@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "A boilerplate built with Astro, Preact, TypeScript and Tailwind CSS",
+  "name": "acgn-stock-museum",
+  "description": "Museum of ACGN Stock (https://github.com/mrbigmouth/acgn-stock)",
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
