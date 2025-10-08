@@ -5,13 +5,17 @@ import { defineConfig } from 'astro/config';
 
 import favicons from 'astro-favicons';
 import preact from '@astrojs/preact';
+import node from '@astrojs/node';
 
 // https://astro.build/config
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  cacheDir: './assets-cache', // when the value is changed, corresponding entry in .gitignore should be changed, too.
+
+  // when the value is changed, corresponding entry in .gitignore should be changed, too.
+  cacheDir: './assets-cache',
+
   integrations: [
     favicons({
       input: {
@@ -38,5 +42,9 @@ export default defineConfig({
     preact({
       compat: true
     })
-  ]
+  ],
+
+  adapter: node({
+    mode: 'standalone'
+  })
 });
