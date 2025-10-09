@@ -1,1 +1,28 @@
 @import 'tailwindcss';
+
+:root {
+  font-family: sans-serif;
+  line-height: 1.15;
+  -ms-text-size-adjust: 100;
+}
+
+body {
+  font-family:
+    'Source Sans Pro',
+    -apple-system,
+    system-ui,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+}
+
+@theme {
+  --color-content-light: #292b2c;
+  --color-content-dark: #839496;
+
+  --color-container-light: #ffffff;
+  --color-container-dark: #002b36;
+}

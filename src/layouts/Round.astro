@@ -1,0 +1,28 @@
+---
+import '@fontsource/source-sans-pro'
+import '@/styles/global.css'
+import { getCurrentPageFullTitle } from '@/libs/routes'
+
+const title = getCurrentPageFullTitle(Astro)
+---
+
+<html lang="zh-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, , shrink-to-fit=no" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body
+    class="bg-container-light text-base font-normal text-content-light dark:bg-container-dark dark:text-content-dark"
+  >
+    <main class="container mx-auto px-4">
+      <!-- TODO: add nav -->
+      <slot />
+    </main>
+    <!-- TODO: add loading effect -->
+    <!-- TODO: add account dialog -->
+    <!-- TODO: add alert dialog -->
+  </body>
+</html>
