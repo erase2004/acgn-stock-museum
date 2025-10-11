@@ -1,0 +1,15 @@
+---
+type Props = {
+  text: string
+}
+
+const { text } = Astro.props
+---
+
+<div class="collapse-arrow collapse">
+  <input type="radio" name="drawer-collpase" />
+  <div class="collapse-title px-[calc(0.25rem*3)] py-[calc(0.25rem*1.5)]">{text}</div>
+  <div class="collapse-content">
+    <slot />
+  </div>
+</div>

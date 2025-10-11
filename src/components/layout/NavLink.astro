@@ -1,0 +1,47 @@
+---
+import { getCurrentRound } from '@/libs/routes'
+import { getPageUrl, getCurrentPage, getPageTitle } from '@/libs/routes'
+import type { HTMLAttributes } from 'astro/types'
+
+type Props = Omit<Parameters<typeof getPageUrl>[0], 'round'> & {
+  isRoundBounded?: boolean
+  externalUrl?: string
+}
+
+const { pageName, params, isRoundBounded, externalUrl } = Astro.props
+const isCurrentPage = isRoundBounded ? getCurrentPage(Astro) === pageName : false
+const isExternal = typeof externalUrl === 'string' && externalUrl.length > 0
+
+let href: HTMLAttributes<'a'>['href']
+if (isExternal) {
+  href = externalUrl
+} else {
+  if (isRoundBounded) {
+    const round = getCurrentRound(Astro)
+
+    if (typeof round !== 'string') throw new Error('Round is not valid')
+
+    href = getPageUrl({
+      pageName,
+      round,
+      params,
+    })
+  } else {
+    href = getPageUrl({
+      pageName,
+      params,
+    })
+  }
+}
+const linkText = getPageTitle(pageName)
+---
+
+<li>
+  <a
+    class={`block whitespace-nowrap ${isCurrentPage ? 'menu-active' : ''}`}
+    href={href}
+    target={isExternal ? '_blank' : '_self'}
+  >
+    <slot>{linkText}</slot>
+  </a>
+</li>

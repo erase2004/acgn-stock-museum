@@ -1,0 +1,21 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+type Props = {
+  text: string
+  style?: HTMLAttributes<'div'>['style']
+}
+
+const { text, style } = Astro.props
+---
+
+<div>
+  <li class="dropdown dropdown-start">
+    <div class="menu-dropdown-toggle" tabindex="0" role="button">
+      {text}
+    </div>
+    <ul style={style} class="dropdown-content menu ml-0 bg-base-300 text-base">
+      <slot />
+    </ul>
+  </li>
+</div>

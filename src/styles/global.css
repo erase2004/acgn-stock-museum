@@ -1,4 +1,9 @@
 @import 'tailwindcss';
+@plugin "daisyui" {
+  themes:
+    light --default,
+    dark --prefersdark;
+}
 
 :root {
   font-family: sans-serif;
@@ -19,10 +24,4 @@ body {
     sans-serif;
 }
 
-@theme {
-  --color-content-light: #292b2c;
-  --color-content-dark: #839496;
-
-  --color-container-light: #ffffff;
-  --color-container-dark: #002b36;
-}
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

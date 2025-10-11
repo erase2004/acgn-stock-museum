@@ -1,0 +1,38 @@
+---
+import '@fontsource/source-sans-pro'
+import '@/styles/global.css'
+import Nav from '@/components/layout/Nav.astro'
+import DrawerSide from '@/components/layout/DrawerSide.astro'
+import { getCurrentPageFullTitle } from '@/libs/routes'
+
+const title = getCurrentPageFullTitle(Astro)
+---
+
+<html lang="zh-TW">
+  <head>
+    <script is:inline>
+      if (localStorage.getItem('theme') === null) {
+        document.documentElement.setAttribute('data-theme', 'light')
+      } else document.documentElement.setAttribute('data-theme', localStorage.getItem('theme'))
+    </script>
+    <script>
+      import { themeChange } from 'theme-change'
+      themeChange(false)
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, , shrink-to-fit=no" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class="text-base font-normal">
+    <main class="drawer drawer-end container mx-auto px-4">
+      <input id="hidden-drawer-input" type="checkbox" class="drawer-toggle" />
+      <div class="drawer-content">
+        <Nav />
+        <slot />
+      </div>
+      <DrawerSide />
+    </main>
+  </body>
+</html>

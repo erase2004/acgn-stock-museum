@@ -1,0 +1,42 @@
+---
+import NavLinkGroup from './NavLinkGroup.astro'
+import NavLink from './NavLink.astro'
+import ThemeToggle from './ThemeToggle.astro'
+import { PAGE } from '@/libs/routes'
+---
+
+<!-- TODO: login & user profile menu -->
+<ul class="menu menu-horizontal hidden text-base md:inline-flex">
+  <NavLink pageName={PAGE.MAIN} isRoundBounded={true} />
+  <NavLink pageName={PAGE.ANNOUNCEMENT_LIST} isRoundBounded={true} />
+  <NavLinkGroup text="交易大廳">
+    <NavLink pageName={PAGE.COMPANY_LIST} isRoundBounded={true} />
+    <NavLink pageName={PAGE.ADVERTISING} isRoundBounded={true} />
+    <NavLink
+      pageName={PAGE.PRODUCT_CENTER_BY_SEASON}
+      isRoundBounded={true}
+      params={'/* TODO: current season */'}
+    />
+    <NavLink
+      pageName={PAGE.ARENA_INFO}
+      isRoundBounded={true}
+      params={'/* TODO: current season */'}
+    />
+  </NavLinkGroup>
+  <!-- TODO: user's favorite company list -->
+  <NavLinkGroup text="其他資訊">
+    <NavLink pageName={PAGE.TUTORIAL} isRoundBounded={true} />
+    <NavLink
+      pageName={PAGE.SEASONAL_REPORT}
+      isRoundBounded={true}
+      params={'/* TODO: lastest season */'}
+    />
+    <NavLink pageName={PAGE.RULE_AGENDA_LIST} isRoundBounded={true} />
+    <NavLink pageName={PAGE.VIOLATION_CASE_LIST} isRoundBounded={true} />
+    <NavLink pageName={PAGE.FSC_LOG} isRoundBounded={true} />
+    <NavLink pageName={PAGE.FSC_STOCK} isRoundBounded={true} />
+    <NavLink pageName={PAGE.MAIN}>歷史博館物首頁</NavLink>
+  </NavLinkGroup>
+  <div class="divider divider-horizontal"></div>
+  <ThemeToggle />
+</ul>

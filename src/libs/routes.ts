@@ -1,36 +1,55 @@
 import type { AstroGlobal } from 'astro'
 import { defaultWebsiteName, siteList } from '@/configs/sites'
 
-const KEY_MAIN_PAGE = 'mainPage'
+export enum PAGE {
+  MAIN = 'mainPage',
+  ANNOUNCEMENT_LIST = 'announcementList',
+  ANNOUNCEMENT_DETAIL = 'announcementDetail',
+  TUTORIAL = 'tutorial',
+  COMPANY_LIST = 'companyList',
+  COMPANY_DETAIL = 'companyDetail',
+  ADVERTISING = 'advertising',
+  PRODUCT_CENTER_BY_SEASON = 'productCenterBySeason',
+  PRODUCT_CENTER_BY_COMPANY = 'productCenterByCompany',
+  ARENA_INFO = 'arenaInfo',
+  SEASONAL_REPORT = 'seasonalReport',
+  ACCOUNT_INFO = 'accountInfo',
+  RULE_AGENDA_LIST = 'ruleAgendaList',
+  RULE_AGENDA_DETAIL = 'ruleAgendaDetail',
+  VIOLATION_CASE_LIST = 'violationCaseList',
+  VIOLATION_CASE_DETAIL = 'violationCaseDetail',
+  FSC_LOG = 'fscLogs',
+  FSC_STOCK = 'fscStock',
+}
 
-const pageNameHash: Record<string, string> = {
-  [KEY_MAIN_PAGE]: '首頁',
-  announcementList: '系統公告',
-  announcementDetail: '系統公告',
-  tutorial: '遊戲規則',
-  companyList: '股市總覽',
-  companyDetail: '公司資訊',
-  advertising: '廣告宣傳',
-  productCenterBySeason: '產品中心',
-  productCenterByCompany: '產品中心',
-  arenaInfo: '最萌亂鬥大賽',
-  seasonalReport: '季度報告',
-  accountInfo: '帳號資訊',
-  ruleAgendaList: '規則討論',
-  ruleAgendaDetail: '議程資訊',
-  violationCaseList: '違規案件列表',
-  violationCaseDetail: '違規案件內容',
-  fscLogs: '金管會執行紀錄',
-  fscStock: '金管會持股',
+const pageNameHash = {
+  [PAGE.MAIN]: '首頁',
+  [PAGE.ANNOUNCEMENT_LIST]: '系統公告',
+  [PAGE.ANNOUNCEMENT_DETAIL]: '系統公告',
+  [PAGE.TUTORIAL]: '遊戲規則',
+  [PAGE.COMPANY_LIST]: '股市總覽',
+  [PAGE.COMPANY_DETAIL]: '公司資訊',
+  [PAGE.ADVERTISING]: '廣告宣傳',
+  [PAGE.PRODUCT_CENTER_BY_SEASON]: '產品中心',
+  [PAGE.PRODUCT_CENTER_BY_COMPANY]: '產品中心',
+  [PAGE.ARENA_INFO]: '最萌亂鬥大賽',
+  [PAGE.SEASONAL_REPORT]: '季度報告',
+  [PAGE.ACCOUNT_INFO]: '帳號資訊',
+  [PAGE.RULE_AGENDA_LIST]: '規則討論',
+  [PAGE.RULE_AGENDA_DETAIL]: '議程資訊',
+  [PAGE.VIOLATION_CASE_LIST]: '違規案件列表',
+  [PAGE.VIOLATION_CASE_DETAIL]: '違規案件內容',
+  [PAGE.FSC_LOG]: '金管會執行紀錄',
+  [PAGE.FSC_STOCK]: '金管會持股',
+  // for external URL
+  other: undefined,
 }
 
 export function getCurrentPage(astro: AstroGlobal) {
-  const paths = astro.url.pathname.split('/')
+  const paths = astro.url.pathname.split('/').filter((ele) => ele !== '')
+  const pageValues: string[] = Object.values(PAGE)
 
-  const currentPage = paths[paths.length - 1]
-
-  if (currentPage === '') return KEY_MAIN_PAGE
-  else return currentPage
+  return paths.findLast((p) => pageValues.includes(p)) ?? PAGE.MAIN
 }
 
 export function getCurrentRound(astro: AstroGlobal) {
@@ -53,7 +72,29 @@ export function getWebsiteName(astro: AstroGlobal) {
 }
 
 export function getPageTitle(pageName: string) {
-  return pageNameHash[pageName]
+  return pageNameHash[pageName as keyof typeof pageNameHash]
+}
+
+export function getPageUrl({
+  pageName,
+  round,
+  params,
+}: {
+  pageName: keyof typeof pageNameHash
+  round?: string
+  params?: string | number
+}) {
+  const paths: Array<string | number> = ['']
+
+  if (typeof round === 'string') paths.push(round)
+
+  if (pageName !== PAGE.MAIN) paths.push(pageName)
+
+  if (typeof params !== 'undefined') paths.push(params)
+
+  paths.push('')
+
+  return paths.join('/')
 }
 
 export function getCurrentPageTitle(astro: AstroGlobal) {
@@ -63,7 +104,7 @@ export function getCurrentPageTitle(astro: AstroGlobal) {
 export function getCurrentPageFullTitle(astro: AstroGlobal, detailName?: string) {
   const websiteName = getWebsiteName(astro)
 
-  if (getCurrentPage(astro) === KEY_MAIN_PAGE) {
+  if (getCurrentPage(astro) === PAGE.MAIN) {
     return websiteName
   }
 
@@ -73,4 +114,8 @@ export function getCurrentPageFullTitle(astro: AstroGlobal, detailName?: string)
   }
 
   return title
+}
+
+export function checkIsRound(astro: AstroGlobal) {
+  return typeof getCurrentRound(astro) === 'string'
 }
