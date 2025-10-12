@@ -1,5 +1,5 @@
 import { defineMiddleware } from 'astro:middleware'
-import { checkIsValidRound, getCurrentRound, getPageUrl, PAGE } from './libs/routes'
+import { checkIsValidRound, getCurrentRound, getPageUrl, PAGE } from '@/libs/routes'
 
 export const onRequest = defineMiddleware((context, next) => {
   const round = getCurrentRound(context)
@@ -12,5 +12,5 @@ export const onRequest = defineMiddleware((context, next) => {
     return context.redirect(homepage)
   }
 
-  next()
+  return next()
 })
