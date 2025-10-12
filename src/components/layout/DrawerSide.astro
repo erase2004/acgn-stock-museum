@@ -2,9 +2,10 @@
 import BaseDrawerSide from './BaseDrawerSide.astro'
 import RoundDrawerSide from './RoundDrawerSide.astro'
 import ThemeToggle from './ThemeToggle.astro'
-import { checkIsRound } from '@/libs/routes'
+import { checkIsValidRound, getCurrentRound } from '@/libs/routes'
 
-const isRound = checkIsRound(Astro)
+const round = getCurrentRound(Astro)
+const isValidRound = checkIsValidRound(round)
 ---
 
 <div class="drawer-side">
@@ -24,7 +25,7 @@ const isRound = checkIsRound(Astro)
     <div></div>
     <div class="overflow-y-scroll">
       <ul class="menu">
-        {isRound ? <RoundDrawerSide /> : <BaseDrawerSide />}
+        {isValidRound ? <RoundDrawerSide /> : <BaseDrawerSide />}
       </ul>
     </div>
   </div>

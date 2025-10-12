@@ -1,9 +1,10 @@
 ---
 import BaseNav from './BaseNav.astro'
 import RoundNav from './RoundNav.astro'
-import { checkIsRound } from '@/libs/routes'
+import { checkIsValidRound, getCurrentRound } from '@/libs/routes'
 
-const isRound = checkIsRound(Astro)
+const round = getCurrentRound(Astro)
+const isValidRound = checkIsValidRound(round)
 ---
 
 <nav class="navbar bg-base-300 max-md:min-h-0">
@@ -23,5 +24,5 @@ const isRound = checkIsRound(Astro)
       </svg>
     </label>
   </div>
-  {isRound ? <RoundNav /> : <BaseNav />}
+  {isValidRound ? <RoundNav /> : <BaseNav />}
 </nav>

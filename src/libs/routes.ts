@@ -1,26 +1,26 @@
-import type { AstroGlobal } from 'astro'
+import type { APIContext } from 'astro'
 import { defaultWebsiteName, siteList } from '@/configs/sites'
 
-export enum PAGE {
-  MAIN = 'mainPage',
-  ANNOUNCEMENT_LIST = 'announcementList',
-  ANNOUNCEMENT_DETAIL = 'announcementDetail',
-  TUTORIAL = 'tutorial',
-  COMPANY_LIST = 'companyList',
-  COMPANY_DETAIL = 'companyDetail',
-  ADVERTISING = 'advertising',
-  PRODUCT_CENTER_BY_SEASON = 'productCenterBySeason',
-  PRODUCT_CENTER_BY_COMPANY = 'productCenterByCompany',
-  ARENA_INFO = 'arenaInfo',
-  SEASONAL_REPORT = 'seasonalReport',
-  ACCOUNT_INFO = 'accountInfo',
-  RULE_AGENDA_LIST = 'ruleAgendaList',
-  RULE_AGENDA_DETAIL = 'ruleAgendaDetail',
-  VIOLATION_CASE_LIST = 'violationCaseList',
-  VIOLATION_CASE_DETAIL = 'violationCaseDetail',
-  FSC_LOG = 'fscLogs',
-  FSC_STOCK = 'fscStock',
-}
+export const PAGE = {
+  MAIN: 'mainPage',
+  ANNOUNCEMENT_LIST: 'announcementList',
+  ANNOUNCEMENT_DETAIL: 'announcementDetail',
+  TUTORIAL: 'tutorial',
+  COMPANY_LIST: 'companyList',
+  COMPANY_DETAIL: 'companyDetail',
+  ADVERTISING: 'advertising',
+  PRODUCT_CENTER_BY_SEASON: 'productCenterBySeason',
+  PRODUCT_CENTER_BY_COMPANY: 'productCenterByCompany',
+  ARENA_INFO: 'arenaInfo',
+  SEASONAL_REPORT: 'seasonalReport',
+  ACCOUNT_INFO: 'accountInfo',
+  RULE_AGENDA_LIST: 'ruleAgendaList',
+  RULE_AGENDA_DETAIL: 'ruleAgendaDetail',
+  VIOLATION_CASE_LIST: 'violationCaseList',
+  VIOLATION_CASE_DETAIL: 'violationCaseDetail',
+  FSC_LOG: 'fscLogs',
+  FSC_STOCK: 'fscStock',
+} as const
 
 const pageNameHash = {
   [PAGE.MAIN]: '首頁',
@@ -45,27 +45,33 @@ const pageNameHash = {
   other: undefined,
 }
 
-export function getCurrentPage(astro: AstroGlobal) {
+export function getCurrentPage(astro: APIContext) {
   const paths = astro.url.pathname.split('/').filter((ele) => ele !== '')
   const pageValues: string[] = Object.values(PAGE)
 
   return paths.findLast((p) => pageValues.includes(p)) ?? PAGE.MAIN
 }
 
-export function getCurrentRound(astro: AstroGlobal) {
-  const paths = /^\/(round\d+)\//.exec(astro.url.pathname)
+export function getCurrentRound(astro: APIContext) {
+  const paths = /^\/(round\d+)\/?/.exec(astro.url.pathname)
 
   if (paths === null) return null
   else return paths[1]
 }
 
-export function getWebsiteName(astro: AstroGlobal) {
+export function getRoundData(round: string) {
+  if (checkIsValidRound(round)) {
+    return siteList[round]
+  }
+
+  return null
+}
+
+export function getWebsiteName(astro: APIContext) {
   const round = getCurrentRound(astro)
 
-  if (typeof round === 'string') {
-    if (round in siteList) {
-      return siteList[round as keyof typeof siteList].name
-    }
+  if (checkIsValidRound(round)) {
+    return siteList[round].name
   }
 
   return defaultWebsiteName
@@ -86,7 +92,7 @@ export function getPageUrl({
 }) {
   const paths: Array<string | number> = ['']
 
-  if (typeof round === 'string') paths.push(round)
+  if (checkIsValidRound(round)) paths.push(round)
 
   if (pageName !== PAGE.MAIN) paths.push(pageName)
 
@@ -97,11 +103,11 @@ export function getPageUrl({
   return paths.join('/')
 }
 
-export function getCurrentPageTitle(astro: AstroGlobal) {
+export function getCurrentPageTitle(astro: APIContext) {
   return getPageTitle(getCurrentPage(astro))
 }
 
-export function getCurrentPageFullTitle(astro: AstroGlobal, detailName?: string) {
+export function getCurrentPageFullTitle(astro: APIContext, detailName?: string) {
   const websiteName = getWebsiteName(astro)
 
   if (getCurrentPage(astro) === PAGE.MAIN) {
@@ -116,6 +122,14 @@ export function getCurrentPageFullTitle(astro: AstroGlobal, detailName?: string)
   return title
 }
 
-export function checkIsRound(astro: AstroGlobal) {
-  return typeof getCurrentRound(astro) === 'string'
+export function checkIsValidRound(
+  round: string | null | undefined,
+): round is keyof typeof siteList {
+  if (typeof round === 'string') {
+    if (round in siteList) {
+      return true
+    }
+  }
+
+  return false
 }
