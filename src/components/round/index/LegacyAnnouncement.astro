@@ -1,0 +1,15 @@
+---
+import { getCurrentRound } from '@/libs/routes'
+import { getConnection } from '@/libs/databases'
+import { getDBVariables } from '@/services/dbVariables'
+
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)
+const dbVariables = getDBVariables(connection)
+const announcementDetail = await dbVariables.get('announcementDetail')
+---
+
+<div>
+  <!-- TODO: update styles -->
+  <div set:html={announcementDetail} />
+</div>

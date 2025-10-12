@@ -1,0 +1,132 @@
+---
+import StatusItem from './StatusItem.astro'
+import dayjs from 'dayjs'
+import isBetween from 'dayjs/plugin/isBetween'
+import { getCurrentRound, getRoundData } from '@/libs/routes'
+import { getConnection } from '@/libs/databases'
+import { getDBRound } from '@/services/dbRound'
+import { getDBSeason } from '@/services/dbSeason'
+import { getDBVariables } from '@/services/dbVariables'
+import { formatDateTimeText, FULL_DATETIME_FORMAT } from '@/libs/timeFormat'
+import { currencyFormat } from '@/utils/helpers'
+
+dayjs.extend(isBetween)
+
+const round = getCurrentRound(Astro)!
+const roundData = getRoundData(round)!
+const connection = getConnection(round)
+const dbRound = getDBRound(connection)
+const dbSeason = getDBSeason(connection)
+const dbVariables = getDBVariables(connection)
+
+// round
+const currentRound = await dbRound.findOne(
+  {},
+  {
+    sort: {
+      beginDate: -1,
+    },
+  },
+)
+
+const roundStartTime = formatDateTimeText(currentRound?.beginDate)
+const roundEndTime = formatDateTimeText(currentRound?.endDate)
+
+// season
+const currentSeason = await dbSeason.findOne(
+  {},
+  {
+    sort: {
+      beginDate: -1,
+    },
+  },
+)
+const seasonStartTime = formatDateTimeText(currentSeason?.beginDate)
+const seasonEndTime = formatDateTimeText(currentSeason?.endDate)
+const updateSalaryDeadline = formatDateTimeText(
+  dayjs(currentSeason?.endDate).subtract(roundData?.config?.announceSalaryTime, 'ms'),
+)
+const updateProfitDistributionDeadline = formatDateTimeText(
+  dayjs(currentSeason?.endDate).subtract(
+    roundData?.config?.companyProfitDistribution?.lockTime,
+    'ms',
+  ),
+)
+
+function createFormatter(formatter: (v: any) => any) {
+  return async (key: string) => {
+    const data = await dbVariables.get(key)
+    return formatter(data)
+  }
+}
+
+const getFormattedDateByKey = createFormatter(formatDateTimeText)
+const getFormmatedNumberByKey = createFormatter(currencyFormat)
+
+// variables
+const stockPriceUpdateBegin = await getFormattedDateByKey('recordListPriceBegin')
+const stockPriceUpdateEnd = await getFormattedDateByKey('recordListPriceEnd')
+const highPriceReleaseBegin = await getFormattedDateByKey('releaseStocksForHighPriceBegin')
+const highPriceReleaseEnd = await getFormattedDateByKey('releaseStocksForHighPriceEnd')
+const noDealReleaseBegin = await getFormattedDateByKey('releaseStocksForNoDealBegin')
+const noDealReleaseEnd = await getFormattedDateByKey('releaseStocksForNoDealEnd')
+const highPriceThreshold = await getFormmatedNumberByKey('highPriceThreshold')
+const lowPriceThreshold = await getFormmatedNumberByKey('lowPriceThreshold')
+
+function taskIsReady(begin: dayjs.ConfigType, end: dayjs.ConfigType) {
+  const b = dayjs(begin, FULL_DATETIME_FORMAT)
+  const e = dayjs(end, FULL_DATETIME_FORMAT)
+
+  if (b.isValid() && e.isValid()) {
+    const now = dayjs(roundEndTime, FULL_DATETIME_FORMAT)
+
+    return now.isBetween(b, e) ? 'text-error' : ''
+  }
+
+  return ''
+}
+---
+
+<div class="flex flex-wrap *:last-of-type:md:ml-auto">
+  <StatusItem title="當前賽季起訖時間">
+    <span class="whitespace-nowrap">{roundStartTime}</span>
+    <span class="whitespace-nowrap">~ {roundEndTime}</span>
+  </StatusItem>
+  <StatusItem title="商業季度起訖時間">
+    <span class="whitespace-nowrap">{seasonStartTime}</span>
+    <span class="whitespace-nowrap">~ {seasonEndTime}</span>
+  </StatusItem>
+  <StatusItem title="員工薪資修改期限">
+    <span class="whitespace-nowrap">{updateSalaryDeadline}</span>
+  </StatusItem>
+  <StatusItem title="營利分配修改期限">
+    <span class="whitespace-nowrap">{updateProfitDistributionDeadline}</span>
+  </StatusItem>
+  <StatusItem
+    title="最近股價更新區間"
+    statusClass={taskIsReady(stockPriceUpdateBegin, stockPriceUpdateEnd)}
+  >
+    <span class="whitespace-nowrap">{stockPriceUpdateBegin}</span>
+    <span class="whitespace-nowrap">~ {stockPriceUpdateEnd}</span>
+  </StatusItem>
+  <StatusItem
+    title="最近高價釋股區間"
+    statusClass={taskIsReady(highPriceReleaseBegin, highPriceReleaseEnd)}
+  >
+    <span class="whitespace-nowrap">{highPriceReleaseBegin}</span>
+    <span class="whitespace-nowrap">~ {highPriceReleaseEnd}</span>
+  </StatusItem>
+  <StatusItem
+    title="最近低量釋股區間"
+    statusClass={taskIsReady(noDealReleaseBegin, noDealReleaseEnd)}
+  >
+    <span class="whitespace-nowrap">{noDealReleaseBegin}</span>
+    <span class="whitespace-nowrap">~ {noDealReleaseEnd}</span>
+  </StatusItem>
+  <StatusItem title="高價公司價格下限">
+    <span>$ {highPriceThreshold}</span>
+  </StatusItem>
+  <StatusItem title="低價公司價格上限">
+    <span>$ {lowPriceThreshold}</span>
+  </StatusItem>
+</div>

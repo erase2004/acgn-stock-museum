@@ -1,7 +1,7 @@
 // @ts-check
 
 import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 
 import favicons from 'astro-favicons';
 import preact from '@astrojs/preact';
@@ -15,6 +15,17 @@ export default defineConfig({
 
   // when the value is changed, corresponding entry in .gitignore should be changed, too.
   cacheDir: './assets-cache',
+
+  env: {
+    schema: {
+      /** database connection URI */
+      DB_URI: envField.string({
+        context: 'server',
+        access: 'secret',
+        default: 'mongodb://127.0.0.1:27017'
+      })
+    }
+  },
 
   integrations: [
     favicons({
