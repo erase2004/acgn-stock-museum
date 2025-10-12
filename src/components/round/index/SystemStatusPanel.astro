@@ -2,55 +2,51 @@
 import StatusItem from './StatusItem.astro'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
-import { getCurrentRound, getRoundData } from '@/libs/routes'
+import { getCurrentRound, getPageUrl, getRoundData, PAGE } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
-import { getDBRound } from '@/services/dbRound'
-import { getDBSeason } from '@/services/dbSeason'
+import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getDBVariables } from '@/services/dbVariables'
 import { formatDateTimeText, FULL_DATETIME_FORMAT } from '@/libs/timeFormat'
 import { currencyFormat } from '@/utils/helpers'
+import { getCurrentSeason } from '@/services/dbSeason'
 
 dayjs.extend(isBetween)
 
 const round = getCurrentRound(Astro)!
 const roundData = getRoundData(round)!
 const connection = getConnection(round)
-const dbRound = getDBRound(connection)
-const dbSeason = getDBSeason(connection)
 const dbVariables = getDBVariables(connection)
 
 // round
-const currentRound = await dbRound.findOne(
-  {},
-  {
-    sort: {
-      beginDate: -1,
-    },
-  },
-)
+const currentRound = await getCurrentRoundFromDB(connection)
+if (!currentRound) {
+  return Astro.redirect(
+    getPageUrl({
+      pageName: PAGE.MAIN,
+    }),
+  )
+}
 
-const roundStartTime = formatDateTimeText(currentRound?.beginDate)
-const roundEndTime = formatDateTimeText(currentRound?.endDate)
+const roundStartTime = formatDateTimeText(currentRound.beginDate)
+const roundEndTime = formatDateTimeText(currentRound.endDate)
 
 // season
-const currentSeason = await dbSeason.findOne(
-  {},
-  {
-    sort: {
-      beginDate: -1,
-    },
-  },
-)
-const seasonStartTime = formatDateTimeText(currentSeason?.beginDate)
-const seasonEndTime = formatDateTimeText(currentSeason?.endDate)
+const currentSeason = await getCurrentSeason(connection)
+if (!currentSeason) {
+  return Astro.redirect(
+    getPageUrl({
+      pageName: PAGE.MAIN,
+    }),
+  )
+}
+
+const seasonStartTime = formatDateTimeText(currentSeason.beginDate)
+const seasonEndTime = formatDateTimeText(currentSeason.endDate)
 const updateSalaryDeadline = formatDateTimeText(
-  dayjs(currentSeason?.endDate).subtract(roundData?.config?.announceSalaryTime, 'ms'),
+  dayjs(currentSeason.endDate).subtract(roundData.config.announceSalaryTime, 'ms'),
 )
 const updateProfitDistributionDeadline = formatDateTimeText(
-  dayjs(currentSeason?.endDate).subtract(
-    roundData?.config?.companyProfitDistribution?.lockTime,
-    'ms',
-  ),
+  dayjs(currentSeason.endDate).subtract(roundData.config.companyProfitDistribution.lockTime, 'ms'),
 )
 
 function createFormatter(formatter: (v: any) => any) {
