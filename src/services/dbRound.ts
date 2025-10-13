@@ -1,3 +1,4 @@
+// 賽季資料集
 import { z } from 'astro/zod'
 import type { Db } from 'mongodb'
 

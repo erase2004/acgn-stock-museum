@@ -1,0 +1,61 @@
+---
+import { getCurrentRound, getPageUrl, PAGE } from '@/libs/routes'
+import { getConnection } from '@/libs/databases'
+import { getDBUserArchive, schema as schemaUserArchive } from '@/services/dbUserArchive'
+import { z } from 'astro/zod'
+import { styledValidateTypeMarkHtml } from '@/utils/helpers'
+
+type Props = {
+  userId?: string
+}
+
+const { userId } = Astro.props
+
+const specialUserDisplayNameMap: Record<string, string> = {
+  '!none': '無',
+  '!system': '系統',
+  '!FSC': '金管會',
+}
+
+const defaultText = '???'
+let displayText: string = defaultText
+let path: string | undefined
+
+if (!userId) {
+  displayText = '（無資料）'
+} else if (userId in specialUserDisplayNameMap) {
+  displayText = specialUserDisplayNameMap[userId]
+} else {
+  try {
+    const round = getCurrentRound(Astro)!
+    const connection = getConnection(round)!
+    const dbUserArhive = getDBUserArchive(connection)
+
+    const { name, status, validateType } = await z
+      .promise(schemaUserArchive)
+      // @ts-expect-error: key is valid ObjectId
+      .parse(dbUserArhive.findOne({ _id: userId }))
+    displayText = `${styledValidateTypeMarkHtml(validateType)}${name}`.trim() || defaultText
+
+    if (status === 'registered') {
+      path = getPageUrl({
+        pageName: PAGE.ACCOUNT_INFO,
+        round,
+        params: userId,
+      })
+    }
+  } catch {
+    displayText = defaultText
+  }
+}
+---
+
+{
+  path ? (
+    <a href={path}>
+      <span set:html={displayText} />
+    </a>
+  ) : (
+    <span>{displayText}</span>
+  )
+}

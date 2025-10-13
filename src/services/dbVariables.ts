@@ -1,3 +1,4 @@
+// 任意變數資料集
 import { type Db, type Document, type WithId } from 'mongodb'
 
 declare module 'mongodb' {

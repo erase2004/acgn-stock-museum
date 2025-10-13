@@ -5,23 +5,78 @@
     dark --prefersdark;
 }
 
-:root {
-  font-family: sans-serif;
-  line-height: 1.15;
-  -ms-text-size-adjust: 100;
+@layer base {
+  :root {
+    font-family: sans-serif;
+    line-height: 1.15;
+    -ms-text-size-adjust: 100;
+  }
+
+  body {
+    font-family:
+      'Source Sans Pro',
+      -apple-system,
+      system-ui,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      'Helvetica Neue',
+      Arial,
+      sans-serif;
+  }
+
+  a {
+    color: var(--color-info);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  @media (hover: hover) {
+    a:hover {
+      text-decoration: underline;
+
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, var(--color-info) 80%, #000);
+      }
+    }
+  }
 }
 
-body {
-  font-family:
-    'Source Sans Pro',
-    -apple-system,
-    system-ui,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+@layer components {
+  .round-container {
+    @apply border border-solid border-base-300;
+  }
+  .round-block {
+    @apply p-5;
+  }
+  .round-block-title {
+    @apply text-4xl;
+  }
+
+  .tutorial-main {
+    ul,
+    ol {
+      padding-left: 1rem;
+    }
+    ol > li {
+      list-style-type: decimal;
+    }
+    ul > li {
+      list-style-type: disc;
+    }
+    .collapse {
+      @apply border border-base-300 bg-base-100;
+
+      &:not(.collapse-close)
+        > :where(input:is([type='checkbox'], [type='radio'])):checked
+        ~ .collapse-content {
+        @apply p-4;
+      }
+    }
+    .collapse-title {
+      @apply bg-base-200 text-xl;
+    }
+  }
 }
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

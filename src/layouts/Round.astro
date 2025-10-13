@@ -3,7 +3,9 @@ import BaseLayout from '@/layouts/Base.astro'
 ---
 
 <BaseLayout>
-  <slot />
+  <div class="round-container">
+    <div class="round-block"><slot /></div>
+  </div>
   <!-- TODO: add loading effect -->
   <!-- TODO: add account dialog -->
   <!-- TODO: add alert dialog -->
