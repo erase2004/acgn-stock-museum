@@ -5,11 +5,12 @@ import { escape } from 'lodash-es'
 import { useEffect, useState } from 'preact/hooks'
 import { schema as schemaUserArchive } from '@/services/dbUserArchive'
 import { getUser } from '@/libs/request'
+import { SpecialUser } from '@/services/dbUsers'
 
 const specialUserDisplayNameMap: Record<string, string> = {
-  '!none': '無',
-  '!system': '系統',
-  '!FSC': '金管會',
+  [SpecialUser.NONE]: '無',
+  [SpecialUser.SYSTEM]: '系統',
+  [SpecialUser.FSC]: '金管會',
 }
 
 const defaultText = '???'

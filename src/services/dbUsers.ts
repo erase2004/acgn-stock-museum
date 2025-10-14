@@ -1,6 +1,12 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 
+export const SpecialUser = {
+  NONE: '!none',
+  SYSTEM: '!system',
+  FSC: '!FSC',
+}
+
 export const UserRole = {
   SUPER_ADMIN: {
     name: 'superAdmin',

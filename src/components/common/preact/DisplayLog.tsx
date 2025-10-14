@@ -6,7 +6,7 @@ import ProductLink from '@/components/common/preact/ProductLink'
 import { currencyFormat, interleave, stoneDisplayName } from '@/utils/helpers'
 import { escape, isEmpty } from 'lodash-es'
 import { getPageUrl, PAGE } from '@/libs/routes'
-import { roleDisplayName } from '@/services/dbUsers'
+import { roleDisplayName, SpecialUser } from '@/services/dbUsers'
 
 type Props = z.infer<typeof logsWithCountSchema>[number]['data'][number] & {
   round: string
@@ -58,7 +58,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data }: 
 
     case '公司復活': {
       let extraInfo: preact.JSX.Element | string
-      if (data.manager === '!none') {
+      if (data.manager === SpecialUser.NONE) {
         extraInfo = '但無人就任公司經理。'
       } else {
         extraInfo = (
@@ -152,7 +152,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data }: 
       )
 
     case '訂單完成': {
-      if (userId && userId[0] === '!system') {
+      if (userId && userId[0] === SpecialUser.SYSTEM) {
         return (
           <>
             【訂單完成】{companyJsx}以每股${currencyFormat(data.price)}的單價釋出{data.amount}
@@ -223,7 +223,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data }: 
       let extraInfo: preact.JSX.Element = <></>
 
       if (Array.isArray(userId)) {
-        if (!userId[1] || userId[1] === '!none') {
+        if (!userId[1] || userId[1] === SpecialUser.NONE) {
           extraInfo = <>成為了「{companyJsx}」公司的經理人。</>
         } else if (userId[0] === userId[1]) {
           extraInfo = <>繼續擔任「{companyJsx}」公司的經理人職務。</>
