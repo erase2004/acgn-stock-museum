@@ -18,9 +18,7 @@ export const schema = z.object({
 })
 
 export function getDBSeason(db: Db) {
-  const dbSeason = db.collection('season')
-
-  return dbSeason
+  return db.collection('season')
 }
 
 export async function getCurrentSeason(db: Db) {

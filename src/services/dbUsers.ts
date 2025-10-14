@@ -27,6 +27,14 @@ export const UserRole = {
   },
 }
 
+export function roleDisplayName(role: string) {
+  return (
+    Object.values(UserRole).find((user) => user.name === role) ?? {
+      displayName: `未知的身份組成員(${role})`,
+    }
+  ).displayName
+}
+
 const profileSchema = z.object({
   /** 使用者名稱 */
   name: z.string(),
@@ -54,7 +62,5 @@ export const schema = z.object({
 })
 
 export function getDBUsers(db: Db) {
-  const dbUsers = db.collection('users')
-
-  return dbUsers
+  return db.collection('users')
 }

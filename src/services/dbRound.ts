@@ -10,9 +10,7 @@ export const schema = z.object({
 })
 
 export function getDBRound(db: Db) {
-  const dbRound = db.collection('round')
-
-  return dbRound
+  return db.collection('round')
 }
 
 export async function getCurrentRound(db: Db) {

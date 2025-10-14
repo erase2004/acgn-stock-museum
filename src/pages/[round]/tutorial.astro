@@ -2,7 +2,7 @@
 export const prerender = false
 
 import RoundLayout from '@/layouts/Round.astro'
-import UserLink from '@/components/common/UserLink.astro'
+import UserLink from '@/components/common/preact/UserLink'
 import { importantFscLogTypeList } from '@/services/dbLog'
 import { getCurrentRound } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
@@ -248,7 +248,7 @@ for await (const result of findResult) {
             {
               fscMembers.map((member) => (
                 <li>
-                  <UserLink userId={member._id} />
+                  <UserLink client:only="preact" round={round} userId={member._id} />
                 </li>
               ))
             }

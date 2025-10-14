@@ -14,7 +14,16 @@ export const schema = z.object({
 })
 
 export function getDBUserArchive(db: Db) {
-  const dbUserArchive = db.collection('userArchive')
+  return db.collection('userArchive')
+}
 
-  return dbUserArchive
+export function getArchivedUser(db: Db, userId: string) {
+  const dbUserArchive = getDBUserArchive(db)
+
+  return (
+    z
+      .promise(schema)
+      // @ts-expect-error: key is valid ObjectId
+      .parse(dbUserArchive.findOne({ _id: userId }))
+  )
 }

@@ -10,12 +10,19 @@ type RoundConfig = {
     /** 分配設定調整的封關時間 (ms) */
     lockTime: number
   }
+  /** 分頁時每個分頁有多少資料 */
+  dataNumberPerPage: {
+    fscLogs: number
+  }
 }
 
 const BaseRoundConfig: RoundConfig = {
   announceSalaryTime: 259200000,
   companyProfitDistribution: {
     lockTime: 86400000,
+  },
+  dataNumberPerPage: {
+    fscLogs: 30,
   },
 }
 
