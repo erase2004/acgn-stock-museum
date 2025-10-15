@@ -13,6 +13,7 @@ type RoundConfig = {
   /** 分頁時每個分頁有多少資料 */
   dataNumberPerPage: {
     fscLogs: number
+    fscStock: number
   }
 }
 
@@ -23,6 +24,7 @@ const BaseRoundConfig: RoundConfig = {
   },
   dataNumberPerPage: {
     fscLogs: 30,
+    fscStock: 20,
   },
 }
 

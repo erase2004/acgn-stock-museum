@@ -15,3 +15,9 @@ export function getFSCLogs(round: string, size: number, page: number) {
     `/api/fsc-logs?${new URLSearchParams({ round, size: String(size), page: String(page) }).toString()}`,
   )
 }
+
+export function getAccountOwnStocks(round: string, userId: string, size: number, page: number) {
+  return fetch(
+    `/api/account-own-stocks?${new URLSearchParams({ round, userId, size: String(size), page: String(page) }).toString()}`,
+  )
+}
