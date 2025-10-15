@@ -16,7 +16,7 @@ export default function LoadMore({ total, pageSize }: Props) {
   const totalPages = Math.ceil(total / pageSize)
 
   if (!total) return <></>
-  if ($currentPage === totalPages) return <></>
+  if ($currentPage >= totalPages) return <></>
 
   useEffect(() => {
     if (isIntersecting) {

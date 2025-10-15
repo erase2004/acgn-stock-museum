@@ -21,6 +21,7 @@ export default function ListContainer({ round, pageSize, total, data }: Props) {
 
   useEffect(() => {
     if ($isDataLoading) return
+    if ($currentPage === 1) return
 
     isDataLoading.set(true)
     getFSCLogs(round, pageSize, $currentPage).then(async (response) => {
