@@ -3,6 +3,7 @@ import { z } from 'astro/zod'
 import type { Db } from 'mongodb'
 
 export const schema = z.object({
+  _id: z.coerce.string(),
   /** 賽季的第幾季度 */
   ordinal: z.number().int(),
   /** 起始日期 */
@@ -21,7 +22,7 @@ export function getDBSeason(db: Db) {
   return db.collection('season')
 }
 
-export async function getCurrentSeason(db: Db) {
+export async function getLatestSeason(db: Db) {
   const dbSeason = getDBSeason(db)
   const { data } = await z
     .promise(schema)

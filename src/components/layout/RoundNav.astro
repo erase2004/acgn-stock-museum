@@ -2,7 +2,13 @@
 import NavLinkGroup from './NavLinkGroup.astro'
 import NavLink from './NavLink.astro'
 import ThemeToggle from './ThemeToggle.astro'
-import { PAGE } from '@/libs/routes'
+import { getCurrentRound, PAGE } from '@/libs/routes'
+import { getLatestSeason } from '@/services/dbSeason'
+import { getConnection } from '@/libs/databases'
+
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)!
+const latestSeason = await getLatestSeason(connection)
 ---
 
 <!-- TODO: login & user profile menu -->
@@ -15,7 +21,7 @@ import { PAGE } from '@/libs/routes'
     <NavLink
       pageName={PAGE.PRODUCT_CENTER_BY_SEASON}
       isRoundBounded={true}
-      params={'/* TODO: current season */'}
+      params={latestSeason?._id}
     />
     <NavLink
       pageName={PAGE.ARENA_INFO}
@@ -26,11 +32,7 @@ import { PAGE } from '@/libs/routes'
   <!-- TODO: user's favorite company list -->
   <NavLinkGroup text="其他資訊">
     <NavLink pageName={PAGE.TUTORIAL} isRoundBounded={true} />
-    <NavLink
-      pageName={PAGE.SEASONAL_REPORT}
-      isRoundBounded={true}
-      params={'/* TODO: lastest season */'}
-    />
+    <NavLink pageName={PAGE.SEASONAL_REPORT} isRoundBounded={true} params={latestSeason?._id} />
     <NavLink pageName={PAGE.RULE_AGENDA_LIST} isRoundBounded={true} />
     <NavLink pageName={PAGE.VIOLATION_CASE_LIST} isRoundBounded={true} />
     <NavLink pageName={PAGE.FSC_LOG} isRoundBounded={true} />

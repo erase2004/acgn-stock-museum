@@ -8,7 +8,7 @@ import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getDBVariables } from '@/services/dbVariables'
 import { formatDateTimeText, FULL_DATETIME_FORMAT } from '@/libs/timeFormat'
 import { currencyFormat } from '@/utils/helpers'
-import { getCurrentSeason } from '@/services/dbSeason'
+import { getLatestSeason } from '@/services/dbSeason'
 
 dayjs.extend(isBetween)
 
@@ -31,8 +31,8 @@ const roundStartTime = formatDateTimeText(currentRound.beginDate)
 const roundEndTime = formatDateTimeText(currentRound.endDate)
 
 // season
-const currentSeason = await getCurrentSeason(connection)
-if (!currentSeason) {
+const latestSeason = await getLatestSeason(connection)
+if (!latestSeason) {
   return Astro.redirect(
     getPageUrl({
       pageName: PAGE.MAIN,
@@ -40,13 +40,13 @@ if (!currentSeason) {
   )
 }
 
-const seasonStartTime = formatDateTimeText(currentSeason.beginDate)
-const seasonEndTime = formatDateTimeText(currentSeason.endDate)
+const seasonStartTime = formatDateTimeText(latestSeason.beginDate)
+const seasonEndTime = formatDateTimeText(latestSeason.endDate)
 const updateSalaryDeadline = formatDateTimeText(
-  dayjs(currentSeason.endDate).subtract(roundData.config.announceSalaryTime, 'ms'),
+  dayjs(latestSeason.endDate).subtract(roundData.config.announceSalaryTime, 'ms'),
 )
 const updateProfitDistributionDeadline = formatDateTimeText(
-  dayjs(currentSeason.endDate).subtract(roundData.config.companyProfitDistribution.lockTime, 'ms'),
+  dayjs(latestSeason.endDate).subtract(roundData.config.companyProfitDistribution.lockTime, 'ms'),
 )
 
 function createFormatter(formatter: (v: any) => any) {
