@@ -10,11 +10,12 @@ import { formatDateTimeText } from '@/libs/timeFormat'
 type Props = {
   round: string
   pageSize: number
-  data: z.infer<typeof logsWithCountSchema>
+  total: number
+  data: z.infer<typeof logsWithCountSchema>[number]['data']
 }
 
-export default function ListContainer({ round, pageSize, data }: Props) {
-  const [items, setItems] = useState(data[0]?.data ?? [])
+export default function ListContainer({ round, pageSize, total, data }: Props) {
+  const [items, setItems] = useState(data)
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
 
@@ -28,24 +29,22 @@ export default function ListContainer({ round, pageSize, data }: Props) {
       isDataLoading.set(false)
 
       if (data) {
-        setItems(data[0]?.data ?? [])
+        const newItems = items.concat(...(data[0]?.data ?? []))
+        setItems(newItems)
       }
     })
   }, [$currentPage])
 
+  if (!total) return <em>沒有資料</em>
+
   return (
     <ul class="relative">
       {items.map((d) => (
-        <li>
+        <li key={d._id}>
           <time class="mr-2 text-primary">({formatDateTimeText(d.createdAt)})</time>
           <DisplayLog round={round} {...d} />
         </li>
       ))}
-      {$isDataLoading === true && (
-        <div class="absolute inset-0 flex items-center justify-center bg-base-300/50">
-          <span class="loading w-24 loading-spinner"></span>
-        </div>
-      )}
     </ul>
   )
 }

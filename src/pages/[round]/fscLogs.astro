@@ -3,7 +3,7 @@ export const prerender = false
 
 import RoundLayout from '@/layouts/Round.astro'
 import ListContainer from '@/components/round/fscLog/preact/ListContainer'
-import Pagination from '@/components/common/preact/Pagination'
+import LoadMore from '@/components/common/preact/LoadMore'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getRoundData } from '@/libs/routes'
 import { getFSCLogs } from '@/services/dbLog'
@@ -15,20 +15,14 @@ const pageSize = roundData.config.dataNumberPerPage.fscLogs
 const connection = getConnection(round)!
 
 const currentRound = await getCurrentRoundFromDB(connection)
-const data = await getFSCLogs(connection, currentRound!, pageSize, 1)
-const total = data[0]?.total[0]?.total ?? 0
+const result = await getFSCLogs(connection, currentRound!, pageSize, 1)
+const total = result[0]?.total[0]?.total ?? 0
+const data = result[0]?.data ?? []
 ---
 
 <RoundLayout>
   <h1 class="round-block-title">金管會執行紀錄</h1>
   <div class="divider"></div>
-  <Pagination client:only="preact" total={total} pageSize={pageSize} />
-  {
-    total > 0 ? (
-      <ListContainer client:only="preact" round={round} pageSize={pageSize} data={data} />
-    ) : (
-      <em>沒有資料</em>
-    )
-  }
-  <Pagination client:only="preact" total={total} pageSize={pageSize} />
+  <ListContainer client:only="preact" round={round} pageSize={pageSize} total={total} data={data} />
+  <LoadMore client:only="preact" total={total} pageSize={pageSize} />
 </RoundLayout>

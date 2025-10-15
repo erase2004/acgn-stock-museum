@@ -529,6 +529,7 @@ export const importantFscLogTypeList: LOG_TYPE[] = [
 ]
 
 export const schema = z.object({
+  _id: z.coerce.string(),
   /** 紀錄類別 */
   logType: z.enum(logTypeList),
   /** 相關的使用者 ID 陣列 */
