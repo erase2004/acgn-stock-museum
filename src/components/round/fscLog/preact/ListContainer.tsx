@@ -24,16 +24,18 @@ export default function ListContainer({ round, pageSize, total, data }: Props) {
     if ($currentPage === 1) return
 
     isDataLoading.set(true)
-    getFSCLogs(round, pageSize, $currentPage).then(async (response) => {
-      const data = await z.promise(logsWithCountSchema).parse(response.json())
+    getFSCLogs(round, pageSize, $currentPage)
+      .then(async (response) => {
+        const data = await z.promise(logsWithCountSchema).parse(response.json())
 
-      isDataLoading.set(false)
-
-      if (data) {
-        const newItems = items.concat(...(data[0]?.data ?? []))
-        setItems(newItems)
-      }
-    })
+        if (data) {
+          const newItems = items.concat(...(data[0]?.data ?? []))
+          setItems(newItems)
+        }
+      })
+      .finally(() => {
+        isDataLoading.set(false)
+      })
   }, [$currentPage])
 
   if (!total) return <em>沒有資料</em>

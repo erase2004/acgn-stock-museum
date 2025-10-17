@@ -3,6 +3,7 @@
 import { z } from 'astro/zod'
 import type { Db } from 'mongodb'
 import { schema as schemaRound } from './dbRound'
+import { handlePromiseParser } from '@/utils/helpers'
 
 type LOG_TYPE = (typeof logTypeList)[number]
 
@@ -566,44 +567,44 @@ export async function getFSCLogs(
 ) {
   const dbLog = getDBLog(db)
 
-  const result = await z.promise(logsWithCountSchema).parse(
-    dbLog
-      .aggregate([
-        {
-          $match: {
-            $and: [
-              {
-                logType: {
-                  $in: fscLogTypeList,
+  return handlePromiseParser(
+    z.promise(logsWithCountSchema).parse(
+      dbLog
+        .aggregate([
+          {
+            $match: {
+              $and: [
+                {
+                  logType: {
+                    $in: fscLogTypeList,
+                  },
                 },
-              },
-              {
-                createdAt: {
-                  $gte: currentRound.beginDate,
+                {
+                  createdAt: {
+                    $gte: currentRound.beginDate,
+                  },
                 },
-              },
-              {
-                createdAt: {
-                  $lt: currentRound.endDate,
+                {
+                  createdAt: {
+                    $lt: currentRound.endDate,
+                  },
                 },
-              },
-            ],
+              ],
+            },
           },
-        },
-        {
-          $sort: {
-            createdAt: -1,
+          {
+            $sort: {
+              createdAt: -1,
+            },
           },
-        },
-        {
-          $facet: {
-            total: [{ $count: 'total' }],
-            data: [{ $skip: (page - 1) * size }, { $limit: size }],
+          {
+            $facet: {
+              total: [{ $count: 'total' }],
+              data: [{ $skip: (page - 1) * size }, { $limit: size }],
+            },
           },
-        },
-      ])
-      .toArray(),
+        ])
+        .toArray(),
+    ),
   )
-
-  return result
 }

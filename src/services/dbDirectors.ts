@@ -1,5 +1,6 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
+import { handlePromiseParser } from '@/utils/helpers'
 
 export const schema = z.object({
   /** 公司 ID */
@@ -29,30 +30,30 @@ export const stocksWithCountSchema = z
 export async function getAccountOwnStocks(db: Db, userId: string, size: number, page: number = 1) {
   const dbDirectors = getDBDirectors(db)
 
-  const result = await z.promise(stocksWithCountSchema).parse(
-    dbDirectors
-      .aggregate([
-        {
-          $match: {
-            userId: {
-              $eq: userId,
+  return handlePromiseParser(
+    z.promise(stocksWithCountSchema).parse(
+      dbDirectors
+        .aggregate([
+          {
+            $match: {
+              userId: {
+                $eq: userId,
+              },
             },
           },
-        },
-        {
-          $sort: {
-            createdAt: -1,
+          {
+            $sort: {
+              createdAt: -1,
+            },
           },
-        },
-        {
-          $facet: {
-            total: [{ $count: 'total' }],
-            data: [{ $skip: (page - 1) * size }, { $limit: size }],
+          {
+            $facet: {
+              total: [{ $count: 'total' }],
+              data: [{ $skip: (page - 1) * size }, { $limit: size }],
+            },
           },
-        },
-      ])
-      .toArray(),
+        ])
+        .toArray(),
+    ),
   )
-
-  return result
 }

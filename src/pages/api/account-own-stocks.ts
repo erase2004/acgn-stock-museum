@@ -28,14 +28,8 @@ export const GET: APIRoute = async ({ request }) => {
   const { round, userId, size, page } = input
   const connection = getConnection(round)
 
-  try {
-    const result = await getAccountOwnStocks(connection, userId, size, page)
+  const result = await getAccountOwnStocks(connection, userId, size, page)
 
-    return createJSONResponse(result)
-  } catch (err) {
-    // TODO: add log format
-    console.error(err)
-
-    return internalServerError
-  }
+  if (typeof result === 'undefined') return internalServerError
+  return createJSONResponse(result)
 }

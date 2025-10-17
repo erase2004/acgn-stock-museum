@@ -16,8 +16,8 @@ const connection = getConnection(round)!
 
 const currentRound = await getCurrentRoundFromDB(connection)
 const result = await getFSCLogs(connection, currentRound!, pageSize, 1)
-const total = result[0]?.total[0]?.total ?? 0
-const data = result[0]?.data ?? []
+const total = result?.[0]?.total[0]?.total ?? 0
+const data = result?.[0]?.data ?? []
 ---
 
 <RoundLayout>

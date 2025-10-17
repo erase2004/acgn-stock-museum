@@ -48,3 +48,11 @@ export function interleave<T, S>(arr: T[], value: S): (T | S)[] {
   const length = arr.length
   return arr.flatMap((v, i) => (i + 1 !== length ? [v, value] : v))
 }
+
+export async function handlePromiseParser<T, U extends Promise<T>>(parseFn: U) {
+  try {
+    return await parseFn
+  } catch {
+    return undefined
+  }
+}

@@ -1,4 +1,5 @@
 // 賽季資料集
+import { handlePromiseParser } from '@/utils/helpers'
 import { z } from 'astro/zod'
 import type { Db } from 'mongodb'
 
@@ -15,8 +16,8 @@ export function getDBRound(db: Db) {
 
 export async function getCurrentRound(db: Db) {
   const dbRound = getDBRound(db)
-  const { data } = await z
-    .promise(schema)
-    .safeParse(dbRound.findOne({}, { sort: { beginDate: -1 } }))
-  return data
+
+  return handlePromiseParser(
+    z.promise(schema).parse(dbRound.findOne({}, { sort: { beginDate: -1 } })),
+  )
 }

@@ -1,4 +1,5 @@
 // 季度資料集
+import { handlePromiseParser } from '@/utils/helpers'
 import { z } from 'astro/zod'
 import type { Db } from 'mongodb'
 
@@ -24,16 +25,20 @@ export function getDBSeason(db: Db) {
 
 export async function getLatestSeason(db: Db) {
   const dbSeason = getDBSeason(db)
-  const { data } = await z
-    .promise(schema)
-    .safeParse(dbSeason.findOne({}, { sort: { beginDate: -1 } }))
-  return data
+  return handlePromiseParser(
+    z.promise(schema).parse(dbSeason.findOne({}, { sort: { beginDate: -1 } })),
+  )
 }
 
 export async function getPreviousSeason(db: Db) {
   const dbSeason = getDBSeason(db)
-  const { data } = await z
-    .promise(schema)
-    .safeParse(dbSeason.findOne({}, { sort: { beginDate: -1 }, skip: 1 }))
-  return data
+  return handlePromiseParser(
+    z.promise(schema).parse(dbSeason.findOne({}, { sort: { beginDate: -1 }, skip: 1 })),
+  )
+}
+
+export async function getSeasonById(db: Db, seasonId: string) {
+  const dbSeason = getDBSeason(db)
+  // @ts-expect-error: seasonId is valid ObjectId
+  return handlePromiseParser(z.promise(schema).parse(dbSeason.findOne({ _id: seasonId })))
 }

@@ -1,4 +1,5 @@
 // 公司產品資料集
+import { handlePromiseParser } from '@/utils/helpers'
 import { z } from 'astro/zod'
 import type { Db } from 'mongodb'
 
@@ -19,13 +20,13 @@ export function getDBProducts(db: Db) {
   return db.collection('products')
 }
 
-export function getProduct(db: Db, productId: string) {
+export async function getProduct(db: Db, productId: string) {
   const dbProducts = getDBProducts(db)
 
-  return (
+  return handlePromiseParser(
     z
       .promise(schema)
       // @ts-expect-error: key is valid ObjectId
-      .parse(dbProducts.findOne({ _id: productId }))
+      .parse(dbProducts.findOne({ _id: productId })),
   )
 }

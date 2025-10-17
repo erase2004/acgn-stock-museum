@@ -29,14 +29,8 @@ export const GET: APIRoute = async ({ request }) => {
   const connection = getConnection(round)
   const currentRound = await getCurrentRound(connection)
 
-  try {
-    const result = await getFSCLogs(connection, currentRound!, size, page)
+  const result = await getFSCLogs(connection, currentRound!, size, page)
 
-    return createJSONResponse(result)
-  } catch (err) {
-    // TODO: add log format
-    console.error(err)
-
-    return internalServerError
-  }
+  if (typeof result === 'undefined') return internalServerError
+  return createJSONResponse(result)
 }

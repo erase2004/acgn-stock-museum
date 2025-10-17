@@ -24,16 +24,18 @@ export default function ListContainer({ round, pageSize, userId, total, data }: 
     if ($currentPage === 1) return
 
     isDataLoading.set(true)
-    getAccountOwnStocks(round, userId, pageSize, $currentPage).then(async (response) => {
-      const data = await z.promise(stocksWithCountSchema).parse(response.json())
+    getAccountOwnStocks(round, userId, pageSize, $currentPage)
+      .then(async (response) => {
+        const data = await z.promise(stocksWithCountSchema).parse(response.json())
 
-      isDataLoading.set(false)
-
-      if (data) {
-        const newItems = items.concat(...(data[0]?.data ?? []))
-        setItems(newItems)
-      }
-    })
+        if (data) {
+          const newItems = items.concat(...(data[0]?.data ?? []))
+          setItems(newItems)
+        }
+      })
+      .finally(() => {
+        isDataLoading.set(false)
+      })
   }, [$currentPage])
 
   let tbodyContent
@@ -59,7 +61,7 @@ export default function ListContainer({ round, pageSize, userId, total, data }: 
 
   return (
     <div class="mx-auto max-w-3xl border border-base-300">
-      <table class="table-pin-rows table border-separate border-spacing-0 **:py-2 **:text-base **:[th,td]:border **:[th,td]:border-base-300">
+      <table class="table-pin-rows table-base table">
         <thead>
           <tr>
             <th class="text-center" title="公司名稱">

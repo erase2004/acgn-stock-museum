@@ -26,14 +26,8 @@ export const GET: APIRoute = async ({ request }) => {
   const { round, productId } = input
   const connection = getConnection(round)
 
-  try {
-    const result = await getProduct(connection, productId)
+  const result = await getProduct(connection, productId)
 
-    return createJSONResponse(result)
-  } catch (err) {
-    // TODO: add log format
-    console.error(err)
-
-    return internalServerError
-  }
+  if (typeof result === 'undefined') return internalServerError
+  return createJSONResponse(result)
 }
