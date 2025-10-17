@@ -9,7 +9,7 @@ type Props = {
 
 export default function UserWealthRankTable({ round, data }: Props) {
   return (
-    <table class="table-base table w-full table-fixed">
+    <table class="table-base table">
       <thead>
         <tr>
           <th class="w-20 text-center text-nowrap" title="排名">

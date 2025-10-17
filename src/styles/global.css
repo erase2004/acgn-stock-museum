@@ -85,7 +85,7 @@
 
 @layer utilities {
   .table-base {
-    @apply border-separate border-spacing-0 **:py-2 **:text-base **:[th,td]:border **:[th,td]:border-base-300;
+    @apply w-full table-fixed border-separate border-spacing-0 **:py-2 **:text-base **:[th,td]:border **:[tr,th,td]:border-base-content/25;
   }
 }
 
