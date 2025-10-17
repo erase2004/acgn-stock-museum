@@ -68,5 +68,5 @@ export async function handlePromiseParser<T, U extends Promise<T>>(parseFn: U) {
 export function setChartStyle(chart: typeof Chart) {
   const style = window.getComputedStyle(document.body)
   chart.defaults.color = style.getPropertyValue('--color-base-content')
-  chart.defaults.borderColor = style.getPropertyValue('--color-base-300')
+  chart.defaults.borderColor = style.getPropertyValue('--color-graph-axis')
 }

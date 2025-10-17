@@ -10,6 +10,13 @@
     font-family: sans-serif;
     line-height: 1.15;
     -ms-text-size-adjust: 100;
+
+    /* for rank list graph */
+    --color-graph-axis: var(--color-base-content);
+
+    @supports (color: color-mix(in lab, red, red)) {
+      --color-graph-axis: color-mix(in oklab, var(--color-base-content) 25%, transparent);
+    }
   }
 
   body {
