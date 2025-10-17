@@ -77,8 +77,15 @@
       @apply bg-base-200 text-xl;
     }
   }
+  /* TODO: might be deprecated */
   .page-item {
     @apply btn btn-outline btn-sm btn-primary;
+  }
+}
+
+@layer utilities {
+  .table-base {
+    @apply border-separate border-spacing-0 **:py-2 **:text-base **:[th,td]:border **:[th,td]:border-base-300;
   }
 }
 

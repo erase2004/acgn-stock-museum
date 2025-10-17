@@ -27,6 +27,13 @@
 </button>
 
 <script>
+  import { theme as $theme } from '@/stores/common'
+
+  function setTheme(value: string | null) {
+    value = value || 'light'
+    $theme.set(value)
+  }
+
   const toggleEl = document.querySelector('[data-toggle-theme]')
   if (toggleEl) {
     const dataKey = toggleEl.getAttribute('data-key') ?? 'theme'
@@ -38,5 +45,11 @@
     } else {
       toggleEl.classList.remove(activeClass)
     }
+    setTheme(theme)
+
+    toggleEl.addEventListener('click', () => {
+      const theme = localStorage.getItem(dataKey)
+      setTheme(theme)
+    })
   }
 </script>

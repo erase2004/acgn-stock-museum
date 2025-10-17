@@ -53,6 +53,9 @@ export function getCurrentPage(astro: APIContext) {
 }
 
 export function getCurrentRound(astro: APIContext) {
+  const round = astro.params['round']
+  if (round) return round
+
   const paths = /^\/(round\d+)\/?/.exec(astro.url.pathname)
 
   if (paths === null) return null

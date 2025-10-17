@@ -1,14 +1,22 @@
 import type { VALIDATE_TYPE } from '@/services/dbUserArchive'
+import type { Chart } from 'chart.js'
 
-export function currencyFormat(money: unknown) {
+export function currencyFormat(money: any, formatOption: Intl.NumberFormatOptions = {}) {
   switch (typeof money) {
     case 'string':
-      return parseFloat(money).toLocaleString()
+      return parseFloat(money).toLocaleString('en-US', formatOption)
     case 'number':
-      return money.toLocaleString()
+      return money.toLocaleString('en-US', formatOption)
     default:
       return money
   }
+}
+
+export function toCurrencyAbbr(value: number) {
+  return Intl.NumberFormat('en-US', {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(value)
 }
 
 function simpleValidateTypeText(validateType: VALIDATE_TYPE) {
@@ -55,4 +63,10 @@ export async function handlePromiseParser<T, U extends Promise<T>>(parseFn: U) {
   } catch {
     return undefined
   }
+}
+
+export function setChartStyle(chart: typeof Chart) {
+  const style = window.getComputedStyle(document.body)
+  chart.defaults.color = style.getPropertyValue('--color-base-content')
+  chart.defaults.borderColor = style.getPropertyValue('--color-base-300')
 }

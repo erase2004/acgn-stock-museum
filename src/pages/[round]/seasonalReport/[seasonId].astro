@@ -1,0 +1,219 @@
+---
+export const prerender = false
+
+import type {
+  TypeCompanyCapitalRank,
+  TypeCompanyPriceRank,
+  TypeCompanyProfitRank,
+  TypeCompanyValueRank,
+  TypeUserWealthRank,
+} from '@/components/round/seasonalReport/types'
+import RoundLayout from '@/layouts/Round.astro'
+import MainBody from '@/components/round/seasonalReport/preact/MainBody'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound } from '@/libs/routes'
+import { getAllArchivedCompanies } from '@/services/dbCompanyArchive'
+import { getAllArchivedUsers } from '@/services/dbUserArchive'
+import { getDBSeason, getSeasonById, schema as schemaSeason } from '@/services/dbSeason'
+import { getRankCompanyCapitalBySeasonId } from '@/services/dbRankCompanyCapital'
+import { getRankCompanyPriceBySeasonId } from '@/services/dbRankCompanyPrice'
+import { getRankCompanyProfitBySeasonId } from '@/services/dbRankCompanyProfit'
+import { getRankCompanyValueBySeasonId } from '@/services/dbRankCompanyValue'
+import { getRankUserWealthBySeasonId } from '@/services/dbRankUserWealth'
+import { getPageUrl } from '@/libs/routes'
+import { PAGE } from '@/libs/routes'
+import { z } from 'astro/zod'
+import { formatDateTimeText } from '@/libs/timeFormat'
+import { handlePromiseParser } from '@/utils/helpers'
+import { sortBy } from 'lodash-es'
+
+const seasonId = Astro.params['seasonId']!
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)!
+const dbSeason = getDBSeason(connection)
+
+const currentSeason = await getSeasonById(connection, seasonId)
+if (!currentSeason) {
+  return Astro.redirect(
+    getPageUrl({
+      pageName: PAGE.MAIN,
+    }),
+  )
+}
+
+const previousSeason = await handlePromiseParser(
+  z.promise(schemaSeason).parse(
+    dbSeason.findOne(
+      {
+        beginDate: {
+          $lt: currentSeason.beginDate,
+        },
+      },
+      {
+        sort: {
+          beginDate: -1,
+        },
+      },
+    ),
+  ),
+)
+const previousSeasonUrl = previousSeason
+  ? getPageUrl({
+      round,
+      pageName: PAGE.SEASONAL_REPORT,
+      params: previousSeason._id,
+    })
+  : undefined
+
+const nextSeason = await handlePromiseParser(
+  z.promise(schemaSeason).parse(
+    dbSeason.findOne(
+      {
+        beginDate: {
+          $gte: currentSeason.endDate,
+        },
+      },
+      {
+        sort: {
+          beginDate: 1,
+        },
+      },
+    ),
+  ),
+)
+
+const nextSeasonUrl = nextSeason
+  ? getPageUrl({
+      round,
+      pageName: PAGE.SEASONAL_REPORT,
+      params: nextSeason._id,
+    })
+  : undefined
+
+const navButtonClass = 'btn btn-sm btn-primary'
+
+const allCompanies = await getAllArchivedCompanies(connection)
+const allUsers = await getAllArchivedUsers(connection)
+if (!allCompanies || !allUsers) {
+  return Astro.redirect(
+    getPageUrl({
+      pageName: PAGE.MAIN,
+    }),
+  )
+}
+
+const allCompaniesDict = allCompanies.reduce(
+  (acc, item) => {
+    acc[item._id] = item.companyName
+    return acc
+  },
+  {} as Record<string, string>,
+)
+const allUsersDict = allUsers.reduce(
+  (acc, item) => {
+    acc[item._id] = item.name
+    return acc
+  },
+  {} as Record<string, string>,
+)
+
+function appendCompanyName<T extends Record<string, any>>(obj: T) {
+  return Object.assign({}, obj, { companyName: allCompaniesDict[obj.companyId] })
+}
+
+function appendUserName<T extends Record<string, any>>(obj: T) {
+  return Object.assign({}, obj, { name: allUsersDict[obj.userId] })
+}
+
+// company price rank
+const rankCompanyPriceData = (await getRankCompanyPriceBySeasonId(connection, seasonId)) ?? []
+const sortedRankCompanyPriceData: TypeCompanyPriceRank = sortBy(
+  rankCompanyPriceData.map((item) => {
+    return Object.assign({}, appendCompanyName(item), {
+      totalMoney: item.totalDealMoney + item.productProfit,
+    })
+  }),
+  'totalMoney',
+)
+sortedRankCompanyPriceData.reverse()
+
+// company profit rank
+const rankCompanyProfitData = (await getRankCompanyProfitBySeasonId(connection, seasonId)) ?? []
+const sortedRankCompanyProfitData: TypeCompanyProfitRank = sortBy(
+  rankCompanyProfitData.map(appendCompanyName),
+  'priceToEarn',
+)
+sortedRankCompanyProfitData.reverse()
+
+// company value rank
+const rankCompanyValueData = (await getRankCompanyValueBySeasonId(connection, seasonId)) ?? []
+const sortedRankCompanyValueData: TypeCompanyValueRank = sortBy(
+  rankCompanyValueData.map((item) => {
+    return Object.assign({}, appendCompanyName(item), {
+      totalValue: item.lastPrice * item.totalRelease,
+    })
+  }),
+  'totalValue',
+)
+sortedRankCompanyValueData.reverse()
+
+// company capital rank
+const rankCompanyCapitalData = (await getRankCompanyCapitalBySeasonId(connection, seasonId)) ?? []
+const sortedRankCompanyCapitalData: TypeCompanyCapitalRank = sortBy(
+  rankCompanyCapitalData.map(appendCompanyName),
+  'capital',
+)
+sortedRankCompanyCapitalData.reverse()
+
+// user wealth rank
+const rankUserWealthData = (await getRankUserWealthBySeasonId(connection, seasonId)) ?? []
+const sortedRankUserWealthData: TypeUserWealthRank = sortBy(
+  rankUserWealthData.map((item) => {
+    return Object.assign({}, appendUserName(item), { totalWealth: item.money + item.stocksValue })
+  }),
+  'totalWealth',
+)
+sortedRankUserWealthData.reverse()
+---
+
+<RoundLayout>
+  <div>
+    <h1 class="round-block-title">季度報告</h1>
+    <div class="divider"></div>
+    <div class="flex items-center justify-between text-center">
+      {
+        previousSeasonUrl ? (
+          <a href={previousSeasonUrl}>
+            <span class={navButtonClass}>&laquo;</span>
+          </a>
+        ) : (
+          <span class={`${navButtonClass} btn-disabled`}>&laquo;</span>
+        )
+      }
+      <div>
+        <span class="inline-block text-nowrap">{formatDateTimeText(currentSeason.beginDate)}～</span
+        >
+        <span class="inline-block text-nowrap">{formatDateTimeText(currentSeason.endDate)}</span>
+      </div>
+      {
+        nextSeasonUrl ? (
+          <a href={nextSeasonUrl}>
+            <span class={navButtonClass}>&raquo;</span>
+          </a>
+        ) : (
+          <span class={`${navButtonClass} btn-disabled`}>&raquo;</span>
+        )
+      }
+    </div>
+    <div class="divider"></div>
+    <MainBody
+      client:only="preact"
+      round={round}
+      rankCompanyCapitalData={sortedRankCompanyCapitalData}
+      rankCompanyPriceData={sortedRankCompanyPriceData}
+      rankCompanyProfitData={sortedRankCompanyProfitData}
+      rankCompanyValueData={sortedRankCompanyValueData}
+      rankUserWealthData={sortedRankUserWealthData}
+    />
+  </div>
+</RoundLayout>
