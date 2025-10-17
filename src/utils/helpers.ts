@@ -59,7 +59,8 @@ export function interleave<T, S>(arr: T[], value: S): (T | S)[] {
 
 export async function handlePromiseParser<T, U extends Promise<T>>(parseFn: U) {
   try {
-    return await parseFn
+    const result = await parseFn
+    return result
   } catch {
     return undefined
   }

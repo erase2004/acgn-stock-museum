@@ -1,0 +1,30 @@
+---
+export const prerender = false
+
+import RoundLayout from '@/layouts/Round.astro'
+import ListContainer from '@/components/round/ruleAgentdaList/ListContainer.astro'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound } from '@/libs/routes'
+import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
+import { getAllRuleAgendas } from '@/services/dbRuleAgendas'
+
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)
+const currentRound = await getCurrentRoundFromDB(connection)
+const ruleAgendas = (await getAllRuleAgendas(connection, currentRound!)) ?? []
+
+const inProgress = ruleAgendas.filter((agenda) => agenda.isEnded === false)
+const finished = ruleAgendas.filter((agenda) => agenda.isEnded === true)
+---
+
+<RoundLayout>
+  <h1 class="round-block-title">規則討論</h1>
+  <div class="divider"></div>
+  <h2 class="text-3xl opacity-70">進行中的議程</h2>
+  <div class="divider my-1"></div>
+  <ListContainer type="進行中" round={round} data={inProgress} />
+  <div class="divider"></div>
+  <h2 class="text-3xl opacity-70">已結束的議程</h2>
+  <div class="divider my-1"></div>
+  <ListContainer type="已結束" round={round} data={finished} />
+</RoundLayout>
