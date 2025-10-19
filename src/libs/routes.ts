@@ -15,7 +15,7 @@ export const PAGE = {
   SEASONAL_REPORT: 'seasonalReport',
   ACCOUNT_INFO: 'accountInfo',
   RULE_AGENDA_LIST: 'ruleDiscuss',
-  RULE_AGENDA_DETAIL: 'ruleAgendaDetail',
+  RULE_AGENDA_DETAIL: 'ruleDiscuss/view',
   VIOLATION_CASE_LIST: 'violationCaseList',
   VIOLATION_CASE_DETAIL: 'violationCaseDetail',
   FSC_LOG: 'fscLogs',
@@ -45,11 +45,22 @@ const pageNameHash = {
   other: undefined,
 }
 
+const routesWithView = {
+  [PAGE.RULE_AGENDA_LIST]: PAGE.RULE_AGENDA_DETAIL,
+}
+
 export function getCurrentPage(astro: APIContext) {
-  const paths = astro.url.pathname.split('/').filter((ele) => ele !== '')
+  const pathname = astro.url.pathname
+  const paths = pathname.split('/').filter((ele) => ele !== '')
   const pageValues: string[] = Object.values(PAGE)
 
-  return paths.findLast((p) => pageValues.includes(p)) ?? PAGE.MAIN
+  const path = paths.findLast((p) => pageValues.includes(p)) ?? PAGE.MAIN
+  if (path in routesWithView) {
+    return /${path}\/view/.test(pathname)
+      ? routesWithView[path as keyof typeof routesWithView]
+      : path
+  }
+  return path
 }
 
 export function getCurrentRound(astro: APIContext) {
@@ -106,18 +117,15 @@ export function getPageUrl({
   return paths.join('/')
 }
 
-export function getCurrentPageTitle(astro: APIContext) {
-  return getPageTitle(getCurrentPage(astro))
-}
-
 export function getCurrentPageFullTitle(astro: APIContext, detailName?: string) {
   const websiteName = getWebsiteName(astro)
 
-  if (getCurrentPage(astro) === PAGE.MAIN) {
+  const page = getCurrentPage(astro)
+  if (page === PAGE.MAIN) {
     return websiteName
   }
 
-  let title = `${getCurrentPageTitle(astro)} - ${websiteName}`
+  let title = `${getPageTitle(page)} - ${websiteName}`
   if (detailName) {
     title = `${detailName} - ${title}`
   }
