@@ -1,13 +1,13 @@
 ---
 import type { z } from 'astro/zod'
-import type { extendedAgendasSchema } from '@/services/dbRuleAgendas'
+import type { agendaListSchema } from '@/services/dbRuleAgendas'
 import { formatDateTimeText } from '@/libs/timeFormat'
 import { getPageUrl, PAGE } from '@/libs/routes'
 
 type Props = {
   type: '進行中' | '已結束'
   round: string
-  data: z.infer<typeof extendedAgendasSchema>
+  data: z.infer<typeof agendaListSchema>
 }
 
 const { type, round, data } = Astro.props
