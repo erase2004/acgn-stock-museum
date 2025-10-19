@@ -14,7 +14,7 @@ export const PAGE = {
   ARENA_INFO: 'arenaInfo',
   SEASONAL_REPORT: 'seasonalReport',
   ACCOUNT_INFO: 'accountInfo',
-  RULE_AGENDA_LIST: 'ruleAgendaList',
+  RULE_AGENDA_LIST: 'ruleDiscuss',
   RULE_AGENDA_DETAIL: 'ruleAgendaDetail',
   VIOLATION_CASE_LIST: 'violationCaseList',
   VIOLATION_CASE_DETAIL: 'violationCaseDetail',
