@@ -32,6 +32,17 @@
       sans-serif;
   }
 
+  ul,
+  ol {
+    padding-left: 1rem;
+  }
+  ol > li {
+    list-style-type: decimal;
+  }
+  ul > li {
+    list-style-type: disc;
+  }
+
   a {
     color: var(--color-info);
     text-decoration: none;
@@ -61,16 +72,6 @@
   }
 
   .tutorial-main {
-    ul,
-    ol {
-      padding-left: 1rem;
-    }
-    ol > li {
-      list-style-type: decimal;
-    }
-    ul > li {
-      list-style-type: disc;
-    }
     .collapse {
       @apply border border-base-300 bg-base-100;
 
@@ -132,6 +133,55 @@
       &::before {
         @apply max-md:absolute max-md:left-1 max-md:text-left max-md:font-bold max-md:whitespace-nowrap max-md:content-[attr(data-title)];
       }
+    }
+  }
+
+  .markdown-container {
+    p,
+    ul,
+    ol {
+      margin-bottom: 1rem;
+    }
+    hr {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+    }
+    h2 {
+      font-size: 1.3rem;
+    }
+    h3 {
+      font-size: 1.15rem;
+    }
+    h4,
+    h5,
+    h6 {
+      font-size: 1rem;
+    }
+    blockquote {
+      font-weight: bold;
+      font-style: italic;
+      margin-left: 1rem;
+      border-left: 2px solid #999;
+      padding-left: 1rem;
+    }
+    pre {
+      @apply break-words;
+    }
+    table {
+      margin-bottom: 0.5em;
+
+      th,
+      td {
+        border: 1px solid;
+        padding: 0.25em;
+      }
+    }
+    ul,
+    ol {
+      padding-left: 2rem;
     }
   }
 }

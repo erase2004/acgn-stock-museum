@@ -5,7 +5,12 @@ import Nav from '@/components/layout/Nav.astro'
 import DrawerSide from '@/components/layout/DrawerSide.astro'
 import { getCurrentPageFullTitle } from '@/libs/routes'
 
-const title = getCurrentPageFullTitle(Astro)
+type Props = {
+  title?: string
+}
+
+const { title: customTitle } = Astro.props
+const title = customTitle ?? getCurrentPageFullTitle(Astro)
 ---
 
 <html lang="zh-TW">

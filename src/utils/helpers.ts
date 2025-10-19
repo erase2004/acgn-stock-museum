@@ -1,5 +1,10 @@
 import type { VALIDATE_TYPE } from '@/services/dbUserArchive'
 import type { Chart } from 'chart.js'
+import xss from 'xss'
+import showdown from 'showdown'
+// @ts-expect-error: no type definition for showdown-footnotes
+import footnotes from 'showdown-footnotes'
+import katex from 'katex'
 
 export function currencyFormat(money: any, formatOption: Intl.NumberFormatOptions = {}) {
   switch (typeof money) {
@@ -70,4 +75,93 @@ export function setChartStyle(chart: typeof Chart) {
   const style = window.getComputedStyle(document.body)
   chart.defaults.color = style.getPropertyValue('--color-base-content')
   chart.defaults.borderColor = style.getPropertyValue('--color-graph-axis')
+}
+
+function escapeHtml(html: any) {
+  return html
+}
+
+const xssFilter = {
+  type: 'output',
+  filter: function (text: any) {
+    return xss(text, {
+      escapeHtml,
+      whiteList: {
+        span: ['class', 'style'],
+      },
+      css: {
+        whiteList: {
+          'aria-hidden': true,
+          'vertical-align': true,
+          top: true,
+          position: true,
+          height: true,
+        },
+      },
+    })
+  },
+}
+
+const codeTagEscapedCharacterTranser = {
+  type: 'lang',
+  filter: function (text: string) {
+    const output = text.replace(/```((.|\r|\n)*?)```/g, function (_, capture) {
+      const text = capture
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&quot;/g, '"')
+        .replace(/&excl;/g, '!')
+
+      return `\`\`\`${text}\`\`\``
+    })
+
+    return output
+  },
+}
+
+const katexExtension = {
+  type: 'lang',
+  filter: function (text: string) {
+    // lang模式會將$轉換為¨D      \r\n轉換為 \n
+    const outputKatexHTML = text.replace(/¨D¨D((.|\n)*?)¨D¨D/g, function (_, capture) {
+      const text = capture
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&quot;/g, '"')
+        .replace(/\n/g, '\r\n')
+      let html = katex.renderToString(text)
+
+      if (text.search('\n') !== -1) {
+        html = `<br/>${html}`
+      }
+
+      return html
+    })
+
+    return outputKatexHTML
+  },
+}
+
+export function markdownToHtml(content: string, advanced = false) {
+  if (!content) {
+    return ''
+  }
+
+  const extensions = [xssFilter, footnotes, codeTagEscapedCharacterTranser]
+  let processedContent = content
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/"/g, '&quot;')
+  if (advanced) {
+    // 保留 KaTeX 和圖片
+    extensions.push(katexExtension)
+  } else {
+    processedContent = processedContent.replace(/!/g, '&excl;')
+  }
+
+  const converter = new showdown.Converter({ extensions })
+  converter.setFlavor('github')
+  converter.setOption('openLinksInNewWindow', true)
+
+  return converter.makeHtml(processedContent)
 }

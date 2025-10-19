@@ -1,8 +1,11 @@
 ---
 import BaseLayout from '@/layouts/Base.astro'
+
+type Props = Parameters<typeof BaseLayout>[0]
+const props = Astro.props
 ---
 
-<BaseLayout>
+<BaseLayout {...props}>
   <div class="round-container">
     <div class="round-block"><slot /></div>
   </div>

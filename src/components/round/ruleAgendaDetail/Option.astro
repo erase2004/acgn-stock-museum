@@ -1,0 +1,46 @@
+---
+import type { z } from 'astro/zod'
+import type { schema as schemaIssueOption } from '@/services/dbRuleIssueOptions'
+import UserLink from '@/components/common/preact/UserLink'
+
+type Props = {
+  round: string
+  prefix: string
+  option: z.infer<typeof schemaIssueOption>
+}
+
+const {
+  round,
+  prefix,
+  option: { title, votes },
+} = Astro.props
+
+const inputId = `${prefix}-${title}`
+---
+
+<li
+  class="list-row collapse grid-cols-1 gap-0 text-base not-[:last-child]:after:border-base-content/25!"
+>
+  <input type="checkbox" class="peer hidden" id={inputId} />
+  <div class="flex">
+    <span class="inline-block self-center">
+      {title}
+    </span>
+    <label class="btn ml-auto btn-sm btn-primary" for={inputId}>
+      {votes.length}<i class="fa fa-users" aria-hidden="true"></i>
+    </label>
+  </div>
+
+  <div
+    class="collapse-content list-col-wrap hidden grid-cols-1 overflow-x-hidden whitespace-nowrap **:row-start-auto! **:truncate peer-checked:grid peer-checked:p-4 peer-checked:pb-0 md:grid-cols-2 lg:grid-cols-4"
+  >
+    {
+      votes.map((userId, index) => (
+        <span class="inline-block">
+          {index + 1}.&nbsp;
+          <UserLink client:visible round={round} userId={userId} />
+        </span>
+      ))
+    }
+  </div>
+</li>
