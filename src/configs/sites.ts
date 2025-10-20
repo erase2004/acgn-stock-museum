@@ -14,6 +14,7 @@ type RoundConfig = {
   dataNumberPerPage: {
     fscLogs: number
     fscStock: number
+    violation: number
   }
 }
 
@@ -25,6 +26,7 @@ const BaseRoundConfig: RoundConfig = {
   dataNumberPerPage: {
     fscLogs: 30,
     fscStock: 20,
+    violation: 10,
   },
 }
 

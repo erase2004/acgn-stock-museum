@@ -1,0 +1,21 @@
+---
+export const prerender = false
+
+import RoundLayout from '@/layouts/Round.astro'
+import Filter from '@/components/round/violation/preact/Filter'
+import ListContainer from '@/components/round/violation/preact/ListContainer'
+import LoadMore from '@/components/common/preact/LoadMore'
+import { getCurrentRound, getRoundData } from '@/libs/routes'
+
+const round = getCurrentRound(Astro)!
+const roundData = getRoundData(round)!
+const pageSize = roundData.config.dataNumberPerPage.fscStock
+---
+
+<RoundLayout>
+  <h1 class="round-block-title">違規案件列表</h1>
+  <div class="divider"></div>
+  <Filter client:only="preact" round={round} pageSize={pageSize} />
+  <ListContainer client:only="preact" round={round} />
+  <LoadMore client:only="preact" pageSize={pageSize} />
+</RoundLayout>

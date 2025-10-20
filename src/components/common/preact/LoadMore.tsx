@@ -1,17 +1,20 @@
-import { currentPage, isDataLoading } from '@/stores/pagination'
+import { currentPage, isDataLoading, totalAmount } from '@/stores/pagination'
 import { useStore } from '@nanostores/preact'
 import { useIntersectionObserver } from 'usehooks-ts'
 import { useEffect } from 'preact/hooks'
 
 type Props = {
-  total: number
+  total?: number
   pageSize: number
 }
 
 export default function LoadMore({ total, pageSize }: Props) {
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
+  const $totalAmount = useStore(totalAmount)
   const { isIntersecting, ref } = useIntersectionObserver({})
+
+  total = total ?? $totalAmount
 
   const totalPages = Math.ceil(total / pageSize)
 

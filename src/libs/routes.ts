@@ -16,8 +16,8 @@ export const PAGE = {
   ACCOUNT_INFO: 'accountInfo',
   RULE_AGENDA_LIST: 'ruleDiscuss',
   RULE_AGENDA_DETAIL: 'ruleDiscuss/view',
-  VIOLATION_CASE_LIST: 'violationCaseList',
-  VIOLATION_CASE_DETAIL: 'violationCaseDetail',
+  VIOLATION_CASE_LIST: 'violation',
+  VIOLATION_CASE_DETAIL: 'violation/view',
   FSC_LOG: 'fscLogs',
   FSC_STOCK: 'fscStock',
 } as const
@@ -47,6 +47,7 @@ const pageNameHash = {
 
 const routesWithView = {
   [PAGE.RULE_AGENDA_LIST]: PAGE.RULE_AGENDA_DETAIL,
+  [PAGE.VIOLATION_CASE_LIST]: PAGE.VIOLATION_CASE_DETAIL,
 }
 
 export function getCurrentPage(astro: APIContext) {

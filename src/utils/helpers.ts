@@ -5,6 +5,7 @@ import showdown from 'showdown'
 // @ts-expect-error: no type definition for showdown-footnotes
 import footnotes from 'showdown-footnotes'
 import katex from 'katex'
+import { ZodError } from 'astro/zod'
 
 export function currencyFormat(money: any, formatOption: Intl.NumberFormatOptions = {}) {
   switch (typeof money) {
@@ -66,7 +67,10 @@ export async function handlePromiseParser<T, U extends Promise<T>>(parseFn: U) {
   try {
     const result = await parseFn
     return result
-  } catch {
+  } catch (err) {
+    if (err instanceof ZodError) {
+      console.error(err.errors)
+    }
     return undefined
   }
 }
@@ -164,4 +168,8 @@ export function markdownToHtml(content: string, advanced = false) {
   converter.setOption('openLinksInNewWindow', true)
 
   return converter.makeHtml(processedContent)
+}
+
+export function typedObjectKeys<T extends object>(obj: T) {
+  return Object.keys(obj) as [keyof typeof obj]
 }
