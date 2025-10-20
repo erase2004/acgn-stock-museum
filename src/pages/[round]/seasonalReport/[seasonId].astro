@@ -14,7 +14,7 @@ import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
 import { getAllArchivedCompanies } from '@/services/dbCompanyArchive'
 import { getAllArchivedUsers } from '@/services/dbUserArchive'
-import { getDBSeason, getSeasonById, schema as schemaSeason } from '@/services/dbSeason'
+import { getPreviousSeason, getNextSeason, getSeasonById } from '@/services/dbSeason'
 import { getRankCompanyCapitalBySeasonId } from '@/services/dbRankCompanyCapital'
 import { getRankCompanyPriceBySeasonId } from '@/services/dbRankCompanyPrice'
 import { getRankCompanyProfitBySeasonId } from '@/services/dbRankCompanyProfit'
@@ -22,15 +22,12 @@ import { getRankCompanyValueBySeasonId } from '@/services/dbRankCompanyValue'
 import { getRankUserWealthBySeasonId } from '@/services/dbRankUserWealth'
 import { getPageUrl } from '@/libs/routes'
 import { PAGE } from '@/libs/routes'
-import { z } from 'astro/zod'
 import { formatDateTimeText } from '@/libs/timeFormat'
-import { handlePromiseParser } from '@/utils/helpers'
 import { sortBy } from 'lodash-es'
 
 const seasonId = Astro.params['seasonId']!
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
-const dbSeason = getDBSeason(connection)
 
 const currentSeason = await getSeasonById(connection, seasonId)
 if (!currentSeason) {
@@ -41,22 +38,7 @@ if (!currentSeason) {
   )
 }
 
-const previousSeason = await handlePromiseParser(
-  z.promise(schemaSeason).parse(
-    dbSeason.findOne(
-      {
-        beginDate: {
-          $lt: currentSeason.beginDate,
-        },
-      },
-      {
-        sort: {
-          beginDate: -1,
-        },
-      },
-    ),
-  ),
-)
+const previousSeason = await getPreviousSeason(connection, currentSeason)
 const previousSeasonUrl = previousSeason
   ? getPageUrl({
       round,
@@ -65,23 +47,7 @@ const previousSeasonUrl = previousSeason
     })
   : undefined
 
-const nextSeason = await handlePromiseParser(
-  z.promise(schemaSeason).parse(
-    dbSeason.findOne(
-      {
-        beginDate: {
-          $gte: currentSeason.endDate,
-        },
-      },
-      {
-        sort: {
-          beginDate: 1,
-        },
-      },
-    ),
-  ),
-)
-
+const nextSeason = await getNextSeason(connection, currentSeason)
 const nextSeasonUrl = nextSeason
   ? getPageUrl({
       round,

@@ -30,10 +30,43 @@ export async function getLatestSeason(db: Db) {
   )
 }
 
-export async function getPreviousSeason(db: Db) {
+export async function getPreviousSeason(db: Db, currentSeason: z.infer<typeof schema>) {
   const dbSeason = getDBSeason(db)
   return handlePromiseParser(
-    z.promise(schema).parse(dbSeason.findOne({}, { sort: { beginDate: -1 }, skip: 1 })),
+    z.promise(schema).parse(
+      dbSeason.findOne(
+        {
+          beginDate: {
+            $lt: currentSeason.beginDate,
+          },
+        },
+        {
+          sort: {
+            beginDate: -1,
+          },
+        },
+      ),
+    ),
+  )
+}
+
+export async function getNextSeason(db: Db, currentSeason: z.infer<typeof schema>) {
+  const dbSeason = getDBSeason(db)
+  return handlePromiseParser(
+    z.promise(schema).parse(
+      dbSeason.findOne(
+        {
+          beginDate: {
+            $gte: currentSeason.endDate,
+          },
+        },
+        {
+          sort: {
+            beginDate: 1,
+          },
+        },
+      ),
+    ),
   )
 }
 
