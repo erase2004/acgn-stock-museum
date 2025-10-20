@@ -48,10 +48,7 @@ export const agendaListSchema = schema
   })
   .array()
 
-function getPipeline(
-  currentRound: z.infer<typeof schemaRound>,
-  filter: Document[] = [{}],
-): Document[] {
+function getPipeline(currentRound: z.infer<typeof schemaRound>, filter: Document = {}): Document[] {
   return [
     {
       $set: {
@@ -66,20 +63,7 @@ function getPipeline(
       },
     },
     {
-      $match: {
-        $and: [
-          ...filter,
-          {
-            $or: [
-              {
-                createdAt: {
-                  $lt: currentRound.endDate,
-                },
-              },
-            ],
-          },
-        ],
-      },
+      $match: filter,
     },
     {
       $set: {
@@ -114,7 +98,7 @@ export async function getAgendaById(
   const result = await handlePromiseParser(
     z
       .promise(schema.array())
-      .parse(dbRuleAgendas.aggregate(getPipeline(currentRound, [{ _id: agendaId }])).toArray()),
+      .parse(dbRuleAgendas.aggregate(getPipeline(currentRound, { _id: agendaId })).toArray()),
   )
 
   if (Array.isArray(result)) return result[0]
