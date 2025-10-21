@@ -5,7 +5,6 @@ import { useStore } from '@nanostores/preact'
 import { currentPage, isDataLoading } from '@/stores/pagination'
 import { getFSCLogs } from '@/libs/request'
 import DisplayLog from '@/components/common/preact/DisplayLog'
-import { formatDateTimeText } from '@/libs/timeFormat'
 
 type Props = {
   round: string
@@ -41,10 +40,9 @@ export default function ListContainer({ round, pageSize, total, data }: Props) {
   if (!total) return <em>沒有資料</em>
 
   return (
-    <ul class="relative">
+    <ul class="relative pl-0">
       {items.map((d) => (
-        <li key={d._id}>
-          <time class="mr-2 text-primary">({formatDateTimeText(d.createdAt)})</time>
+        <li key={d._id} class="list-none">
           <DisplayLog round={round} {...d} />
         </li>
       ))}
