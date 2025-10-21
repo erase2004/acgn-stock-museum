@@ -1,0 +1,21 @@
+---
+export const prerender = false
+
+import RoundLayout from '@/layouts/Round.astro'
+import Filter from '@/components/round/announcement/preact/Filter'
+import ListContainer from '@/components/round/announcement/preact/ListContainer'
+import LoadMore from '@/components/common/preact/LoadMore'
+import { getCurrentRound, getRoundData } from '@/libs/routes'
+
+const round = getCurrentRound(Astro)!
+const roundData = getRoundData(round)!
+const pageSize = roundData.config.dataNumberPerPage.announcements
+---
+
+<RoundLayout>
+  <h1 class="round-block-title">系統公告</h1>
+  <div class="divider"></div>
+  <Filter client:only="preact" round={round} pageSize={pageSize} />
+  <ListContainer client:only="preact" round={round} />
+  <LoadMore client:only="preact" pageSize={pageSize} />
+</RoundLayout>

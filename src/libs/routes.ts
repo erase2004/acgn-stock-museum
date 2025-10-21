@@ -3,8 +3,8 @@ import { defaultWebsiteName, siteList } from '@/configs/sites'
 
 export const PAGE = {
   MAIN: 'mainPage',
-  ANNOUNCEMENT_LIST: 'announcementList',
-  ANNOUNCEMENT_DETAIL: 'announcementDetail',
+  ANNOUNCEMENT_LIST: 'announcement',
+  ANNOUNCEMENT_DETAIL: 'announcement/view',
   TUTORIAL: 'tutorial',
   COMPANY_LIST: 'companyList',
   COMPANY_DETAIL: 'companyDetail',
@@ -48,6 +48,7 @@ const pageNameHash = {
 const routesWithView = {
   [PAGE.RULE_AGENDA_LIST]: PAGE.RULE_AGENDA_DETAIL,
   [PAGE.VIOLATION_CASE_LIST]: PAGE.VIOLATION_CASE_DETAIL,
+  [PAGE.ANNOUNCEMENT_LIST]: PAGE.ANNOUNCEMENT_DETAIL,
 }
 
 export function getCurrentPage(astro: APIContext) {
@@ -196,5 +197,13 @@ export function getSeasonalReportUrl(round: string, seasonId: string) {
     round,
     pageName: PAGE.SEASONAL_REPORT,
     params: seasonId,
+  })
+}
+
+export function getAnnouncementUrl(round: string, announcementId: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.ANNOUNCEMENT_DETAIL,
+    params: announcementId,
   })
 }

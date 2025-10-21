@@ -1,5 +1,6 @@
 import type { z } from 'astro/zod'
-import type { querySchema } from '@/services/dbViolationCases'
+import type { querySchema as violationCasesQuery } from '@/services/dbViolationCases'
+import type { querySchema as announcementsQuery } from '@/services/dbAnnouncements'
 
 export function getUser(round: string, userId: string) {
   return fetch(`/api/user?${new URLSearchParams({ round, userId }).toString()}`)
@@ -27,7 +28,7 @@ export function getAccountOwnStocks(round: string, userId: string, size: number,
 
 export function getViolationCases(
   round: string,
-  filter: z.infer<typeof querySchema>,
+  filter: z.infer<typeof violationCasesQuery>,
   size: number,
   page: number,
 ) {
@@ -44,5 +45,16 @@ export function getViolationCaseRelatedLogs(
 ) {
   return fetch(
     `/api/violation-logs?${new URLSearchParams({ round, violationCaseId, size: String(size), page: String(page) }).toString()}`,
+  )
+}
+
+export function getAnnouncements(
+  round: string,
+  filter: z.infer<typeof announcementsQuery>,
+  size: number,
+  page: number,
+) {
+  return fetch(
+    `/api/announcement?${new URLSearchParams(Object.assign({ round, size: String(size), page: String(page) }, filter)).toString()}`,
   )
 }

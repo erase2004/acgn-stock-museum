@@ -107,6 +107,11 @@
       @apply max-md:block;
     }
 
+    thead,
+    tbody {
+      @apply py-0;
+    }
+
     thead tr {
       @apply max-md:hidden;
     }
