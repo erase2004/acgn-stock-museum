@@ -1,5 +1,4 @@
 import type { z } from 'astro/zod'
-import type { querySchema as violationCasesQuery } from '@/services/dbViolationCases'
 import type { querySchema as announcementsQuery } from '@/services/dbAnnouncements'
 
 export function getUser(round: string, userId: string) {
@@ -23,17 +22,6 @@ export function getFSCLogs(round: string, size: number, page: number) {
 export function getAccountOwnStocks(round: string, userId: string, size: number, page: number) {
   return fetch(
     `/api/account-own-stocks?${new URLSearchParams({ round, userId, size: String(size), page: String(page) }).toString()}`,
-  )
-}
-
-export function getViolationCases(
-  round: string,
-  filter: z.infer<typeof violationCasesQuery>,
-  size: number,
-  page: number,
-) {
-  return fetch(
-    `/api/violation?${new URLSearchParams(Object.assign({ round, size: String(size), page: String(page) }, filter)).toString()}`,
   )
 }
 

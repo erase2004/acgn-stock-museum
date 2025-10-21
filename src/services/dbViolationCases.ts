@@ -1,5 +1,5 @@
 // 違規案件資料集
-import type { Db, Document } from 'mongodb'
+import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser, typedObjectKeys } from '@/utils/helpers'
 
@@ -108,49 +108,15 @@ export const casesWithCountSchema = z
   })
   .array()
 
-type FilterOption = {
-  category?: z.infer<typeof schema>['category']
-  state?: z.infer<typeof schema>['state']
-  violatorUserId?: string
-  onlyUnread?: boolean
-}
-
 const DESCRIPTION_DIGEST_LENGTH_LIMIT = 100
 
-export function getViolationCases(
-  db: Db,
-  filterOption: FilterOption,
-  size: number,
-  page: number = 1,
-) {
+export function getViolationCases(db: Db) {
   const dbViolationCases = getDBViolationCase(db)
-
-  // TODO: add unread handle
-  const { category, state, violatorUserId } = filterOption
-  const filter: Document = {}
-
-  if (category) {
-    Object.assign(filter, { category })
-  }
-
-  if (state) {
-    Object.assign(filter, { state })
-  }
-
-  if (violatorUserId) {
-    Object.assign(filter, {
-      'violators.violatorType': 'user',
-      'violators.violatorId': violatorUserId,
-    })
-  }
 
   return handlePromiseParser(
     z.promise(casesWithCountSchema).parse(
       dbViolationCases
         .aggregate([
-          {
-            $match: filter,
-          },
           {
             $sort: {
               createdAt: -1,
@@ -178,7 +144,7 @@ export function getViolationCases(
           {
             $facet: {
               total: [{ $count: 'total' }],
-              data: [{ $skip: (page - 1) * size }, { $limit: size }],
+              data: [],
             },
           },
         ])

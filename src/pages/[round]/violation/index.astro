@@ -6,16 +6,23 @@ import Filter from '@/components/round/violation/preact/Filter'
 import ListContainer from '@/components/round/violation/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { getCurrentRound, getRoundData } from '@/libs/routes'
+import { getViolationCases } from '@/services/dbViolationCases'
+import { getConnection } from '@/libs/databases'
 
 const round = getCurrentRound(Astro)!
+const connection = getConnection(round)!
 const roundData = getRoundData(round)!
 const pageSize = roundData.config.dataNumberPerPage.violation
+
+const result = await getViolationCases(connection)
+const totalAmount = result?.[0]?.total[0]?.total ?? 0
+const data = result?.[0]?.data ?? []
 ---
 
 <RoundLayout>
   <h1 class="round-block-title">違規案件列表</h1>
   <div class="divider"></div>
-  <Filter client:only="preact" round={round} pageSize={pageSize} />
+  <Filter client:only="preact" pageSize={pageSize} data={data} />
   <ListContainer client:only="preact" round={round} />
-  <LoadMore client:only="preact" pageSize={pageSize} />
+  <LoadMore client:only="preact" total={totalAmount} pageSize={pageSize} />
 </RoundLayout>

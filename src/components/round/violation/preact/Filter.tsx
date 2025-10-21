@@ -1,32 +1,25 @@
 import type { TargetedEvent } from 'preact'
 import { z } from 'astro/zod'
-import { getViolationCases } from '@/libs/request'
-import {
-  categoryMap,
-  stateMap,
-  querySchema,
-  casesWithCountSchema,
-} from '@/services/dbViolationCases'
-import { currentPage, isDataLoading, totalAmount } from '@/stores/pagination'
+import { categoryMap, stateMap, querySchema, listItemSchema } from '@/services/dbViolationCases'
+import { currentPage, isDataLoading } from '@/stores/pagination'
 import { items } from '@/stores/violation'
 import { useStore } from '@nanostores/preact'
-import { isString, pickBy } from 'lodash-es'
+import { filter, isString, pickBy, some } from 'lodash-es'
 import { useEffect, useState } from 'preact/hooks'
 import { stateDisplayName, categoryDisplayName } from '@/utils/violation'
 
 type Props = {
-  round: string
   pageSize: number
+  data: z.infer<typeof listItemSchema>[]
 }
 
-export default function Filter({ round, pageSize }: Props) {
+export default function Filter({ pageSize, data }: Props) {
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
   const [currentCategory, setCurrentCategory] = useState<keyof typeof categoryMap | ''>('')
   const [currentState, setCurrentState] = useState<keyof typeof stateMap | ''>('')
   const [violatorUserId, setViolatorUserId] = useState('')
   const [isInitialized, setIsInitialized] = useState(false)
-  const $items = useStore(items)
 
   const categoryList = Object.keys(categoryMap)
   const stateList = Object.keys(stateMap)
@@ -120,36 +113,37 @@ export default function Filter({ round, pageSize }: Props) {
     setViolatorUserId('')
   }
 
-  async function search(reset: boolean = false) {
+  function search(reset: boolean = false) {
     if ($isDataLoading) return
     isDataLoading.set(true)
 
-    if (reset) currentPage.set(1)
+    const { category, state, violatorUserId } = getQuery()
 
-    const query = getQuery()
-    const response = await getViolationCases(
-      round,
-      query,
-      pageSize,
-      reset === true ? 1 : $currentPage,
-    )
-
-    try {
-      const data = await z.promise(casesWithCountSchema).parse(response.json())
-
-      if (data) {
-        let newItems = data[0]?.data ?? []
-
-        if (reset !== true) {
-          newItems = $items.concat(...newItems)
-        }
-
-        items.set(newItems)
-        totalAmount.set(data[0]?.total[0]?.total ?? 0)
-      }
-    } finally {
-      isDataLoading.set(false)
+    let newList = data
+    if (category) {
+      newList = filter(newList, (item) => item.category === category)
     }
+    if (state) {
+      newList = filter(newList, (item) => item.state === state)
+    }
+    if (violatorUserId) {
+      newList = filter(newList, (item) =>
+        some(
+          item.violators,
+          (violator) => violator.violatorType === 'user' && violator.violatorId === violatorUserId,
+        ),
+      )
+    }
+
+    if (reset) {
+      currentPage.set(1)
+      newList = newList.slice(0, pageSize)
+    } else {
+      newList = newList.slice(0, pageSize * $currentPage)
+    }
+
+    items.set(newList)
+    isDataLoading.set(false)
   }
 
   return (
