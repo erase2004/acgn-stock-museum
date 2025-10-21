@@ -15,6 +15,7 @@ type RoundConfig = {
     fscLogs: number
     fscStock: number
     violation: number
+    violationRelatedLog: number
   }
 }
 

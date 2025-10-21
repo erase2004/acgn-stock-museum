@@ -1,0 +1,129 @@
+---
+export const prerender = false
+
+import RoundLayout from '@/layouts/Round.astro'
+import Violator from '@/components/round/violation/preact/Violator'
+import ActionLog from '@/components/round/violation/preact/ActionLog'
+import RelatedLogListContainer from '@/components/round/violation/preact/RelatedLogListContainer'
+import LoadMore from '@/components/common/preact/LoadMore'
+
+import { getConnection } from '@/libs/databases'
+import { getViolationCaseById } from '@/services/dbViolationCases'
+import { getRelatedActionLog } from '@/services/dbViolationCaseActionLogs'
+import { getViolationCaseRelatedLogs } from '@/services/dbLog'
+import {
+  getCurrentRound,
+  getViolationCaseUrl,
+  getRoundData,
+  getMuseumMainPageUrl,
+} from '@/libs/routes'
+import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/violation'
+
+import { markdownToHtml } from '@/utils/helpers'
+import { formatDateTimeText } from '@/libs/timeFormat'
+
+const round = getCurrentRound(Astro)!
+const roundData = getRoundData(round)!
+const pageSize = roundData.config.dataNumberPerPage.violationRelatedLog
+const connection = getConnection(round)
+
+const { caseId = '' } = Astro.params
+const violation = await getViolationCaseById(connection, caseId)
+
+if (!violation) {
+  return Astro.redirect(getMuseumMainPageUrl())
+}
+
+const relatedActionLogs = await getRelatedActionLog(connection, caseId)
+const result = await getViolationCaseRelatedLogs(connection, caseId, pageSize, 1)
+const totalAmount = result?.[0]?.total[0]?.total ?? 0
+const relatedLogs = result?.[0]?.data ?? []
+---
+
+<RoundLayout>
+  <h1 class="round-block-title">
+    違規案件內容 - <span class="text-nowrap">{categoryDisplayName(violation.category)}</span>
+  </h1>
+  <div class="divider"></div>
+  <div class="mb-1 flex items-center text-xl">
+    目前狀態： <span class={`badge ${stateBadgeClass(violation.state)}`}
+      >{stateDisplayName(violation.state)}</span
+    >
+  </div>
+  <div>
+    舉報時間：<span class="text-nowrap">{formatDateTimeText(violation.createdAt)}</span>
+  </div>
+  <div>
+    更新時間：<span class="text-nowrap">{formatDateTimeText(violation.updatedAt)}</span>
+  </div>
+  <div>
+    案件識別碼：<span class="text-nowrap">{violation._id}</span>
+  </div>
+  <div class="divider"></div>
+  <div class="flex flex-col gap-y-4">
+    <div class="violation-case-detail-block">
+      <p>違規名單</p>
+      <ul>
+        {
+          violation.violators.length > 0 ? (
+            violation.violators.map((violator) => (
+              <li>
+                <Violator client:only="preact" {...violator} round={round} />
+              </li>
+            ))
+          ) : (
+            <em>一個都沒有！</em>
+          )
+        }
+      </ul>
+    </div>
+    <div class="violation-case-detail-block">
+      <p>相關案件</p>
+      <ul>
+        {
+          violation.relatedCases.length > 0 ? (
+            violation.relatedCases.map((caseId) => (
+              <li>
+                <a href={getViolationCaseUrl(round, caseId)}>{caseId}</a>
+              </li>
+            ))
+          ) : (
+            <em>並沒有。</em>
+          )
+        }
+      </ul>
+    </div>
+    <div class="violation-case-detail-block">
+      <p>案件描述</p>
+      <div class="markdown-container px-3" set:html={markdownToHtml(violation.description)} />
+    </div>
+    <div class="violation-case-detail-block">
+      <p>案件處理紀錄</p>
+      <div class="px-4 py-2">
+        {
+          relatedActionLogs ? (
+            relatedActionLogs.map((log) => (
+              <ActionLog client:only="preact" {...log} round={round} />
+            ))
+          ) : (
+            <em>沒有任何紀錄！</em>
+          )
+        }
+      </div>
+    </div>
+    <div class="violation-case-detail-block">
+      <p>案件相關遊戲紀錄</p>
+      <div class="border border-base-content/25 p-6">
+        <RelatedLogListContainer
+          client:only="preact"
+          round={round}
+          violationCaseId={caseId}
+          pageSize={pageSize}
+          total={totalAmount}
+          data={relatedLogs}
+        />
+        <LoadMore client:only="preact" total={totalAmount} pageSize={pageSize} />
+      </div>
+    </div>
+  </div>
+</RoundLayout>

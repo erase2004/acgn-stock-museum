@@ -1,7 +1,6 @@
 // 紀錄資料集
-
+import type { Db, Document } from 'mongodb'
 import { z } from 'astro/zod'
-import type { Db } from 'mongodb'
 import { schema as schemaRound } from './dbRound'
 import { handlePromiseParser } from '@/utils/helpers'
 
@@ -547,6 +546,23 @@ export function getDBLog(db: Db) {
   return db.collection('log')
 }
 
+function getPipeline(size: number, page: number, filter: Document = { $match: {} }): Document[] {
+  return [
+    filter,
+    {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    {
+      $facet: {
+        total: [{ $count: 'total' }],
+        data: [{ $skip: (page - 1) * size }, { $limit: size }],
+      },
+    },
+  ]
+}
+
 export const logsWithCountSchema = z
   .object({
     total: z
@@ -570,8 +586,8 @@ export async function getFSCLogs(
   return handlePromiseParser(
     z.promise(logsWithCountSchema).parse(
       dbLog
-        .aggregate([
-          {
+        .aggregate(
+          getPipeline(size, page, {
             $match: {
               $and: [
                 {
@@ -591,19 +607,31 @@ export async function getFSCLogs(
                 },
               ],
             },
-          },
-          {
-            $sort: {
-              createdAt: -1,
+          }),
+        )
+        .toArray(),
+    ),
+  )
+}
+
+export async function getViolationCaseRelatedLogs(
+  db: Db,
+  violationCaseId: string,
+  size: number,
+  page: number = 1,
+) {
+  const dbLog = getDBLog(db)
+
+  return handlePromiseParser(
+    z.promise(logsWithCountSchema).parse(
+      dbLog
+        .aggregate(
+          getPipeline(size, page, {
+            $match: {
+              'data.violationCaseId': violationCaseId,
             },
-          },
-          {
-            $facet: {
-              total: [{ $count: 'total' }],
-              data: [{ $skip: (page - 1) * size }, { $limit: size }],
-            },
-          },
-        ])
+          }),
+        )
         .toArray(),
     ),
   )

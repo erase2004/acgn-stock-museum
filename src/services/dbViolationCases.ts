@@ -8,46 +8,36 @@ const violatorTypeList = ['user', 'company', 'product'] as const
 export const stateMap = {
   pending: {
     displayName: '待處理',
-    nextStates: ['processing'],
   },
   processing: {
     displayName: '處理中',
-    nextStates: ['closed', 'rejected'],
   },
   rejected: {
     displayName: '已駁回',
-    nextStates: ['processing'],
   },
   closed: {
     displayName: '已結案',
-    nextStates: ['processing'],
   },
 }
 
 export const categoryMap = {
   company: {
     displayName: '公司違規',
-    allowedInitialViolatorTypes: ['company'],
   },
   foundation: {
     displayName: '新創違規',
-    allowedInitialViolatorTypes: ['company'],
   },
   product: {
     displayName: '產品違規',
-    allowedInitialViolatorTypes: ['product'],
   },
   advertising: {
     displayName: '廣告違規',
-    allowedInitialViolatorTypes: ['user'],
   },
   multipleAccounts: {
     displayName: '分身違規',
-    allowedInitialViolatorTypes: ['user'],
   },
   miscellaneous: {
     displayName: '其他違規',
-    allowedInitialViolatorTypes: violatorTypeList,
   },
 }
 
@@ -195,4 +185,11 @@ export function getViolationCases(
         .toArray(),
     ),
   )
+}
+
+export async function getViolationCaseById(db: Db, caseId: string) {
+  const dbViolationCases = getDBViolationCase(db)
+
+  // @ts-expect-error: caseId is valid ObjectId
+  return handlePromiseParser(z.promise(schema).parse(dbViolationCases.findOne({ _id: caseId })))
 }

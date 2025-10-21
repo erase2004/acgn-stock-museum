@@ -184,6 +184,24 @@
       padding-left: 2rem;
     }
   }
+
+  .violation-case-detail-block {
+    > p {
+      @apply mb-1 text-2xl font-medium;
+    }
+  }
+
+  .violation-case-action-reason {
+    border-radius: 1rem;
+    border-top-left-radius: 0;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 1rem;
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

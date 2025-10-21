@@ -1,3 +1,4 @@
+import { actionMap } from '@/services/dbViolationCaseActionLogs'
 import { stateMap, categoryMap } from '@/services/dbViolationCases'
 
 export function stateDisplayName(state: string) {
@@ -22,4 +23,9 @@ export function stateBadgeClass(state: string) {
     default:
       return 'badge-default'
   }
+}
+
+export function actionDisplayName(action: string) {
+  return (actionMap[action as keyof typeof actionMap] || { displayName: `未知(${action})` })
+    .displayName
 }

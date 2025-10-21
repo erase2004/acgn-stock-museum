@@ -35,3 +35,14 @@ export function getViolationCases(
     `/api/violation?${new URLSearchParams(Object.assign({ round, size: String(size), page: String(page) }, filter)).toString()}`,
   )
 }
+
+export function getViolationCaseRelatedLogs(
+  round: string,
+  violationCaseId: string,
+  size: number,
+  page: number,
+) {
+  return fetch(
+    `/api/violation-logs?${new URLSearchParams({ round, violationCaseId, size: String(size), page: String(page) }).toString()}`,
+  )
+}
