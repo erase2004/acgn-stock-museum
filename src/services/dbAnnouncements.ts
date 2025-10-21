@@ -141,3 +141,12 @@ export function getAnnouncements(db: Db) {
     ),
   )
 }
+
+export async function getAnnouncementById(db: Db, announcementId: string) {
+  const dbAnnouncements = getDBAnnouncements(db)
+
+  return handlePromiseParser(
+    // @ts-expect-error: announcementId is valid ObjectId
+    z.promise(schema).parse(dbAnnouncements.findOne({ _id: announcementId })),
+  )
+}

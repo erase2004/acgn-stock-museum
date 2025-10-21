@@ -5,6 +5,7 @@ export const PAGE = {
   MAIN: 'mainPage',
   ANNOUNCEMENT_LIST: 'announcement',
   ANNOUNCEMENT_DETAIL: 'announcement/view',
+  ANNOUNCEMENT_REJECTION: 'announcement/reject',
   TUTORIAL: 'tutorial',
   COMPANY_LIST: 'companyList',
   COMPANY_DETAIL: 'companyDetail',
@@ -25,7 +26,8 @@ export const PAGE = {
 const pageNameHash = {
   [PAGE.MAIN]: '首頁',
   [PAGE.ANNOUNCEMENT_LIST]: '系統公告',
-  [PAGE.ANNOUNCEMENT_DETAIL]: '系統公告',
+  [PAGE.ANNOUNCEMENT_DETAIL]: '公告內容',
+  [PAGE.ANNOUNCEMENT_REJECTION]: '公告否決',
   [PAGE.TUTORIAL]: '遊戲規則',
   [PAGE.COMPANY_LIST]: '股市總覽',
   [PAGE.COMPANY_DETAIL]: '公司資訊',
@@ -51,17 +53,29 @@ const routesWithView = {
   [PAGE.ANNOUNCEMENT_LIST]: PAGE.ANNOUNCEMENT_DETAIL,
 }
 
+const routesWithRejection = {
+  [PAGE.ANNOUNCEMENT_LIST]: PAGE.ANNOUNCEMENT_REJECTION,
+}
+
 export function getCurrentPage(astro: APIContext) {
   const pathname = astro.url.pathname
   const paths = pathname.split('/').filter((ele) => ele !== '')
   const pageValues: string[] = Object.values(PAGE)
 
-  const path = paths.findLast((p) => pageValues.includes(p)) ?? PAGE.MAIN
+  let path = paths.findLast((p) => pageValues.includes(p)) ?? PAGE.MAIN
+
   if (path in routesWithView) {
-    return new RegExp(`/${path}/view`).test(pathname)
+    path = new RegExp(`/${path}/view`).test(pathname)
       ? routesWithView[path as keyof typeof routesWithView]
       : path
   }
+
+  if (path in routesWithRejection) {
+    path = new RegExp(`/${path}/reject`).test(pathname)
+      ? routesWithRejection[path as keyof typeof routesWithRejection]
+      : path
+  }
+
   return path
 }
 
@@ -204,6 +218,14 @@ export function getAnnouncementUrl(round: string, announcementId: string) {
   return getPageUrl({
     round,
     pageName: PAGE.ANNOUNCEMENT_DETAIL,
+    params: announcementId,
+  })
+}
+
+export function getAnnouncementRejectionUrl(round: string, announcementId: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.ANNOUNCEMENT_REJECTION,
     params: announcementId,
   })
 }

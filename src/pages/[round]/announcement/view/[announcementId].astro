@@ -1,0 +1,60 @@
+---
+export const prerender = false
+
+import RoundLayout from '@/layouts/Round.astro'
+import UserLink from '@/components/common/preact/UserLink'
+import { getCurrentRound, getMuseumMainPageUrl, getAnnouncementRejectionUrl } from '@/libs/routes'
+import { getConnection } from '@/libs/databases'
+import { getAnnouncementById } from '@/services/dbAnnouncements'
+import { categoryDisplayName } from '@/utils/announcement'
+import { formatDateTimeText } from '@/libs/timeFormat'
+import { markdownToHtml } from '@/utils/helpers'
+import { getCurrentPageFullTitle } from '@/libs/routes'
+
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)!
+
+const { announcementId = '' } = Astro.params
+const announcement = await getAnnouncementById(connection, announcementId)
+
+if (!announcement) {
+  return Astro.redirect(getMuseumMainPageUrl())
+}
+
+const title = getCurrentPageFullTitle(Astro, announcement.subject)
+const canRejectAnnoumcenet = !!announcement.rejectionPetition
+---
+
+<RoundLayout title={title}>
+  <h1 class="round-block-title flex items-center justify-between">
+    <div>公告 - {categoryDisplayName(announcement.category)}</div>
+    {
+      canRejectAnnoumcenet && (
+        <a class="btn btn-warning" href={getAnnouncementRejectionUrl(round, announcementId)}>
+          否決
+        </a>
+      )
+    }
+  </h1>
+  <h2 class="my-2 text-3xl break-all">主旨：{announcement.subject}</h2>
+  <p class="my-2 text-wrap">
+    於 {formatDateTimeText(announcement.createdAt)} 由 <UserLink
+      client:only="preact"
+      round={round}
+      userId={announcement.creator}
+    /> 發佈
+  </p>
+  {
+    announcement.voided && (
+      <p class="my-2 text-warning">
+        <i class="fa fa-warning" />
+        已於 {formatDateTimeText(announcement.voidedAt)} 由{' '}
+        <UserLink client:only="preact" round={round} userId={announcement.voidedBy} />
+        以「{announcement.voidedReason}」的理由作廢！
+      </p>
+    )
+  }
+  <div class="divider"></div>
+  <h2 class="my-2 text-3xl">內文：</h2>
+  <div class="markdown-container" set:html={markdownToHtml(announcement.content, true)} />
+</RoundLayout>
