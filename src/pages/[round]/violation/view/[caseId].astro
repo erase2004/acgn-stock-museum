@@ -35,7 +35,7 @@ if (!violation) {
 }
 
 const relatedActionLogs = await getRelatedActionLog(connection, caseId)
-const result = await getViolationCaseRelatedLogs(connection, caseId, pageSize, 1)
+const result = await getViolationCaseRelatedLogs(connection, caseId)
 const totalAmount = result?.[0]?.total[0]?.total ?? 0
 const relatedLogs = result?.[0]?.data ?? []
 ---
@@ -117,7 +117,6 @@ const relatedLogs = result?.[0]?.data ?? []
         <RelatedLogListContainer
           client:only="preact"
           round={round}
-          violationCaseId={caseId}
           pageSize={pageSize}
           total={totalAmount}
           data={relatedLogs}

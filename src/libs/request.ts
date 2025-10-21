@@ -13,17 +13,6 @@ export function getProduct(round: string, productId: string) {
   return fetch(`/api/product?${new URLSearchParams({ round, productId }).toString()}`)
 }
 
-export function getViolationCaseRelatedLogs(
-  round: string,
-  violationCaseId: string,
-  size: number,
-  page: number,
-) {
-  return fetch(
-    `/api/violation-logs?${new URLSearchParams({ round, violationCaseId, size: String(size), page: String(page) }).toString()}`,
-  )
-}
-
 export function getAnnouncements(
   round: string,
   filter: z.infer<typeof announcementsQuery>,

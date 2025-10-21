@@ -4,24 +4,16 @@ import { logsWithCountSchema } from '@/services/dbLog'
 import { useEffect, useState } from 'preact/hooks'
 import { useStore } from '@nanostores/preact'
 import { currentPage, isDataLoading } from '@/stores/pagination'
-import { getViolationCaseRelatedLogs } from '@/libs/request'
 
 type Props = {
   round: string
-  violationCaseId: string
   pageSize: number
   total: number
   data: z.infer<typeof logsWithCountSchema>[number]['data']
 }
 
-export default function RelatedLogListContainer({
-  round,
-  violationCaseId,
-  pageSize,
-  total,
-  data,
-}: Props) {
-  const [items, setItems] = useState(data)
+export default function RelatedLogListContainer({ round, pageSize, total, data }: Props) {
+  const [items, setItems] = useState(data.slice(0, pageSize))
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
 
@@ -30,18 +22,8 @@ export default function RelatedLogListContainer({
     if ($currentPage === 1) return
 
     isDataLoading.set(true)
-    getViolationCaseRelatedLogs(round, violationCaseId, pageSize, $currentPage)
-      .then(async (response) => {
-        const data = await z.promise(logsWithCountSchema).parse(response.json())
-
-        if (data) {
-          const newItems = items.concat(...(data[0]?.data ?? []))
-          setItems(newItems)
-        }
-      })
-      .finally(() => {
-        isDataLoading.set(false)
-      })
+    setItems(data.slice(0, pageSize * $currentPage))
+    isDataLoading.set(false)
   }, [$currentPage])
 
   if (!total) return <em class="mx-4">沒有任何紀錄！</em>
