@@ -1,21 +1,19 @@
+import CompanyLink from '@/components/common/preact/CompanyLink'
 import { z } from 'astro/zod'
 import { stocksWithCountSchema } from '@/services/dbDirectors'
 import { useEffect, useState } from 'preact/hooks'
 import { useStore } from '@nanostores/preact'
 import { currentPage, isDataLoading } from '@/stores/pagination'
-import { getAccountOwnStocks } from '@/libs/request'
-import CompanyLink from '@/components/common/preact/CompanyLink'
 
 type Props = {
   round: string
   pageSize: number
-  userId: string
   total: number
   data: z.infer<typeof stocksWithCountSchema>[number]['data']
 }
 
-export default function ListContainer({ round, pageSize, userId, total, data }: Props) {
-  const [items, setItems] = useState(data)
+export default function ListContainer({ round, pageSize, total, data }: Props) {
+  const [items, setItems] = useState(data.slice(0, pageSize))
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
 
@@ -24,18 +22,8 @@ export default function ListContainer({ round, pageSize, userId, total, data }: 
     if ($currentPage === 1) return
 
     isDataLoading.set(true)
-    getAccountOwnStocks(round, userId, pageSize, $currentPage)
-      .then(async (response) => {
-        const data = await z.promise(stocksWithCountSchema).parse(response.json())
-
-        if (data) {
-          const newItems = items.concat(...(data[0]?.data ?? []))
-          setItems(newItems)
-        }
-      })
-      .finally(() => {
-        isDataLoading.set(false)
-      })
+    setItems(data.slice(0, pageSize * $currentPage))
+    isDataLoading.set(false)
   }, [$currentPage])
 
   let tbodyContent

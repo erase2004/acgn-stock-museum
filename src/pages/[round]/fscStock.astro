@@ -15,7 +15,7 @@ const round = getCurrentRound(Astro)!
 const roundData = getRoundData(round)!
 const pageSize = roundData.config.dataNumberPerPage.fscStock
 const connection = getConnection(round)!
-const result = await getAccountOwnStocks(connection, userId, pageSize, 1)
+const result = await getAccountOwnStocks(connection, userId)
 const total = result?.[0]?.total[0]?.total ?? 0
 const data = result?.[0]?.data ?? []
 ---
@@ -23,13 +23,6 @@ const data = result?.[0]?.data ?? []
 <RoundLayout>
   <h1 class="round-block-title">金管會持股</h1>
   <div class="divider"></div>
-  <ListContainer
-    client:only="preact"
-    round={round}
-    userId={userId}
-    pageSize={pageSize}
-    total={total}
-    data={data}
-  />
+  <ListContainer client:only="preact" round={round} pageSize={pageSize} total={total} data={data} />
   <LoadMore client:only="preact" total={total} pageSize={pageSize} />
 </RoundLayout>

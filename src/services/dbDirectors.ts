@@ -27,7 +27,7 @@ export const stocksWithCountSchema = z
   })
   .array()
 
-export async function getAccountOwnStocks(db: Db, userId: string, size: number, page: number = 1) {
+export async function getAccountOwnStocks(db: Db, userId: string) {
   const dbDirectors = getDBDirectors(db)
 
   return handlePromiseParser(
@@ -49,7 +49,7 @@ export async function getAccountOwnStocks(db: Db, userId: string, size: number, 
           {
             $facet: {
               total: [{ $count: 'total' }],
-              data: [{ $skip: (page - 1) * size }, { $limit: size }],
+              data: [],
             },
           },
         ])

@@ -13,12 +13,6 @@ export function getProduct(round: string, productId: string) {
   return fetch(`/api/product?${new URLSearchParams({ round, productId }).toString()}`)
 }
 
-export function getAccountOwnStocks(round: string, userId: string, size: number, page: number) {
-  return fetch(
-    `/api/account-own-stocks?${new URLSearchParams({ round, userId, size: String(size), page: String(page) }).toString()}`,
-  )
-}
-
 export function getViolationCaseRelatedLogs(
   round: string,
   violationCaseId: string,
