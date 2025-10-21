@@ -15,7 +15,7 @@ const pageSize = roundData.config.dataNumberPerPage.fscLogs
 const connection = getConnection(round)!
 
 const currentRound = await getCurrentRoundFromDB(connection)
-const result = await getFSCLogs(connection, currentRound!, pageSize, 1)
+const result = await getFSCLogs(connection, currentRound!)
 const total = result?.[0]?.total[0]?.total ?? 0
 const data = result?.[0]?.data ?? []
 ---

@@ -546,7 +546,7 @@ export function getDBLog(db: Db) {
   return db.collection('log')
 }
 
-function getPipeline(size: number, page: number, filter: Document = { $match: {} }): Document[] {
+function getPipeline(filter: Document = { $match: {} }): Document[] {
   return [
     filter,
     {
@@ -557,7 +557,7 @@ function getPipeline(size: number, page: number, filter: Document = { $match: {}
     {
       $facet: {
         total: [{ $count: 'total' }],
-        data: [{ $skip: (page - 1) * size }, { $limit: size }],
+        data: [],
       },
     },
   ]
@@ -575,19 +575,14 @@ export const logsWithCountSchema = z
   })
   .array()
 
-export async function getFSCLogs(
-  db: Db,
-  currentRound: z.infer<typeof schemaRound>,
-  size: number,
-  page: number = 1,
-) {
+export async function getFSCLogs(db: Db, currentRound: z.infer<typeof schemaRound>) {
   const dbLog = getDBLog(db)
 
   return handlePromiseParser(
     z.promise(logsWithCountSchema).parse(
       dbLog
         .aggregate(
-          getPipeline(size, page, {
+          getPipeline({
             $match: {
               $and: [
                 {
@@ -614,19 +609,14 @@ export async function getFSCLogs(
   )
 }
 
-export async function getViolationCaseRelatedLogs(
-  db: Db,
-  violationCaseId: string,
-  size: number,
-  page: number = 1,
-) {
+export async function getViolationCaseRelatedLogs(db: Db, violationCaseId: string) {
   const dbLog = getDBLog(db)
 
   return handlePromiseParser(
     z.promise(logsWithCountSchema).parse(
       dbLog
         .aggregate(
-          getPipeline(size, page, {
+          getPipeline({
             $match: {
               'data.violationCaseId': violationCaseId,
             },

@@ -1,10 +1,9 @@
+import DisplayLog from '@/components/common/preact/DisplayLog'
 import { z } from 'astro/zod'
 import { logsWithCountSchema } from '@/services/dbLog'
 import { useEffect, useState } from 'preact/hooks'
 import { useStore } from '@nanostores/preact'
 import { currentPage, isDataLoading } from '@/stores/pagination'
-import { getFSCLogs } from '@/libs/request'
-import DisplayLog from '@/components/common/preact/DisplayLog'
 
 type Props = {
   round: string
@@ -14,7 +13,7 @@ type Props = {
 }
 
 export default function ListContainer({ round, pageSize, total, data }: Props) {
-  const [items, setItems] = useState(data)
+  const [items, setItems] = useState(data.slice(0, pageSize))
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
 
@@ -23,18 +22,8 @@ export default function ListContainer({ round, pageSize, total, data }: Props) {
     if ($currentPage === 1) return
 
     isDataLoading.set(true)
-    getFSCLogs(round, pageSize, $currentPage)
-      .then(async (response) => {
-        const data = await z.promise(logsWithCountSchema).parse(response.json())
-
-        if (data) {
-          const newItems = items.concat(...(data[0]?.data ?? []))
-          setItems(newItems)
-        }
-      })
-      .finally(() => {
-        isDataLoading.set(false)
-      })
+    setItems(data.slice(0, pageSize * $currentPage))
+    isDataLoading.set(false)
   }, [$currentPage])
 
   if (!total) return <em>沒有資料</em>
