@@ -121,7 +121,7 @@ const relatedLogs = result?.[0]?.data ?? []
           total={totalAmount}
           data={relatedLogs}
         />
-        <LoadMore client:only="preact" total={totalAmount} pageSize={pageSize} />
+        <LoadMore client:only="preact" />
       </div>
     </div>
   </div>

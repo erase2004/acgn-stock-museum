@@ -15,7 +15,6 @@ const pageSize = roundData.config.dataNumberPerPage.announcements
 
 const connection = getConnection(round)!
 const result = await getAnnouncements(connection)
-const totalAmount = result?.[0].total?.[0].total ?? 0
 const data = result?.[0].data ?? []
 ---
 
@@ -24,5 +23,5 @@ const data = result?.[0].data ?? []
   <div class="divider"></div>
   <Filter client:only="preact" pageSize={pageSize} data={data} />
   <ListContainer client:only="preact" round={round} />
-  <LoadMore client:only="preact" pageSize={pageSize} total={totalAmount} />
+  <LoadMore client:only="preact" />
 </RoundLayout>

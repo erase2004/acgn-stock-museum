@@ -1,7 +1,7 @@
 import type { TargetedEvent } from 'preact'
 import { z } from 'astro/zod'
 import { announcementCategoryMap, querySchema, listItemSchema } from '@/services/dbAnnouncements'
-import { currentPage, isDataLoading } from '@/stores/pagination'
+import { currentPage, isDataLoading, hasMore } from '@/stores/pagination'
 import { items } from '@/stores/announcement'
 import { useStore } from '@nanostores/preact'
 import { filter, isString, pickBy } from 'lodash-es'
@@ -16,6 +16,7 @@ type Props = {
 export default function Filter({ data, pageSize }: Props) {
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
+  const $items = useStore(items)
   const [currentCategory, setCurrentCategory] = useState<keyof typeof announcementCategoryMap | ''>(
     '',
   )
@@ -94,8 +95,10 @@ export default function Filter({ data, pageSize }: Props) {
     if (reset) {
       newList = newList.slice(0, pageSize)
       currentPage.set(1)
+      hasMore.set(newList.length >= pageSize)
     } else {
       newList = newList.slice(0, pageSize * $currentPage)
+      hasMore.set(newList.length > $items.length)
     }
 
     items.set(newList)
@@ -104,7 +107,7 @@ export default function Filter({ data, pageSize }: Props) {
 
   return (
     <div class="flex flex-wrap gap-2">
-      <label class="select w-44 select-sm">
+      <label class="select w-56 select-sm">
         <span class="label">顯示分類</span>
         <select onChange={onCategoryChange}>
           <option value="">全部分類</option>

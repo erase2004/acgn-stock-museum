@@ -3,7 +3,7 @@ import { z } from 'astro/zod'
 import { logsWithCountSchema } from '@/services/dbLog'
 import { useEffect, useState } from 'preact/hooks'
 import { useStore } from '@nanostores/preact'
-import { currentPage, isDataLoading } from '@/stores/pagination'
+import { currentPage, isDataLoading, hasMore } from '@/stores/pagination'
 
 type Props = {
   round: string
@@ -22,7 +22,9 @@ export default function ListContainer({ round, pageSize, total, data }: Props) {
     if ($currentPage === 1) return
 
     isDataLoading.set(true)
-    setItems(data.slice(0, pageSize * $currentPage))
+    const newList = data.slice(0, pageSize * $currentPage)
+    hasMore.set(newList.length < total)
+    setItems(newList)
     isDataLoading.set(false)
   }, [$currentPage])
 

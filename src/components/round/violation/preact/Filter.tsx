@@ -1,7 +1,7 @@
 import type { TargetedEvent } from 'preact'
 import { z } from 'astro/zod'
 import { categoryMap, stateMap, querySchema, listItemSchema } from '@/services/dbViolationCases'
-import { currentPage, isDataLoading } from '@/stores/pagination'
+import { currentPage, isDataLoading, hasMore } from '@/stores/pagination'
 import { items } from '@/stores/violation'
 import { useStore } from '@nanostores/preact'
 import { filter, isString, pickBy, some } from 'lodash-es'
@@ -16,6 +16,7 @@ type Props = {
 export default function Filter({ pageSize, data }: Props) {
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
+  const $items = useStore(items)
   const [currentCategory, setCurrentCategory] = useState<keyof typeof categoryMap | ''>('')
   const [currentState, setCurrentState] = useState<keyof typeof stateMap | ''>('')
   const [violatorUserId, setViolatorUserId] = useState('')
@@ -136,10 +137,12 @@ export default function Filter({ pageSize, data }: Props) {
     }
 
     if (reset) {
-      currentPage.set(1)
       newList = newList.slice(0, pageSize)
+      currentPage.set(1)
+      hasMore.set(newList.length >= pageSize)
     } else {
       newList = newList.slice(0, pageSize * $currentPage)
+      hasMore.set(newList.length > $items.length)
     }
 
     items.set(newList)
