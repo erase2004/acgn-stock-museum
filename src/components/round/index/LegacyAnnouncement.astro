@@ -9,7 +9,5 @@ const dbVariables = getDBVariables(connection)
 const announcementDetail = await dbVariables.get('announcementDetail')
 ---
 
-<div>
-  <!-- TODO: update styles -->
-  <div set:html={announcementDetail} />
-</div>
+<!-- TODO: update styles -->
+<div set:html={announcementDetail} />

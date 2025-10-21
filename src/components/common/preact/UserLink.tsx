@@ -55,11 +55,7 @@ export default function UserLink({ round, userId }: Props) {
             params: userId,
           })
 
-          setHtml(
-            <a href={path}>
-              <span dangerouslySetInnerHTML={{ __html: displayText }} />
-            </a>,
-          )
+          setHtml(<a href={path} dangerouslySetInnerHTML={{ __html: displayText }}></a>)
           return
         }
 

@@ -64,9 +64,7 @@ const data = issues.map((issue) =>
           <i class="fa fa-external-link"></i>相關討論
         </a>
       </div>
-      <div class="markdown-container px-4 py-2 break-all">
-        <div set:html={descriptionHtml} />
-      </div>
+      <div class="markdown-container px-4 py-2 break-all" set:html={descriptionHtml} />
     </div>
     {data.map((issue, index) => <Issue index={index} round={round} issue={issue} />)}
   </div>
