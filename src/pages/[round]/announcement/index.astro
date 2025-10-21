@@ -6,16 +6,23 @@ import Filter from '@/components/round/announcement/preact/Filter'
 import ListContainer from '@/components/round/announcement/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { getCurrentRound, getRoundData } from '@/libs/routes'
+import { getConnection } from '@/libs/databases'
+import { getAnnouncements } from '@/services/dbAnnouncements'
 
 const round = getCurrentRound(Astro)!
 const roundData = getRoundData(round)!
 const pageSize = roundData.config.dataNumberPerPage.announcements
+
+const connection = getConnection(round)!
+const result = await getAnnouncements(connection)
+const totalAmount = result?.[0].total?.[0].total ?? 0
+const data = result?.[0].data ?? []
 ---
 
 <RoundLayout>
   <h1 class="round-block-title">系統公告</h1>
   <div class="divider"></div>
-  <Filter client:only="preact" round={round} pageSize={pageSize} />
+  <Filter client:only="preact" pageSize={pageSize} data={data} />
   <ListContainer client:only="preact" round={round} />
-  <LoadMore client:only="preact" pageSize={pageSize} />
+  <LoadMore client:only="preact" pageSize={pageSize} total={totalAmount} />
 </RoundLayout>

@@ -1,6 +1,3 @@
-import type { z } from 'astro/zod'
-import type { querySchema as announcementsQuery } from '@/services/dbAnnouncements'
-
 export function getUser(round: string, userId: string) {
   return fetch(`/api/user?${new URLSearchParams({ round, userId }).toString()}`)
 }
@@ -11,15 +8,4 @@ export function getCompany(round: string, companyId: string) {
 
 export function getProduct(round: string, productId: string) {
   return fetch(`/api/product?${new URLSearchParams({ round, productId }).toString()}`)
-}
-
-export function getAnnouncements(
-  round: string,
-  filter: z.infer<typeof announcementsQuery>,
-  size: number,
-  page: number,
-) {
-  return fetch(
-    `/api/announcement?${new URLSearchParams(Object.assign({ round, size: String(size), page: String(page) }, filter)).toString()}`,
-  )
 }

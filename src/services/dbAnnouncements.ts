@@ -1,5 +1,5 @@
 // 系統公告資料集
-import type { Db, Document } from 'mongodb'
+import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser, typedObjectKeys } from '@/utils/helpers'
 
@@ -113,38 +113,17 @@ export const querySchema = schema
   })
   .partial()
 
-type FilterOption = {
-  category?: z.infer<typeof schema>['category']
-  onlyUnread?: boolean
-  showVoided?: boolean
-}
-
-export function getAnnouncements(
-  db: Db,
-  filterOption: FilterOption,
-  size: number,
-  page: number = 1,
-) {
+export function getAnnouncements(db: Db) {
   const dbAnnouncements = getDBAnnouncements(db)
-
-  // TODO: add unread handle
-  const { category, showVoided } = filterOption
-  const filter: Document = {}
-
-  if (category) {
-    Object.assign(filter, { category })
-  }
-
-  if (!showVoided) {
-    Object.assign(filter, { voided: false })
-  }
 
   return handlePromiseParser(
     z.promise(casesWithCountSchema).parse(
       dbAnnouncements
         .aggregate([
           {
-            $match: filter,
+            $match: {
+              voided: false,
+            },
           },
           {
             $sort: {
@@ -154,7 +133,7 @@ export function getAnnouncements(
           {
             $facet: {
               total: [{ $count: 'total' }],
-              data: [{ $skip: (page - 1) * size }, { $limit: size }],
+              data: [],
             },
           },
         ])

@@ -1,31 +1,25 @@
 import type { TargetedEvent } from 'preact'
 import { z } from 'astro/zod'
-import { getAnnouncements } from '@/libs/request'
-import {
-  announcementCategoryMap,
-  querySchema,
-  casesWithCountSchema,
-} from '@/services/dbAnnouncements'
-import { currentPage, isDataLoading, totalAmount } from '@/stores/pagination'
+import { announcementCategoryMap, querySchema, listItemSchema } from '@/services/dbAnnouncements'
+import { currentPage, isDataLoading } from '@/stores/pagination'
 import { items } from '@/stores/announcement'
 import { useStore } from '@nanostores/preact'
-import { isString, pickBy } from 'lodash-es'
+import { filter, isString, pickBy } from 'lodash-es'
 import { useEffect, useState } from 'preact/hooks'
 import { categoryDisplayName } from '@/utils/announcement'
 
 type Props = {
-  round: string
+  data: z.infer<typeof listItemSchema>[]
   pageSize: number
 }
 
-export default function Filter({ round, pageSize }: Props) {
+export default function Filter({ data, pageSize }: Props) {
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
   const [currentCategory, setCurrentCategory] = useState<keyof typeof announcementCategoryMap | ''>(
     '',
   )
   const [isInitialized, setIsInitialized] = useState(false)
-  const $items = useStore(items)
 
   const categoryList = Object.keys(announcementCategoryMap)
 
@@ -90,30 +84,22 @@ export default function Filter({ round, pageSize }: Props) {
 
     if (reset) currentPage.set(1)
 
-    const query = getQuery()
-    const response = await getAnnouncements(
-      round,
-      query,
-      pageSize,
-      reset === true ? 1 : $currentPage,
-    )
+    const { category } = getQuery()
 
-    try {
-      const data = await z.promise(casesWithCountSchema).parse(response.json())
-
-      if (data) {
-        let newItems = data[0]?.data ?? []
-
-        if (reset !== true) {
-          newItems = $items.concat(...newItems)
-        }
-
-        items.set(newItems)
-        totalAmount.set(data[0]?.total[0]?.total ?? 0)
-      }
-    } finally {
-      isDataLoading.set(false)
+    let newList = data
+    if (category) {
+      newList = filter(newList, (item) => item.category === category)
     }
+
+    if (reset) {
+      newList = newList.slice(0, pageSize)
+      currentPage.set(1)
+    } else {
+      newList = newList.slice(0, pageSize * $currentPage)
+    }
+
+    items.set(newList)
+    isDataLoading.set(false)
   }
 
   return (
