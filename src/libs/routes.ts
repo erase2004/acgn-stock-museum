@@ -57,7 +57,7 @@ export function getCurrentPage(astro: APIContext) {
 
   const path = paths.findLast((p) => pageValues.includes(p)) ?? PAGE.MAIN
   if (path in routesWithView) {
-    return /${path}\/view/.test(pathname)
+    return new RegExp(`/${path}/view`).test(pathname)
       ? routesWithView[path as keyof typeof routesWithView]
       : path
   }
