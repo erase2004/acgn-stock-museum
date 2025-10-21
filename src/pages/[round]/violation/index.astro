@@ -9,7 +9,7 @@ import { getCurrentRound, getRoundData } from '@/libs/routes'
 
 const round = getCurrentRound(Astro)!
 const roundData = getRoundData(round)!
-const pageSize = roundData.config.dataNumberPerPage.fscStock
+const pageSize = roundData.config.dataNumberPerPage.violation
 ---
 
 <RoundLayout>
