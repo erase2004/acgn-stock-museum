@@ -1,9 +1,9 @@
+import Violator from './Violator'
 import { formatDateTimeText } from '@/libs/timeFormat'
 import { items } from '@/stores/violation'
 import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/violation'
 import { useStore } from '@nanostores/preact'
-import Violator from './Violator'
-import { getPageUrl, PAGE } from '@/libs/routes'
+import { getViolationCaseUrl } from '@/libs/routes'
 import { isDataLoading } from '@/stores/pagination'
 
 type Props = {
@@ -64,14 +64,7 @@ export default function ListContainer({ round }: Props) {
               </div>
             </div>
             <div class="card-actions justify-end bg-base-200 p-4">
-              <a
-                class="btn btn-primary hover:no-underline"
-                href={getPageUrl({
-                  round,
-                  pageName: PAGE.VIOLATION_CASE_DETAIL,
-                  params: _id,
-                })}
-              >
+              <a class="btn btn-primary hover:no-underline" href={getViolationCaseUrl(round, _id)}>
                 詳細內容
               </a>
             </div>

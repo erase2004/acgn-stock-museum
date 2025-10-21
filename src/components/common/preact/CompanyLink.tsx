@@ -1,5 +1,5 @@
 import { z } from 'astro/zod'
-import { getPageUrl, PAGE } from '@/libs/routes'
+import { getCompanyUrl } from '@/libs/routes'
 import { useEffect, useState } from 'preact/hooks'
 import { schema as schemaCompanyArchive } from '@/services/dbCompanyArchive'
 import { getCompany } from '@/libs/request'
@@ -29,12 +29,7 @@ export default function CompanyLink({ round, companyId }: Props) {
         displayText = companyName || defaultText
 
         if (status === 'market') {
-          const path = getPageUrl({
-            round,
-            pageName: PAGE.COMPANY_DETAIL,
-            params: companyId,
-          })
-
+          const path = getCompanyUrl(round, companyId)
           setHtml(<a href={path}>{displayText}</a>)
           return
         }

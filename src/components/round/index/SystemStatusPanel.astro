@@ -2,7 +2,7 @@
 import StatusItem from './StatusItem.astro'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
-import { getCurrentRound, getPageUrl, getRoundData, PAGE } from '@/libs/routes'
+import { getCurrentRound, getMuseumMainPageUrl, getRoundData } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getDBVariables } from '@/services/dbVariables'
@@ -17,14 +17,12 @@ const roundData = getRoundData(round)!
 const connection = getConnection(round)
 const dbVariables = getDBVariables(connection)
 
+const homepage = getMuseumMainPageUrl()
+
 // round
 const currentRound = await getCurrentRoundFromDB(connection)
 if (!currentRound) {
-  return Astro.redirect(
-    getPageUrl({
-      pageName: PAGE.MAIN,
-    }),
-  )
+  return Astro.redirect(homepage)
 }
 
 const roundStartTime = formatDateTimeText(currentRound.beginDate)
@@ -33,11 +31,7 @@ const roundEndTime = formatDateTimeText(currentRound.endDate)
 // season
 const latestSeason = await getLatestSeason(connection)
 if (!latestSeason) {
-  return Astro.redirect(
-    getPageUrl({
-      pageName: PAGE.MAIN,
-    }),
-  )
+  return Astro.redirect(homepage)
 }
 
 const seasonStartTime = formatDateTimeText(latestSeason.beginDate)

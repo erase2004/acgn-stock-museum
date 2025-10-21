@@ -11,7 +11,7 @@ import type {
 import RoundLayout from '@/layouts/Round.astro'
 import MainBody from '@/components/round/seasonalReport/preact/MainBody'
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound } from '@/libs/routes'
+import { getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
 import { getAllArchivedCompanies } from '@/services/dbCompanyArchive'
 import { getAllArchivedUsers } from '@/services/dbUserArchive'
 import { getPreviousSeason, getNextSeason, getSeasonById } from '@/services/dbSeason'
@@ -20,8 +20,7 @@ import { getRankCompanyPriceBySeasonId } from '@/services/dbRankCompanyPrice'
 import { getRankCompanyProfitBySeasonId } from '@/services/dbRankCompanyProfit'
 import { getRankCompanyValueBySeasonId } from '@/services/dbRankCompanyValue'
 import { getRankUserWealthBySeasonId } from '@/services/dbRankUserWealth'
-import { getPageUrl } from '@/libs/routes'
-import { PAGE } from '@/libs/routes'
+import { getSeasonalReportUrl } from '@/libs/routes'
 import { formatDateTimeText } from '@/libs/timeFormat'
 import { sortBy } from 'lodash-es'
 
@@ -29,43 +28,27 @@ const seasonId = Astro.params['seasonId']!
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 
+const homepage = getMuseumMainPageUrl()
+
 const currentSeason = await getSeasonById(connection, seasonId)
 if (!currentSeason) {
-  return Astro.redirect(
-    getPageUrl({
-      pageName: PAGE.MAIN,
-    }),
-  )
+  return Astro.redirect(homepage)
 }
 
 const previousSeason = await getPreviousSeason(connection, currentSeason)
 const previousSeasonUrl = previousSeason
-  ? getPageUrl({
-      round,
-      pageName: PAGE.SEASONAL_REPORT,
-      params: previousSeason._id,
-    })
+  ? getSeasonalReportUrl(round, previousSeason._id)
   : undefined
 
 const nextSeason = await getNextSeason(connection, currentSeason)
-const nextSeasonUrl = nextSeason
-  ? getPageUrl({
-      round,
-      pageName: PAGE.SEASONAL_REPORT,
-      params: nextSeason._id,
-    })
-  : undefined
+const nextSeasonUrl = nextSeason ? getSeasonalReportUrl(round, nextSeason._id) : undefined
 
 const navButtonClass = 'btn btn-sm btn-primary'
 
 const allCompanies = await getAllArchivedCompanies(connection)
 const allUsers = await getAllArchivedUsers(connection)
 if (!allCompanies || !allUsers) {
-  return Astro.redirect(
-    getPageUrl({
-      pageName: PAGE.MAIN,
-    }),
-  )
+  return Astro.redirect(homepage)
 }
 
 const allCompaniesDict = allCompanies.reduce(

@@ -145,3 +145,56 @@ export function checkIsValidRound(
 
   return false
 }
+
+export function getMuseumMainPageUrl() {
+  return getPageUrl({
+    pageName: PAGE.MAIN,
+  })
+}
+
+export function getRoundMainPageUrl(round: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.MAIN,
+  })
+}
+
+export function getViolationCaseUrl(round: string, caseId: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.VIOLATION_CASE_DETAIL,
+    params: caseId,
+  })
+}
+
+export function getCompanyUrl(round: string, companyId: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.COMPANY_DETAIL,
+    params: companyId,
+  })
+}
+
+export function getAccountUrl(round: string, userId: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.ACCOUNT_INFO,
+    params: userId,
+  })
+}
+
+export function getRuleAgendaUrl(round: string, agendaId: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.RULE_AGENDA_DETAIL,
+    params: agendaId,
+  })
+}
+
+export function getSeasonalReportUrl(round: string, seasonId: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.SEASONAL_REPORT,
+    params: seasonId,
+  })
+}

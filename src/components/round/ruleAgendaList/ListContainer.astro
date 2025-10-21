@@ -2,7 +2,7 @@
 import type { z } from 'astro/zod'
 import type { agendaListSchema } from '@/services/dbRuleAgendas'
 import { formatDateTimeText } from '@/libs/timeFormat'
-import { getPageUrl, PAGE } from '@/libs/routes'
+import { getRuleAgendaUrl } from '@/libs/routes'
 
 type Props = {
   type: '進行中' | '已結束'
@@ -12,14 +12,6 @@ type Props = {
 
 const { type, round, data } = Astro.props
 const hasData = data.length > 0
-
-function getAgendaHref(agendaId: string) {
-  return getPageUrl({
-    round,
-    pageName: PAGE.RULE_AGENDA_DETAIL,
-    params: agendaId,
-  })
-}
 ---
 
 <table class="table-base custom-responsive-table-md table">
@@ -37,7 +29,7 @@ function getAgendaHref(agendaId: string) {
           return (
             <tr>
               <td class="truncate text-left" data-title="議程主題">
-                <a href={getAgendaHref(agenda._id)}>{agenda.title}</a>
+                <a href={getRuleAgendaUrl(round, agenda._id)}>{agenda.title}</a>
               </td>
               <td class="truncate text-center" data-title="結束日期">
                 {formatDateTimeText(agenda.endedAt)}

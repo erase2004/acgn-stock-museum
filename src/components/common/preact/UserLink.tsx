@@ -1,5 +1,5 @@
 import { z } from 'astro/zod'
-import { getPageUrl, PAGE } from '@/libs/routes'
+import { getAccountUrl } from '@/libs/routes'
 import { styledValidateTypeMarkHtml } from '@/utils/helpers'
 import { escape } from 'lodash-es'
 import { useEffect, useState } from 'preact/hooks'
@@ -49,12 +49,7 @@ export default function UserLink({ round, userId }: Props) {
           `${styledValidateTypeMarkHtml(validateType)}${escape(name)}`.trim() || defaultText
 
         if (status === 'registered') {
-          const path = getPageUrl({
-            pageName: PAGE.ACCOUNT_INFO,
-            round,
-            params: userId,
-          })
-
+          const path = getAccountUrl(round, userId)
           setHtml(<a href={path} dangerouslySetInnerHTML={{ __html: displayText }}></a>)
           return
         }
