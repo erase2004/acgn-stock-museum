@@ -1,0 +1,90 @@
+---
+import type { z } from 'astro/zod'
+import type { schema as schemaAnnouncement } from '@/services/dbAnnouncements'
+import UserLink from '@/components/common/preact/UserLink'
+import { formatDateTimeText } from '@/libs/timeFormat'
+import { computeThreshold, isVoided } from '@/utils/announcement'
+
+type Props = z.infer<typeof schemaAnnouncement> & { round: string }
+
+const { round, ...announcement } = Astro.props
+const { rejectionPoll: poll } = announcement
+
+const state = isVoided(announcement)
+  ? `<span class="text-warning"><i class="fa fa-warning"></i> 公告已作廢，投票中止</span>`
+  : `<span class="text-error">投票已結束</span>`
+
+const yesCount = poll!.yesVotes.length
+const noCount = poll!.noVotes.length
+const totalCount = yesCount + noCount
+const threshold = computeThreshold(poll!.thresholdPercent, poll!.activeUserCount)
+const isThresholdPassed = totalCount >= threshold
+const shouldShowVoteList = yesCount > 0 || noCount > 0
+---
+
+<h3 class="mb-2 text-2xl">否決投票</h3>
+<div class="flex flex-wrap gap-y-4 p-2">
+  <div class="flex w-full flex-col gap-y-2 md:w-1/2">
+    <h4 class="text-xl">投票資訊</h4>
+    <div set:html={state} />
+    <div>
+      截止時間：{formatDateTimeText(poll!.dueAt)}<br />
+      投票門檻：{threshold} 人（活躍玩家 {poll!.activeUserCount} 人中的 {poll!.thresholdPercent}%）
+    </div>
+  </div>
+  <div class="flex w-full flex-col gap-y-2 md:w-1/2">
+    <h4 class="text-xl">投票結果</h4>
+    <p>
+      <i class="fa fa-check-circle text-success"></i> 贊成：{yesCount} 人<br />
+      <i class="fa fa-times-circle text-error"></i> 反對：{noCount} 人<br />
+    </p>
+    <p>
+      <span class="mr-2">總投票人數：{totalCount} 人</span>
+      {
+        isThresholdPassed ? (
+          <span class="text-success">
+            <i class="fa fa-circle-o" /> 已達投票門檻
+          </span>
+        ) : (
+          <span class="text-error">
+            <i class="fa fa-times" /> 未達投票門檻
+          </span>
+        )
+      }
+    </p>
+  </div>
+  {
+    shouldShowVoteList && (
+      <Fragment>
+        <div class="flex w-full flex-col gap-y-2 md:w-1/2">
+          <h4 class="text-xl">贊成名單</h4>
+          <ol class="max-h-80 overflow-y-auto">
+            {poll!.yesVotes.length > 0 ? (
+              poll!.yesVotes.map((userId) => (
+                <li class="ml-4">
+                  <UserLink client:only="preact" round={round} userId={userId} />
+                </li>
+              ))
+            ) : (
+              <em>一個人都沒有呢！</em>
+            )}
+          </ol>
+        </div>
+        <div class="flex w-full flex-col gap-y-2 md:w-1/2">
+          <h4 class="text-xl">反對名單</h4>
+          <ol class="max-h-80 overflow-y-auto">
+            {poll!.noVotes.length > 0 ? (
+              poll!.noVotes.map((userId) => (
+                <li class="ml-4">
+                  <UserLink client:only="preact" round={round} userId={userId} />
+                </li>
+              ))
+            ) : (
+              <em>一個人都沒有呢！</em>
+            )}
+          </ol>
+        </div>
+      </Fragment>
+    )
+  }
+</div>

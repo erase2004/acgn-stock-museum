@@ -1,0 +1,61 @@
+---
+import type { schema as schemaAnnouncement } from '@/services/dbAnnouncements'
+import type { z } from 'astro/zod'
+import UserLink from '@/components/common/preact/UserLink'
+import { isVoided, computeThreshold } from '@/utils/announcement'
+import { formatDateTimeText } from '@/libs/timeFormat'
+
+type Props = z.infer<typeof schemaAnnouncement> & { round: string }
+
+const { round, ...announcement } = Astro.props
+const { rejectionPetition: petition } = announcement
+
+let state = isVoided(announcement)
+  ? `
+  <span class="text-nowrap text-warning">
+    <i class="fa fa-warning"></i> 公告已作廢，連署中止
+  </span>
+`
+  : petition!.passedAt
+    ? `
+  <span class="text-nowrap text-success">
+    <i class="fa fa-check"></i> 連署已通過（於 ${formatDateTimeText(petition!.passedAt)}）
+  </span>
+`
+    : `
+  <span class="text-error text-nowrap">
+    <i class="fa fa-times"></i> 已截止，連署未通過
+  </span>
+`
+---
+
+<h3 class="mb-2 text-2xl">否決連署</h3>
+<div class="flex flex-wrap gap-y-4 p-2">
+  <div class="flex w-full flex-col gap-y-2 md:w-1/2">
+    <h4 class="text-xl">連署資訊</h4>
+    <div set:html={state} />
+    <div>
+      截止時間：{formatDateTimeText(petition!.dueAt)}
+      <br />
+      連署門檻：{computeThreshold(petition!.thresholdPercent, petition!.activeUserCount)} 人（活躍玩家
+      {petition!.activeUserCount} 人中的 {petition!.thresholdPercent}%） <br />
+      目前連署人數：{petition!.signers.length} 人
+    </div>
+  </div>
+  <div class="flex w-full flex-col gap-y-2 md:w-1/2">
+    <h4 class="text-xl">支持否決名單</h4>
+    <ol class="max-h-80 overflow-y-auto">
+      {
+        petition!.signers.length > 0 ? (
+          petition!.signers.map((userId) => (
+            <li class="ml-4">
+              <UserLink client:only="preact" round={round} userId={userId} />
+            </li>
+          ))
+        ) : (
+          <em>裡面什麼都沒有呢…</em>
+        )
+      }
+    </ol>
+  </div>
+</div>
