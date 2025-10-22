@@ -76,14 +76,12 @@ export function getCurrentPage(astro: APIContext) {
       : path
   }
 
-  if (path === 'productCenter') {
-    if (new RegExp('/productCenter/season/').test(pathname)) {
-      path = PAGE.PRODUCT_CENTER_BY_SEASON
-    }
+  if (new RegExp('/productCenter/season/').test(pathname)) {
+    path = PAGE.PRODUCT_CENTER_BY_SEASON
+  }
 
-    if (new RegExp('/productCenter/company/').test(pathname)) {
-      path = PAGE.PRODUCT_CENTER_BY_COMPANY
-    }
+  if (new RegExp('/productCenter/company/').test(pathname)) {
+    path = PAGE.PRODUCT_CENTER_BY_COMPANY
   }
 
   return path

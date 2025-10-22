@@ -1,6 +1,5 @@
 import type { schema as schemaProduct } from '@/services/dbProducts'
 import type { z } from 'astro/zod'
-import CompanyLink from '@/components/common/preact/CompanyLink'
 import ProductLink from '@/components/common/preact/ProductLink'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { isRestrictedRating, useProductCenter } from '@/utils/product'
@@ -51,11 +50,8 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
       <table class="table-base custom-responsive-table-md table">
         <thead>
           <tr>
-            <th class="w-2/5 truncate text-center" title="產品">
+            <th class="truncate text-center" title="產品">
               產品
-            </th>
-            <th class="w-1/5 truncate text-center" title="公司名稱">
-              公司名稱
             </th>
             <th
               class="w-24 cursor-pointer truncate px-0 text-center"
@@ -99,9 +95,6 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
                   </div>
                   <div class="max-h-14 overflow-y-auto text-sm! break-all">{item.description}</div>
                 </td>
-                <td class="truncate text-left text-nowrap" data-title="公司名稱">
-                  <CompanyLink round={round} companyId={item.companyId} />
-                </td>
                 <td class="truncate text-center text-nowrap" data-title="類別">
                   {item.type}
                 </td>
@@ -128,8 +121,8 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
             ))
           ) : (
             <tr class="default-content">
-              <td class="text-center" colspan={5}>
-                當季度沒有任何產品上架！
+              <td class="text-center" colspan={4}>
+                這家公司尚未推出任何產品！
               </td>
             </tr>
           )}

@@ -54,6 +54,25 @@ export async function getProductsBySeason(db: Db, seasonId: string) {
   )
 }
 
+export async function getProductsByCompany(db: Db, companyId: string) {
+  const dbProducts = getDBProducts(db)
+
+  return handlePromiseParser(
+    z.promise(schema.array()).parse(
+      dbProducts
+        .find(
+          { companyId, state: { $ne: 'planning' } },
+          {
+            sort: {
+              voteCount: -1,
+            },
+          },
+        )
+        .toArray(),
+    ),
+  )
+}
+
 export async function getProduct(db: Db, productId: string) {
   const dbProducts = getDBProducts(db)
 
