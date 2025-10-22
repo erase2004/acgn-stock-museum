@@ -1,0 +1,81 @@
+---
+export const prerender = false
+
+import dayjs from 'dayjs'
+import RoundLayout from '@/layouts/Round.astro'
+import UserLink from '@/components/common/preact/UserLink'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound, getRoundData } from '@/libs/routes'
+import { getAdvertisements } from '@/services/dbAdvertising'
+import { currencyFormat } from '@/utils/helpers'
+import { formatDateTimeText } from '@/libs/timeFormat'
+
+const round = getCurrentRound(Astro)!
+const roundData = getRoundData(round)!
+const connection = getConnection(round)!
+const advertisements = (await getAdvertisements(connection)) ?? []
+
+function formatExpireDate(begin: Date) {
+  const expire = dayjs(begin).add(roundData.config.advertisingExpireTime, 'ms')
+  return formatDateTimeText(expire)
+}
+---
+
+<RoundLayout>
+  <h1 class="round-block-title">廣告中心</h1>
+  <div class="divider"></div>
+  <h2 class="text-3xl opacity-70">進行中的廣告</h2>
+  <div class="divider"></div>
+  <table class="table-base custom-responsive-table-md table">
+    <thead>
+      <tr>
+        <th class="w-32 truncate text-center" title="購買者">購買者</th>
+        <th class="truncate text-center" title="廣告內容">廣告內容</th>
+        <th class="w-32 truncate text-center" title="費用">費用</th>
+        <th class="w-40 truncate text-center" title="終止日期">終止日期</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        advertisements.length > 0 ? (
+          advertisements.map((item, index) => (
+            <tr
+              class:list={[
+                {
+                  'bg-success/10': index < roundData.config.displayAdvertisingNumber,
+                },
+              ]}
+            >
+              <td class="truncate text-left text-nowrap" data-title="購買者">
+                <UserLink client:only="preact" round={round} userId={item.userId} />
+              </td>
+              <td class="text-left" data-title="廣告內容" title={item.message}>
+                <div class="max-md:max-h-36 max-md:overflow-y-auto max-md:break-all md:truncate">
+                  {item.url ? (
+                    <a href={item.url} target="_blank">
+                      {item.message}
+                    </a>
+                  ) : (
+                    item.message
+                  )}
+                </div>
+              </td>
+              <td class="truncate text-center text-nowrap" data-title="費用">
+                $ {currencyFormat(item.paid)}
+              </td>
+              <td class="text-truncate text-center text-nowrap" data-title="終止日期">
+                {formatExpireDate(item.createdAt)}
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr class="default-content">
+            <td class="truncate p-1 text-center" colspan="4">
+              目前沒有發布中廣告！
+            </td>
+          </tr>
+        )
+      }
+    </tbody>
+  </table>
+</RoundLayout>

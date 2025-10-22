@@ -3,9 +3,13 @@ export const defaultWebsiteName = 'ACGN 股票歷史博物館'
 type RoundKey = `round${number}`
 
 type RoundConfig = {
+  /** 廣告持續時間，單位為毫秒 */
+  advertisingExpireTime: number
+  /** 同時最多顯示的廣告筆數 */
+  displayAdvertisingNumber: number
   /** 季度結束前多久開放設定薪資，單位為毫秒 */
   announceSalaryTime: number
-  /** companyProfitDistribution */
+  /** 公司營利的分配設定 */
   companyProfitDistribution: {
     /** 分配設定調整的封關時間 (ms) */
     lockTime: number
@@ -21,6 +25,8 @@ type RoundConfig = {
 }
 
 const BaseRoundConfig: RoundConfig = {
+  advertisingExpireTime: 259200000,
+  displayAdvertisingNumber: 5,
   announceSalaryTime: 259200000,
   companyProfitDistribution: {
     lockTime: 86400000,
