@@ -10,8 +10,8 @@ export const PAGE = {
   COMPANY_LIST: 'companyList',
   COMPANY_DETAIL: 'companyDetail',
   ADVERTISING: 'advertising',
-  PRODUCT_CENTER_BY_SEASON: 'productCenterBySeason',
-  PRODUCT_CENTER_BY_COMPANY: 'productCenterByCompany',
+  PRODUCT_CENTER_BY_SEASON: 'productCenter/season',
+  PRODUCT_CENTER_BY_COMPANY: 'productCenter/company',
   ARENA_INFO: 'arenaInfo',
   SEASONAL_REPORT: 'seasonalReport',
   ACCOUNT_INFO: 'accountInfo',
@@ -65,15 +65,25 @@ export function getCurrentPage(astro: APIContext) {
   let path = paths.findLast((p) => pageValues.includes(p)) ?? PAGE.MAIN
 
   if (path in routesWithView) {
-    path = new RegExp(`/${path}/view`).test(pathname)
+    path = new RegExp(`/${path}/view/`).test(pathname)
       ? routesWithView[path as keyof typeof routesWithView]
       : path
   }
 
   if (path in routesWithRejection) {
-    path = new RegExp(`/${path}/reject`).test(pathname)
+    path = new RegExp(`/${path}/reject/`).test(pathname)
       ? routesWithRejection[path as keyof typeof routesWithRejection]
       : path
+  }
+
+  if (path === 'productCenter') {
+    if (new RegExp('/productCenter/season/').test(pathname)) {
+      path = PAGE.PRODUCT_CENTER_BY_SEASON
+    }
+
+    if (new RegExp('/productCenter/company/').test(pathname)) {
+      path = PAGE.PRODUCT_CENTER_BY_COMPANY
+    }
   }
 
   return path
@@ -227,5 +237,21 @@ export function getAnnouncementRejectionUrl(round: string, announcementId: strin
     round,
     pageName: PAGE.ANNOUNCEMENT_REJECTION,
     params: announcementId,
+  })
+}
+
+export function getProductCenterBySeasonUrl(round: string, seasonId: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.PRODUCT_CENTER_BY_SEASON,
+    params: seasonId,
+  })
+}
+
+export function getProductCenterByCompanyUrl(round: string, companyId: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.PRODUCT_CENTER_BY_COMPANY,
+    params: companyId,
   })
 }

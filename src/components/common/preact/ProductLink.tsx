@@ -1,6 +1,6 @@
 import { z } from 'astro/zod'
 import { useEffect, useState } from 'preact/hooks'
-import { schema as schemaProduct } from '@/services/dbProducts'
+import { basicSchema as schemaProduct } from '@/services/dbProducts'
 import { getProduct } from '@/libs/request'
 
 const defaultText = '???'

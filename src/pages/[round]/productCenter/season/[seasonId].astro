@@ -1,0 +1,56 @@
+---
+export const prerender = false
+
+import RoundLayout from '@/layouts/Round.astro'
+import SeasonNavbar from '@/components/common/preact/SeasonNavbar'
+import SeasonListContainer from '@/components/round/productCenter/preact/SeasonListContainer'
+import { getConnection } from '@/libs/databases'
+import {
+  getCurrentRound,
+  getMuseumMainPageUrl,
+  getProductCenterBySeasonUrl,
+  getRoundData,
+} from '@/libs/routes'
+import { getNextSeason, getPreviousSeason, getSeasonById } from '@/services/dbSeason'
+import { getProductsBySeason } from '@/services/dbProducts'
+
+const seasonId = Astro.params['seasonId']!
+const round = getCurrentRound(Astro)!
+const roundData = getRoundData(round)!
+const connection = getConnection(round)!
+
+const homepage = getMuseumMainPageUrl()
+
+const currentSeason = await getSeasonById(connection, seasonId)
+if (!currentSeason) {
+  return Astro.redirect(homepage)
+}
+
+const previousSeason = await getPreviousSeason(connection, currentSeason)
+const previousSeasonUrl = previousSeason
+  ? getProductCenterBySeasonUrl(round, previousSeason._id)
+  : undefined
+
+const nextSeason = await getNextSeason(connection, currentSeason)
+const nextSeasonUrl = nextSeason ? getProductCenterBySeasonUrl(round, nextSeason._id) : undefined
+
+const data = (await getProductsBySeason(connection, seasonId)) ?? []
+---
+
+<RoundLayout>
+  <h1 class="round-block-title">產品中心</h1>
+  <div class="divider"></div>
+  <SeasonNavbar
+    client:only="preact"
+    currentSeason={currentSeason}
+    previousSeasonUrl={previousSeasonUrl}
+    nextSeasonUrl={nextSeasonUrl}
+  />
+  <div class="divider"></div>
+  <SeasonListContainer
+    client:only="preact"
+    round={round}
+    pageSize={roundData.config.dataNumberPerPage.productCenter}
+    data={data}
+  />
+</RoundLayout>

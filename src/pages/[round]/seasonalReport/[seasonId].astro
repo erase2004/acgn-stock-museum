@@ -9,6 +9,7 @@ import type {
   TypeUserWealthRank,
 } from '@/components/round/seasonalReport/types'
 import RoundLayout from '@/layouts/Round.astro'
+import SeasonNavbar from '@/components/common/preact/SeasonNavbar'
 import MainBody from '@/components/round/seasonalReport/preact/MainBody'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
@@ -21,7 +22,6 @@ import { getRankCompanyProfitBySeasonId } from '@/services/dbRankCompanyProfit'
 import { getRankCompanyValueBySeasonId } from '@/services/dbRankCompanyValue'
 import { getRankUserWealthBySeasonId } from '@/services/dbRankUserWealth'
 import { getSeasonalReportUrl } from '@/libs/routes'
-import { formatDateTimeText } from '@/libs/timeFormat'
 import { sortBy } from 'lodash-es'
 
 const seasonId = Astro.params['seasonId']!
@@ -42,8 +42,6 @@ const previousSeasonUrl = previousSeason
 
 const nextSeason = await getNextSeason(connection, currentSeason)
 const nextSeasonUrl = nextSeason ? getSeasonalReportUrl(round, nextSeason._id) : undefined
-
-const navButtonClass = 'btn btn-sm btn-primary'
 
 const allCompanies = await getAllArchivedCompanies(connection)
 const allUsers = await getAllArchivedUsers(connection)
@@ -129,31 +127,11 @@ sortedRankUserWealthData.reverse()
   <div>
     <h1 class="round-block-title">季度報告</h1>
     <div class="divider"></div>
-    <div class="flex items-center justify-between text-center">
-      {
-        previousSeasonUrl ? (
-          <a href={previousSeasonUrl}>
-            <span class={navButtonClass}>&laquo;</span>
-          </a>
-        ) : (
-          <span class={`${navButtonClass} btn-disabled`}>&laquo;</span>
-        )
-      }
-      <div>
-        <span class="inline-block text-nowrap">{formatDateTimeText(currentSeason.beginDate)}～</span
-        >
-        <span class="inline-block text-nowrap">{formatDateTimeText(currentSeason.endDate)}</span>
-      </div>
-      {
-        nextSeasonUrl ? (
-          <a href={nextSeasonUrl}>
-            <span class={navButtonClass}>&raquo;</span>
-          </a>
-        ) : (
-          <span class={`${navButtonClass} btn-disabled`}>&raquo;</span>
-        )
-      }
-    </div>
+    <SeasonNavbar
+      currentSeason={currentSeason}
+      previousSeasonUrl={previousSeasonUrl}
+      nextSeasonUrl={nextSeasonUrl}
+    />
     <div class="divider"></div>
     <MainBody
       client:only="preact"

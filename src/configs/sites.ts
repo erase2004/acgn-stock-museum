@@ -21,6 +21,7 @@ type RoundConfig = {
     violation: number
     violationRelatedLog: number
     announcements: number
+    productCenter: number
   }
 }
 
@@ -37,6 +38,7 @@ const BaseRoundConfig: RoundConfig = {
     violation: 10,
     violationRelatedLog: 30,
     announcements: 20,
+    productCenter: 30,
   },
 }
 
