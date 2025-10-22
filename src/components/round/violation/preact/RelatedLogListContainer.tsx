@@ -1,9 +1,9 @@
 import DisplayLog from '@/components/common/preact/DisplayLog'
 import { z } from 'astro/zod'
 import { logsWithCountSchema } from '@/services/dbLog'
-import { useEffect, useState } from 'preact/hooks'
+import { useMemo } from 'preact/hooks'
 import { useStore } from '@nanostores/preact'
-import { currentPage, isDataLoading, hasMore } from '@/stores/pagination'
+import { currentPage, hasMore } from '@/stores/pagination'
 
 type Props = {
   round: string
@@ -13,28 +13,21 @@ type Props = {
 }
 
 export default function RelatedLogListContainer({ round, pageSize, total, data }: Props) {
-  const [items, setItems] = useState(data.slice(0, pageSize))
   const $currentPage = useStore(currentPage)
-  const $isDataLoading = useStore(isDataLoading)
 
-  useEffect(() => {
-    if ($isDataLoading) return
-    if ($currentPage === 1) return
-
-    isDataLoading.set(true)
+  const displayItems = useMemo(() => {
     const newList = data.slice(0, pageSize * $currentPage)
     hasMore.set(newList.length < total)
-    setItems(newList)
-    isDataLoading.set(false)
+    return newList
   }, [$currentPage])
 
   if (!total) return <em class="mx-4">沒有任何紀錄！</em>
 
   return (
     <ul class="relative pl-0">
-      {items.map((d) => (
-        <li key={d._id} class="list-none">
-          <DisplayLog round={round} {...d} />
+      {displayItems.map((item) => (
+        <li key={item._id} class="list-none">
+          <DisplayLog round={round} {...item} />
         </li>
       ))}
     </ul>

@@ -1,9 +1,9 @@
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import { z } from 'astro/zod'
 import { stocksWithCountSchema } from '@/services/dbDirectors'
-import { useEffect, useState } from 'preact/hooks'
+import { useMemo } from 'preact/hooks'
 import { useStore } from '@nanostores/preact'
-import { currentPage, isDataLoading, hasMore } from '@/stores/pagination'
+import { currentPage, hasMore } from '@/stores/pagination'
 
 type Props = {
   round: string
@@ -13,19 +13,12 @@ type Props = {
 }
 
 export default function ListContainer({ round, pageSize, total, data }: Props) {
-  const [items, setItems] = useState(data.slice(0, pageSize))
   const $currentPage = useStore(currentPage)
-  const $isDataLoading = useStore(isDataLoading)
 
-  useEffect(() => {
-    if ($isDataLoading) return
-    if ($currentPage === 1) return
-
-    isDataLoading.set(true)
+  const displayItems = useMemo(() => {
     const newList = data.slice(0, pageSize * $currentPage)
     hasMore.set(newList.length < total)
-    setItems(newList)
-    isDataLoading.set(false)
+    return newList
   }, [$currentPage])
 
   let tbodyContent
@@ -39,7 +32,7 @@ export default function ListContainer({ round, pageSize, total, data }: Props) {
       </tr>
     )
   } else {
-    tbodyContent = items.map((item) => (
+    tbodyContent = displayItems.map((item) => (
       <tr key={item.companyId}>
         <td>
           <CompanyLink round={round} companyId={item.companyId} />
