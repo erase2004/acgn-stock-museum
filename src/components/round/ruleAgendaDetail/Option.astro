@@ -32,11 +32,11 @@ const inputId = `${prefix}-${title}`
   </div>
 
   <div
-    class="collapse-content list-col-wrap hidden grid-cols-1 overflow-x-hidden whitespace-nowrap **:row-start-auto! **:truncate peer-checked:grid peer-checked:p-4 peer-checked:pb-0 md:grid-cols-2 lg:grid-cols-4"
+    class="collapse-content list-col-wrap hidden grid-cols-1 overflow-x-hidden whitespace-nowrap **:truncate peer-checked:grid peer-checked:p-4 peer-checked:pb-0 md:grid-cols-2 lg:grid-cols-4"
   >
     {
       votes.map((userId, index) => (
-        <span class="inline-block">
+        <span class="row-start-auto! inline-block">
           {index + 1}.&nbsp;
           <UserLink client:visible round={round} userId={userId} />
         </span>

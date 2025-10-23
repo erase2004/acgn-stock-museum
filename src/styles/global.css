@@ -133,26 +133,6 @@
       }
     }
   }
-}
-
-@layer utilities {
-  .table-base {
-    @apply **:[th,td]:py-1;
-  }
-
-  table.custom-responsive-table-md {
-    td {
-      @apply max-md:pl-[35%];
-    }
-
-    tr {
-      &.default-content {
-        td {
-          @apply max-md:px-0;
-        }
-      }
-    }
-  }
 
   .markdown-container {
     p,
@@ -217,7 +197,28 @@
     padding: 0.5rem 1rem;
 
     p:last-child {
+      /* should be put after .markdown-container */
       margin-bottom: 0;
+    }
+  }
+}
+
+@layer utilities {
+  .table-base {
+    @apply **:[th,td]:py-1;
+  }
+
+  table.custom-responsive-table-md {
+    td {
+      @apply max-md:pl-[35%];
+    }
+
+    tr {
+      &.default-content {
+        td {
+          @apply max-md:px-0;
+        }
+      }
     }
   }
 }
