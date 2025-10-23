@@ -1,19 +1,16 @@
 import UserLink from '@/components/common/preact/UserLink'
 import { formatDateTimeText } from '@/libs/timeFormat'
 import { items } from '@/stores/announcement'
-import { isDataLoading } from '@/stores/pagination'
 import { useStore } from '@nanostores/preact'
 import { categoryDisplayName } from '@/utils/announcement'
 import { getAnnouncementUrl } from '@/libs/routes'
 
 type Props = {
-  storeKey: string
   round: string
 }
 
-export default function ListContainer({ storeKey, round }: Props) {
+export default function ListContainer({ round }: Props) {
   const $items = useStore(items)
-  const $isDataLoading = useStore(isDataLoading)
 
   return (
     <>
@@ -56,11 +53,6 @@ export default function ListContainer({ storeKey, round }: Props) {
           ))}
         </tbody>
       </table>
-      {$isDataLoading[storeKey] && (
-        <div class="fixed inset-0 flex h-full items-center justify-center bg-base-content/25">
-          <div class="loading w-1/6 loading-spinner lg:w-1/12"></div>
-        </div>
-      )}
     </>
   )
 }

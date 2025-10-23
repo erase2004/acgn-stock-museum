@@ -91,7 +91,7 @@
   }
 
   .table-base {
-    @apply w-full table-fixed border-separate border-spacing-0 **:text-base **:[th,td]:border **:[tr,th,td]:border-base-content/25;
+    @apply -z-10 w-full table-fixed border-separate border-spacing-0 **:text-base **:[th,td]:border **:[tr,th,td]:border-base-content/25;
   }
 
   table.custom-responsive-table-md {
