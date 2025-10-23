@@ -9,6 +9,8 @@ import { getCurrentRound, getRoundData } from '@/libs/routes'
 import { getFSCLogs } from '@/services/dbLog'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 
+const STORE_KEY = 'fsc-logs'
+
 const round = getCurrentRound(Astro)!
 const roundData = getRoundData(round)!
 const pageSize = roundData.config.dataNumberPerPage.fscLogs
@@ -23,6 +25,13 @@ const data = result?.[0]?.data ?? []
 <RoundLayout>
   <h1 class="round-block-title">金管會執行紀錄</h1>
   <div class="divider"></div>
-  <ListContainer client:only="preact" round={round} pageSize={pageSize} total={total} data={data} />
-  <LoadMore client:only="preact" />
+  <ListContainer
+    client:only="preact"
+    round={round}
+    pageSize={pageSize}
+    total={total}
+    data={data}
+    storeKey={STORE_KEY}
+  />
+  <LoadMore client:only="preact" storeKey={STORE_KEY} />
 </RoundLayout>

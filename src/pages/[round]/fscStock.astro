@@ -9,6 +9,7 @@ import { getCurrentRound, getRoundData } from '@/libs/routes'
 import { getAccountOwnStocks } from '@/services/dbDirectors'
 import { SpecialUser } from '@/services/dbUsers'
 
+const STORE_KEY = 'fsc-stock'
 const userId = SpecialUser.FSC
 
 const round = getCurrentRound(Astro)!
@@ -23,6 +24,13 @@ const data = result?.[0]?.data ?? []
 <RoundLayout>
   <h1 class="round-block-title">金管會持股</h1>
   <div class="divider"></div>
-  <ListContainer client:only="preact" round={round} pageSize={pageSize} total={total} data={data} />
-  <LoadMore client:only="preact" />
+  <ListContainer
+    client:only="preact"
+    round={round}
+    pageSize={pageSize}
+    total={total}
+    data={data}
+    storeKey={STORE_KEY}
+  />
+  <LoadMore client:only="preact" storeKey={STORE_KEY} />
 </RoundLayout>

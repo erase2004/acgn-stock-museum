@@ -9,6 +9,8 @@ import { getCurrentRound, getRoundData } from '@/libs/routes'
 import { getViolationCases } from '@/services/dbViolationCases'
 import { getConnection } from '@/libs/databases'
 
+const STORE_KEY = 'violation'
+
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 const roundData = getRoundData(round)!
@@ -21,7 +23,7 @@ const data = result?.[0]?.data ?? []
 <RoundLayout>
   <h1 class="round-block-title">違規案件列表</h1>
   <div class="divider"></div>
-  <Filter client:only="preact" pageSize={pageSize} data={data} />
-  <ListContainer client:only="preact" round={round} />
-  <LoadMore client:only="preact" />
+  <Filter client:only="preact" pageSize={pageSize} data={data} storeKey={STORE_KEY} />
+  <ListContainer client:only="preact" round={round} storeKey={STORE_KEY} />
+  <LoadMore client:only="preact" storeKey={STORE_KEY} />
 </RoundLayout>

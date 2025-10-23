@@ -1,16 +1,17 @@
 import Violator from './Violator'
 import { formatDateTimeText } from '@/libs/timeFormat'
-import { items } from '@/stores/violation'
 import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/violation'
+import { isDataLoading } from '@/stores/pagination'
+import { items } from '@/stores/violation'
 import { useStore } from '@nanostores/preact'
 import { getViolationCaseUrl } from '@/libs/routes'
-import { isDataLoading } from '@/stores/pagination'
 
 type Props = {
+  storeKey: string
   round: string
 }
 
-export default function ListContainer({ round }: Props) {
+export default function ListContainer({ storeKey, round }: Props) {
   const $items = useStore(items)
   const $isDataLoading = useStore(isDataLoading)
 
@@ -71,7 +72,7 @@ export default function ListContainer({ round }: Props) {
           </div>
         ),
       )}
-      {$isDataLoading && (
+      {$isDataLoading[storeKey] && (
         <div class="fixed inset-0 flex h-full items-center justify-center bg-base-content/25">
           <div class="loading w-1/6 loading-spinner lg:w-1/12"></div>
         </div>

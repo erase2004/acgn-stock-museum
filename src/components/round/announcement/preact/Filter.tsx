@@ -9,14 +9,14 @@ import { useEffect, useState } from 'preact/hooks'
 import { categoryDisplayName } from '@/utils/announcement'
 
 type Props = {
+  storeKey: string
   data: z.infer<typeof listItemSchema>[]
   pageSize: number
 }
 
-export default function Filter({ data, pageSize }: Props) {
+export default function Filter({ storeKey, data, pageSize }: Props) {
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
-  const $items = useStore(items)
   const [currentCategory, setCurrentCategory] = useState<keyof typeof announcementCategoryMap | ''>(
     '',
   )
@@ -67,11 +67,11 @@ export default function Filter({ data, pageSize }: Props) {
 
   useEffect(() => {
     if (!isInitialized) return
-    if ($isDataLoading) return
-    if ($currentPage === 1) return
+    if ($isDataLoading[storeKey]) return
+    if ($currentPage[storeKey] === 1) return
 
     search()
-  }, [$currentPage])
+  }, [$currentPage[storeKey]])
 
   function onCategoryChange(event: TargetedEvent<HTMLSelectElement>) {
     const value = event.currentTarget.value
@@ -80,29 +80,28 @@ export default function Filter({ data, pageSize }: Props) {
   }
 
   async function search(reset: boolean = false) {
-    if ($isDataLoading) return
-    isDataLoading.set(true)
-
-    if (reset) currentPage.set(1)
-
-    const { category } = getQuery()
+    if ($isDataLoading[storeKey]) return
+    isDataLoading.setKey(storeKey, true)
 
     let newList = data
+
+    const { category } = getQuery()
     if (category) {
       newList = filter(newList, (item) => item.category === category)
     }
 
+    const totalAmount = newList.length
+
     if (reset) {
       newList = newList.slice(0, pageSize)
-      currentPage.set(1)
-      hasMore.set(newList.length >= pageSize)
+      currentPage.setKey(storeKey, 1)
     } else {
-      newList = newList.slice(0, pageSize * $currentPage)
-      hasMore.set(newList.length > $items.length)
+      newList = newList.slice(0, pageSize * $currentPage[storeKey])
     }
 
     items.set(newList)
-    isDataLoading.set(false)
+    hasMore.setKey(storeKey, newList.length < totalAmount)
+    isDataLoading.setKey(storeKey, false)
   }
 
   return (

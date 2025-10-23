@@ -5,17 +5,21 @@ import { useStore } from '@nanostores/preact'
 import { useMemo, useState } from 'preact/hooks'
 import { orderBy } from 'lodash-es'
 
-type SortOrder = {
-  type?: 1 | 0
-  rating?: 1 | 0
-  voteCount?: 1 | 0
+type SortOrder<T = 1 | 0> = {
+  type?: T
+  rating?: T
+  voteCount?: T
 }
 
 export function isRestrictedRating(rating: string) {
   return rating === '18禁'
 }
 
-export function useProductCenter(data: z.infer<typeof schemaProduct>[], pageSize: number) {
+export function useProductCenter(
+  data: z.infer<typeof schemaProduct>[],
+  pageSize: number,
+  storeKey: string,
+) {
   const totalAmount = data.length
   const $currentPage = useStore(currentPage)
   const [sortOrder, setSortOrder] = useState<SortOrder>({ voteCount: 0 })
@@ -40,10 +44,10 @@ export function useProductCenter(data: z.infer<typeof schemaProduct>[], pageSize
     }
 
     const sorted = orderBy(data, [key], [order])
-    const newList = sorted.slice(0, pageSize * $currentPage)
-    hasMore.set(newList.length < totalAmount)
+    const newList = sorted.slice(0, pageSize * $currentPage[storeKey])
+    hasMore.setKey(storeKey, newList.length < totalAmount)
     return newList
-  }, [data, sortOrder, $currentPage])
+  }, [data, sortOrder, $currentPage[storeKey]])
 
   function handleSortChange(key: keyof SortOrder) {
     if (typeof sortOrder[key] === 'number') {

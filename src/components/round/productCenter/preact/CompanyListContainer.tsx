@@ -4,6 +4,8 @@ import ProductLink from '@/components/common/preact/ProductLink'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { isRestrictedRating, useProductCenter } from '@/utils/product'
 
+const STORE_KEY = 'product'
+
 type Props = {
   round: string
   pageSize: number
@@ -14,6 +16,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
   const { displayItems, handleSortChange, getSortButtonClass, getSortIcon } = useProductCenter(
     data,
     pageSize,
+    STORE_KEY,
   )
 
   return (
@@ -126,7 +129,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
           )}
         </tbody>
       </table>
-      <LoadMore />
+      <LoadMore storeKey={STORE_KEY} />
     </>
   )
 }

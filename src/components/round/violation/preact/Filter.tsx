@@ -5,22 +5,23 @@ import { currentPage, isDataLoading, hasMore } from '@/stores/pagination'
 import { items } from '@/stores/violation'
 import { useStore } from '@nanostores/preact'
 import { filter, isString, pickBy, some } from 'lodash-es'
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import { stateDisplayName, categoryDisplayName } from '@/utils/violation'
 
 type Props = {
+  storeKey: string
   pageSize: number
   data: z.infer<typeof listItemSchema>[]
 }
 
-export default function Filter({ pageSize, data }: Props) {
+export default function Filter({ storeKey, pageSize, data }: Props) {
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
-  const $items = useStore(items)
   const [currentCategory, setCurrentCategory] = useState<keyof typeof categoryMap | ''>('')
   const [currentState, setCurrentState] = useState<keyof typeof stateMap | ''>('')
-  const [violatorUserId, setViolatorUserId] = useState('')
   const [isInitialized, setIsInitialized] = useState(false)
+  const [showClear, setShowClear] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const categoryList = Object.keys(categoryMap)
   const stateList = Object.keys(stateMap)
@@ -36,7 +37,7 @@ export default function Filter({ pageSize, data }: Props) {
 
       if (category) setCurrentCategory(category)
       if (state) setCurrentState(state)
-      if (_userId) setViolatorUserId(_userId)
+      if (_userId && inputRef.current) inputRef.current.value = _userId
     }
 
     setIsInitialized(true)
@@ -47,7 +48,7 @@ export default function Filter({ pageSize, data }: Props) {
       {
         category: currentCategory,
         state: currentState,
-        violatorUserId: violatorUserId,
+        violatorUserId: inputRef.current?.value ?? '',
       },
       (value) => {
         return isString(value) && value.length > 0
@@ -64,12 +65,10 @@ export default function Filter({ pageSize, data }: Props) {
   }
 
   useEffect(() => {
-    if (!isInitialized) return
-    if (violatorUserId) return
-
-    updateURL()
-    search(true)
-  }, [violatorUserId, isInitialized])
+    if (isInitialized) {
+      search(true)
+    }
+  }, [isInitialized])
 
   useEffect(() => {
     if (!isInitialized) return
@@ -80,11 +79,11 @@ export default function Filter({ pageSize, data }: Props) {
 
   useEffect(() => {
     if (!isInitialized) return
-    if ($isDataLoading) return
-    if ($currentPage === 1) return
+    if ($isDataLoading[storeKey]) return
+    if ($currentPage[storeKey] === 1) return
 
     search()
-  }, [$currentPage])
+  }, [$currentPage[storeKey]])
 
   function onCategoryChange(event: TargetedEvent<HTMLSelectElement>) {
     const value = event.currentTarget.value
@@ -98,9 +97,14 @@ export default function Filter({ pageSize, data }: Props) {
     setCurrentState(value)
   }
 
-  function onInputChange(event: TargetedEvent<HTMLInputElement>) {
-    const value = event.currentTarget.value
-    setViolatorUserId(value)
+  function updateShowClear(value: string) {
+    if (value !== '') setShowClear(true)
+    else setShowClear(false)
+  }
+
+  function onInputChange(e: TargetedEvent<HTMLInputElement>) {
+    const value = e.currentTarget.value
+    updateShowClear(value)
   }
 
   function onSubmit(e: TargetedEvent<HTMLFormElement>) {
@@ -111,16 +115,19 @@ export default function Filter({ pageSize, data }: Props) {
   }
 
   function clear() {
-    setViolatorUserId('')
+    updateShowClear('')
+    if (inputRef.current) inputRef.current.value = ''
+    updateURL()
+    search(true)
   }
 
   function search(reset: boolean = false) {
-    if ($isDataLoading) return
-    isDataLoading.set(true)
-
-    const { category, state, violatorUserId } = getQuery()
+    if ($isDataLoading[storeKey]) return
+    isDataLoading.setKey(storeKey, true)
 
     let newList = data
+
+    const { category, state, violatorUserId } = getQuery()
     if (category) {
       newList = filter(newList, (item) => item.category === category)
     }
@@ -136,17 +143,18 @@ export default function Filter({ pageSize, data }: Props) {
       )
     }
 
+    const totalAmount = newList.length
+
     if (reset) {
       newList = newList.slice(0, pageSize)
-      currentPage.set(1)
-      hasMore.set(newList.length >= pageSize)
+      currentPage.setKey(storeKey, 1)
     } else {
-      newList = newList.slice(0, pageSize * $currentPage)
-      hasMore.set(newList.length > $items.length)
+      newList = newList.slice(0, pageSize * $currentPage[storeKey])
     }
 
     items.set(newList)
-    isDataLoading.set(false)
+    hasMore.setKey(storeKey, newList.length < totalAmount)
+    isDataLoading.setKey(storeKey, false)
   }
 
   return (
@@ -179,11 +187,11 @@ export default function Filter({ pageSize, data }: Props) {
           <input
             type="text"
             placeholder="輸入使用者識別碼"
+            ref={inputRef}
             onChange={onInputChange}
-            value={violatorUserId}
           />
         </label>
-        {violatorUserId && (
+        {showClear && (
           <button type="reset" class="btn join-item btn-sm" aria-label="清除" onClick={clear}>
             <i class="fa fa-times"></i>
           </button>

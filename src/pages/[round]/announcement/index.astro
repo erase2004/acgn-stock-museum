@@ -9,6 +9,8 @@ import { getCurrentRound, getRoundData } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAnnouncements } from '@/services/dbAnnouncements'
 
+const STORE_KEY = 'announcement'
+
 const round = getCurrentRound(Astro)!
 const roundData = getRoundData(round)!
 const pageSize = roundData.config.dataNumberPerPage.announcements
@@ -21,7 +23,7 @@ const data = result?.[0].data ?? []
 <RoundLayout>
   <h1 class="round-block-title">系統公告</h1>
   <div class="divider"></div>
-  <Filter client:only="preact" pageSize={pageSize} data={data} />
-  <ListContainer client:only="preact" round={round} />
-  <LoadMore client:only="preact" />
+  <Filter client:only="preact" pageSize={pageSize} data={data} storeKey={STORE_KEY} />
+  <ListContainer client:only="preact" round={round} storeKey={STORE_KEY} />
+  <LoadMore client:only="preact" storeKey={STORE_KEY} />
 </RoundLayout>

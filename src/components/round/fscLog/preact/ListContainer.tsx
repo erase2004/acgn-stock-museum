@@ -6,20 +6,21 @@ import { useStore } from '@nanostores/preact'
 import { currentPage, hasMore } from '@/stores/pagination'
 
 type Props = {
+  storeKey: string
   round: string
   pageSize: number
   total: number
   data: z.infer<typeof logsWithCountSchema>[number]['data']
 }
 
-export default function ListContainer({ round, pageSize, total, data }: Props) {
+export default function ListContainer({ storeKey, round, pageSize, total, data }: Props) {
   const $currentPage = useStore(currentPage)
 
   const displayItems = useMemo(() => {
-    const newList = data.slice(0, pageSize * $currentPage)
-    hasMore.set(newList.length < total)
+    const newList = data.slice(0, pageSize * $currentPage[storeKey])
+    hasMore.setKey(storeKey, newList.length < total)
     return newList
-  }, [$currentPage])
+  }, [$currentPage[storeKey]])
 
   if (!total) return <em>沒有資料</em>
 

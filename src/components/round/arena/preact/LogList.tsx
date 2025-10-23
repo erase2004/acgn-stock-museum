@@ -3,13 +3,13 @@ import type { schema as schemaFighter } from '@/services/dbArenaFighters'
 import type { schema as schemaLog } from '@/services/dbArenaLog'
 import type { Dictionary } from 'lodash'
 import type { TargetedEvent } from 'preact'
+import CompanyLink from '@/components/common/preact/CompanyLink'
+import LoadMore from '@/components/common/preact/LoadMore'
 import { currentPage, hasMore, isDataLoading } from '@/stores/pagination'
 import { useStore } from '@nanostores/preact'
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
-import CompanyLink from '@/components/common/preact/CompanyLink'
 import { filter, map, zipObject } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
-import LoadMore from '@/components/common/preact/LoadMore'
 
 type Fighter = z.infer<typeof schemaFighter>
 type FighterDict = Dictionary<Fighter>
@@ -78,6 +78,7 @@ export default function LogList({ storeKey, round, pageSize, fighters, logs }: P
   const $isDataLoading = useStore(isDataLoading)
   const $currentPage = useStore(currentPage)
   const inputRef = useRef<HTMLInputElement>(null)
+  const [showClear, setShowClear] = useState(false)
   const [displayLogs, setDisplayLogs] = useState(logs.slice(0, pageSize))
 
   const fighterDict = useMemo(() => {
@@ -122,30 +123,44 @@ export default function LogList({ storeKey, round, pageSize, fighters, logs }: P
     isDataLoading.setKey(storeKey, true)
 
     let newList = logs
-    let totalAmount = newList.length
 
     const companyId = inputRef.current?.value ?? ''
     if (companyId) {
       newList = filter(newList, (log) => log.companyId.includes(companyId))
-      totalAmount = newList.length
     }
+
+    const totalAmount = newList.length
 
     if (reset) {
       newList = newList.slice(0, pageSize)
       currentPage.setKey(storeKey, 1)
-      hasMore.setKey(storeKey, newList.length >= pageSize)
     } else {
       newList = newList.slice(0, pageSize * $currentPage[storeKey])
-      hasMore.setKey(storeKey, newList.length < totalAmount)
     }
 
     setDisplayLogs(newList)
+    hasMore.setKey(storeKey, newList.length < totalAmount)
     isDataLoading.setKey(storeKey, false)
   }
 
   function onSubmit(e: TargetedEvent<HTMLFormElement>) {
     e.preventDefault()
+    search(true)
+  }
 
+  function updateShowClear(value: string) {
+    if (value !== '') setShowClear(true)
+    else setShowClear(false)
+  }
+
+  function handleInputChange(e: TargetedEvent<HTMLInputElement>) {
+    const value = e.currentTarget.value
+    updateShowClear(value)
+  }
+
+  function clear() {
+    updateShowClear('')
+    if (inputRef.current) inputRef.current.value = ''
     search(true)
   }
 
@@ -154,16 +169,13 @@ export default function LogList({ storeKey, round, pageSize, fighters, logs }: P
       <form class="sticky top-0 join bg-base-100 py-4 pr-4" onSubmit={onSubmit}>
         <label class="input input-sm join-item">
           <span class="label">篩選參賽者</span>
-          <input type="text" placeholder="全部參賽者" ref={inputRef} />
+          <input type="text" placeholder="全部參賽者" ref={inputRef} onChange={handleInputChange} />
         </label>
-        <button
-          type="reset"
-          class="btn join-item btn-sm"
-          aria-label="清除"
-          onClick={() => search(true)}
-        >
-          <i class="fa fa-times"></i>
-        </button>
+        {showClear && (
+          <button type="reset" class="btn join-item btn-sm" aria-label="清除" onClick={clear}>
+            <i class="fa fa-times"></i>
+          </button>
+        )}
 
         <button type="submit" class="btn join-item btn-sm btn-primary" aria-label="搜尋">
           <i class="fa fa-search"></i>
