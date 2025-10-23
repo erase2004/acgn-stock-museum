@@ -13,7 +13,7 @@ export default function ListContainer({ round }: Props) {
   const $items = useStore(items)
 
   return (
-    <div class="relative -z-10 flex flex-col gap-y-6">
+    <div class="relative flex flex-col gap-y-6">
       {$items.map(
         ({
           _id,

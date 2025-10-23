@@ -166,7 +166,7 @@ export default function LogList({ storeKey, round, pageSize, fighters, logs }: P
 
   return (
     <div>
-      <form class="sticky top-0 join bg-base-100 py-4 pr-4" onSubmit={onSubmit}>
+      <form class="sticky-control join py-4" onSubmit={onSubmit}>
         <label class="input input-sm join-item">
           <span class="label">篩選參賽者</span>
           <input type="text" placeholder="全部參賽者" ref={inputRef} onChange={handleInputChange} />

@@ -91,7 +91,7 @@
   }
 
   .table-base {
-    @apply -z-10 w-full table-fixed border-separate border-spacing-0 **:text-base **:[th,td]:border **:[tr,th,td]:border-base-content/25;
+    @apply w-full table-fixed border-separate border-spacing-0 **:text-base **:[th,td]:border **:[tr,th,td]:border-base-content/25;
   }
 
   table.custom-responsive-table-md {
@@ -200,6 +200,10 @@
       /* should be put after .markdown-container */
       margin-bottom: 0;
     }
+  }
+
+  .sticky-control {
+    @apply sticky top-0 z-10 bg-base-100;
   }
 }
 

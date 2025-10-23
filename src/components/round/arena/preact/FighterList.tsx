@@ -101,7 +101,7 @@ export default function FighterList({
 
   return (
     <div class="max-h-dvh overflow-y-auto">
-      <div class="sticky top-0 mb-2 flex flex-wrap gap-2 bg-base-100 py-4 pr-4 md:hidden">
+      <div class="sticky-control mb-2 flex flex-wrap gap-2 py-4 md:hidden">
         {arenaFighterSortableFields.map((field) => (
           <button
             key={field}

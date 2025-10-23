@@ -14,7 +14,7 @@ export default function ListContainer({ round }: Props) {
 
   return (
     <>
-      <table class="table-base custom-responsive-table-md table-pin-rows table mt-4">
+      <table class="table-base custom-responsive-table-md table-pin-rows table">
         <thead>
           <tr>
             <th class="truncate text-center" title="分類">

@@ -105,7 +105,7 @@ export default function Filter({ storeKey, data, pageSize }: Props) {
   }
 
   return (
-    <div class="flex flex-wrap gap-2">
+    <div class="sticky-control flex flex-wrap gap-2 py-4">
       <label class="select w-56 select-sm">
         <span class="label">顯示分類</span>
         <select onChange={onCategoryChange}>

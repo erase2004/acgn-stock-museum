@@ -21,7 +21,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
 
   return (
     <>
-      <div class="sticky top-0 mb-2 flex gap-x-2 bg-base-100 py-4 md:hidden">
+      <div class="sticky-control mb-2 flex gap-x-2 py-4 md:hidden">
         <button
           class={`btn-default btn btn-outline btn-sm ${getSortButtonClass('type')}`}
           onClick={() => {

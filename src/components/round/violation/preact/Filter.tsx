@@ -158,7 +158,7 @@ export default function Filter({ storeKey, pageSize, data }: Props) {
   }
 
   return (
-    <div class="sticky top-0 flex flex-wrap gap-2 bg-base-100 py-4 pr-2">
+    <div class="sticky-control flex flex-wrap gap-2 py-4">
       <label class="select w-44 select-sm">
         <span class="label">案件分類</span>
         <select onChange={onCategoryChange}>
