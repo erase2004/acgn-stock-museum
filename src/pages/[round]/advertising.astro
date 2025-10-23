@@ -26,7 +26,7 @@ function formatExpireDate(begin: Date) {
   <div class="divider"></div>
   <h2 class="text-3xl opacity-70">進行中的廣告</h2>
   <div class="divider"></div>
-  <table class="table-base custom-responsive-table-md table">
+  <table class="table-base custom-responsive-table-md table-pin-rows table">
     <thead>
       <tr>
         <th class="w-32 truncate text-center" title="購買者">購買者</th>
@@ -70,7 +70,7 @@ function formatExpireDate(begin: Date) {
           ))
         ) : (
           <tr class="default-content">
-            <td class="truncate p-1 text-center" colspan="4">
+            <td class="truncate" colspan="4">
               目前沒有發布中廣告！
             </td>
           </tr>

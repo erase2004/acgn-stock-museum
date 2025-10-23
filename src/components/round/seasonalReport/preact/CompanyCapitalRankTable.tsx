@@ -32,7 +32,7 @@ export default function CompanyCapitalRankTable({ round, data }: Props) {
       </thead>
       <tbody>
         {data.map(({ companyId, totalRelease, totalValue, capital }, index) => (
-          <tr key={companyId}>
+          <tr key={companyId} class="*:px-1">
             <td class="text-center text-nowrap">{index + 1}</td>
             <td class="truncate text-left">
               <CompanyLink round={round} companyId={companyId} />

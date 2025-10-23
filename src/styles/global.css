@@ -89,11 +89,9 @@
   .page-item {
     @apply btn btn-outline btn-sm btn-primary;
   }
-}
 
-@layer utilities {
   .table-base {
-    @apply w-full table-fixed border-separate border-spacing-0 **:py-2 **:text-base **:[th,td]:border **:[tr,th,td]:border-base-content/25;
+    @apply w-full table-fixed border-separate border-spacing-0 **:text-base **:[th,td]:border **:[tr,th,td]:border-base-content/25;
   }
 
   table.custom-responsive-table-md {
@@ -107,36 +105,51 @@
       @apply max-md:block;
     }
 
-    thead,
-    tbody {
-      @apply py-0;
-    }
-
     thead tr {
       @apply max-md:hidden;
     }
 
     tr {
-      @apply max-md:border-2 max-md:py-0;
+      @apply max-md:border-2;
 
       &.default-content {
         @apply max-md:border-none;
 
         td {
-          @apply max-md:border max-md:px-0;
+          @apply text-center max-md:border;
         }
       }
     }
 
     td {
-      @apply max-md:relative max-md:border-b max-md:border-solid max-md:pl-[35%] max-md:whitespace-normal;
+      @apply min-h-8 max-md:relative max-md:whitespace-normal;
 
       &:last-child {
         @apply max-md:border-b-0;
       }
 
       &::before {
-        @apply max-md:absolute max-md:left-1 max-md:text-left max-md:font-bold max-md:whitespace-nowrap max-md:content-[attr(data-title)];
+        @apply pb-[1rem] max-md:absolute max-md:left-1 max-md:text-left max-md:font-bold max-md:whitespace-nowrap max-md:content-[attr(data-title)];
+      }
+    }
+  }
+}
+
+@layer utilities {
+  .table-base {
+    @apply **:[th,td]:py-1;
+  }
+
+  table.custom-responsive-table-md {
+    td {
+      @apply max-md:pl-[35%];
+    }
+
+    tr {
+      &.default-content {
+        td {
+          @apply max-md:px-0;
+        }
       }
     }
   }

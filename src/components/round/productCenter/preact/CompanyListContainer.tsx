@@ -18,7 +18,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
 
   return (
     <>
-      <div class="mb-2 flex gap-x-2 md:hidden">
+      <div class="sticky top-0 z-1 mb-2 flex gap-x-2 bg-base-100 py-4 md:hidden">
         <button
           class={`btn-default btn btn-outline btn-sm ${getSortButtonClass('type')}`}
           onClick={() => {
@@ -47,7 +47,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
           {getSortIcon('voteCount')}
         </button>
       </div>
-      <table class="table-base custom-responsive-table-md table">
+      <table class="table-base custom-responsive-table-md table-pin-rows table">
         <thead>
           <tr>
             <th class="truncate text-center" title="產品">
@@ -93,7 +93,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
                   <div class="max-h-12 overflow-y-auto break-all">
                     <ProductLink round={round} productId={item._id} />
                   </div>
-                  <div class="max-h-14 overflow-y-auto text-sm! break-all">{item.description}</div>
+                  <div class="max-h-14 overflow-y-auto text-sm break-all">{item.description}</div>
                 </td>
                 <td class="truncate text-center text-nowrap" data-title="類別">
                   {item.type}
@@ -121,9 +121,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
             ))
           ) : (
             <tr class="default-content">
-              <td class="text-center" colspan={4}>
-                這家公司尚未推出任何產品！
-              </td>
+              <td colspan={4}>這家公司尚未推出任何產品！</td>
             </tr>
           )}
         </tbody>

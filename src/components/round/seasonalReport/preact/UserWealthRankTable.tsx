@@ -32,7 +32,7 @@ export default function UserWealthRankTable({ round, data }: Props) {
       </thead>
       <tbody>
         {data.map(({ userId, money, stocksValue, totalWealth }, index) => (
-          <tr key={userId}>
+          <tr key={userId} class="*:px-1">
             <td class="text-center text-nowrap">{index + 1}</td>
             <td class="truncate text-left">
               <UserLink round={round} userId={userId} />

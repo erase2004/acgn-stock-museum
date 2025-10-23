@@ -14,7 +14,7 @@ const { type, round, data } = Astro.props
 const hasData = data.length > 0
 ---
 
-<table class="table-base custom-responsive-table-md table">
+<table class="table-base custom-responsive-table-md table-pin-rows table">
   <thead>
     <tr>
       <th class="w-3/5 truncate text-center" title="議程主題">議程主題</th>
@@ -47,13 +47,9 @@ const hasData = data.length > 0
           )
         })
       ) : (
-        <Fragment>
-          <tr class="default-content">
-            <td class="text-center" colspan={3}>
-              沒有{type}的議程！
-            </td>
-          </tr>
-        </Fragment>
+        <tr class="default-content">
+          <td colspan={3}>沒有{type}的議程！</td>
+        </tr>
       )
     }
   </tbody>

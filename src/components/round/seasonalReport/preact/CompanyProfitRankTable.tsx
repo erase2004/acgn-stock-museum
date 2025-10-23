@@ -35,7 +35,7 @@ export default function CompanyProfitRankTable({ round, data }: Props) {
       </thead>
       <tbody>
         {data.map(({ companyId, profit, totalRelease, avgPrice, priceToEarn }, index) => (
-          <tr key={companyId}>
+          <tr key={companyId} class="*:px-1">
             <td class="text-center text-nowrap">{index + 1}</td>
             <td class="truncate text-left">
               <CompanyLink round={round} companyId={companyId} />

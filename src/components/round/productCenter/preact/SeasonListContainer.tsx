@@ -19,7 +19,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
 
   return (
     <>
-      <div class="mb-2 flex gap-x-2 md:hidden">
+      <div class="sticky top-0 z-1 mb-2 flex gap-x-2 bg-base-100 py-4 md:hidden">
         <button
           class={`btn-default btn btn-outline btn-sm ${getSortButtonClass('type')}`}
           onClick={() => {
@@ -48,9 +48,9 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
           {getSortIcon('voteCount')}
         </button>
       </div>
-      <table class="table-base custom-responsive-table-md table">
+      <table class="table-base custom-responsive-table-md table-pin-rows table">
         <thead>
-          <tr>
+          <tr class="*:px-0">
             <th class="w-2/5 truncate text-center" title="產品">
               產品
             </th>
@@ -58,7 +58,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
               公司名稱
             </th>
             <th
-              class="w-24 cursor-pointer truncate px-0 text-center"
+              class="w-24 cursor-pointer truncate text-center"
               title="類別"
               onClick={() => {
                 handleSortChange('type')
@@ -68,7 +68,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
               {getSortIcon('type')}
             </th>
             <th
-              class="w-24 cursor-pointer truncate px-0 text-center"
+              class="w-24 cursor-pointer truncate text-center"
               title="分級"
               onClick={() => {
                 handleSortChange('rating')
@@ -78,7 +78,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
               {getSortIcon('rating')}
             </th>
             <th
-              class="w-24 cursor-pointer truncate px-0 text-center"
+              class="w-24 cursor-pointer truncate text-center"
               title="得票數"
               onClick={() => {
                 handleSortChange('voteCount')
@@ -97,7 +97,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
                   <div class="max-h-12 overflow-y-auto break-all">
                     <ProductLink round={round} productId={item._id} />
                   </div>
-                  <div class="max-h-14 overflow-y-auto text-sm! break-all">{item.description}</div>
+                  <div class="max-h-14 overflow-y-auto text-sm break-all">{item.description}</div>
                 </td>
                 <td class="truncate text-left text-nowrap" data-title="公司名稱">
                   <CompanyLink round={round} companyId={item.companyId} />
@@ -128,9 +128,7 @@ export default function SeasonListContainer({ round, pageSize, data }: Props) {
             ))
           ) : (
             <tr class="default-content">
-              <td class="text-center" colspan={5}>
-                當季度沒有任何產品上架！
-              </td>
+              <td colspan={5}>當季度沒有任何產品上架！</td>
             </tr>
           )}
         </tbody>

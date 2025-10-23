@@ -16,7 +16,7 @@ export default function ListContainer({ round }: Props) {
 
   return (
     <>
-      <table class="table-base custom-responsive-table-md table mt-4">
+      <table class="table-base custom-responsive-table-md table-pin-rows table mt-4">
         <thead>
           <tr>
             <th class="truncate text-center" title="分類">
@@ -40,7 +40,7 @@ export default function ListContainer({ round }: Props) {
                 {categoryDisplayName(category)}
               </td>
               <td class="truncate text-left" data-title="主旨">
-                <div class="flex items-center gap-x-2 py-0! **:py-0!">
+                <div class="flex items-center gap-x-2">
                   {voided && <span class="badge text-nowrap badge-warning">已作廢</span>}
                   <a href={getAnnouncementUrl(round, _id)}>{subject}</a>
                 </div>
@@ -48,7 +48,7 @@ export default function ListContainer({ round }: Props) {
               <td class="truncate text-center" data-title="發佈人">
                 <UserLink round={round} userId={creator} />
               </td>
-              <td class="px-md-2 truncate text-center" data-title="發佈日期">
+              <td class="truncate text-center" data-title="發佈日期">
                 {formatDateTimeText(createdAt)}
               </td>
             </tr>
