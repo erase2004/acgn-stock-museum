@@ -3,6 +3,8 @@ export const defaultWebsiteName = 'ACGN 股票歷史博物館'
 type RoundKey = `round${number}`
 
 type RoundConfig = {
+  /** 最萌亂鬥大賽的參賽所需最小總投資金額 */
+  arenaMinInvestedAmount: number
   /** 廣告持續時間，單位為毫秒 */
   advertisingExpireTime: number
   /** 同時最多顯示的廣告筆數 */
@@ -22,10 +24,13 @@ type RoundConfig = {
     violationRelatedLog: number
     announcements: number
     productCenter: number
+    arenaFighterList: number
+    arenaLog: number
   }
 }
 
 const BaseRoundConfig: RoundConfig = {
+  arenaMinInvestedAmount: 10000,
   advertisingExpireTime: 259200000,
   displayAdvertisingNumber: 5,
   announceSalaryTime: 259200000,
@@ -39,6 +44,8 @@ const BaseRoundConfig: RoundConfig = {
     violationRelatedLog: 30,
     announcements: 20,
     productCenter: 30,
+    arenaFighterList: 20,
+    arenaLog: 30,
   },
 }
 

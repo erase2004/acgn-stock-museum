@@ -1,0 +1,96 @@
+---
+export const prerender = false
+
+import SeasonNavbar from '@/components/common/preact/SeasonNavbar'
+import RoundLayout from '@/layouts/Round.astro'
+import PanelFolder from '@/components/common/preact/PanelFolder'
+import FighterList from '@/components/round/arena/preact/FighterList'
+import LogList from '@/components/round/arena/preact/LogList'
+import { getConnection } from '@/libs/databases'
+import { getRoundData } from '@/libs/routes'
+import { getCurrentRound, getMuseumMainPageUrl, getArenaInfoUrl } from '@/libs/routes'
+import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
+import { getArenaById, getPreviousArena, getNextArena } from '@/services/dbArena'
+import { getFighters } from '@/services/dbArenaFighters'
+import { getArenaLogs } from '@/services/dbArenaLog'
+import { isArenaEnded, isArenaJoinEnded } from '@/utils/arena'
+
+const arenaId = Astro.params['arenaId']!
+const round = getCurrentRound(Astro)!
+const roundData = getRoundData(round)!
+const connection = getConnection(round)!
+const currentRound = await getCurrentRoundFromDB(connection)
+
+const homepage = getMuseumMainPageUrl()
+
+const currentArena = await getArenaById(connection, arenaId)
+if (!currentArena || !currentRound) {
+  return Astro.redirect(homepage)
+}
+
+const previousArena = await getPreviousArena(connection, currentArena)
+const previousArenaUrl = previousArena ? getArenaInfoUrl(round, previousArena._id) : undefined
+
+const nextArena = await getNextArena(connection, currentArena)
+const nextArenaUrl = nextArena ? getArenaInfoUrl(round, nextArena._id) : undefined
+
+const isEnded = isArenaEnded(currentArena.endDate, currentRound.endDate)
+const fighters = (await getFighters(connection, arenaId)) ?? []
+
+const logs = (await getArenaLogs(connection, arenaId)) ?? []
+---
+
+<RoundLayout>
+  <h1 class="round-block-title">最萌亂鬥大賽</h1>
+  <div class="divider"></div>
+  <SeasonNavbar
+    client:only="preact"
+    currentSeason={currentArena}
+    previousSeasonUrl={previousArenaUrl}
+    nextSeasonUrl={nextArenaUrl}
+  />
+  <div class="divider"></div>
+  {
+    isEnded ? (
+      <div>本屆最萌亂鬥大賽已經結束！</div>
+    ) : isArenaJoinEnded(currentArena.joinEndDate, currentRound.endDate) ? (
+      <div class="text-warning">本屆最萌亂鬥大賽報名已經截止。</div>
+    ) : (
+      <div class="text-info">本屆最萌亂鬥大賽正在報名中。</div>
+    )
+  }
+  <div class="divider"></div>
+  <PanelFolder
+    client:only="preact"
+    title={isEnded ? '優勝者列表' : '參賽者列表'}
+    classes="text-2xl mb-2"
+    state={true}
+  >
+    <FighterList
+      client:only="preact"
+      storeKey={'fighter'}
+      round={round}
+      isArenaEnded={isEnded}
+      pageSize={roundData.config.dataNumberPerPage.arenaFighterList}
+      minInvestment={roundData.config.arenaMinInvestedAmount}
+      data={fighters}
+    />
+  </PanelFolder>
+  {
+    isEnded && (
+      <Fragment>
+        <div class="divider" />
+        <PanelFolder client:only="preact" title={'戰鬥紀錄'} classes="text-2xl" state={false}>
+          <LogList
+            client:only="preact"
+            storeKey="log"
+            round={round}
+            pageSize={roundData.config.dataNumberPerPage.arenaLog}
+            fighters={fighters}
+            logs={logs}
+          />
+        </PanelFolder>
+      </Fragment>
+    )
+  }
+</RoundLayout>

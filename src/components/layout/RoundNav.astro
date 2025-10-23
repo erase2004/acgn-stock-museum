@@ -5,10 +5,12 @@ import ThemeToggle from './ThemeToggle.astro'
 import { getCurrentRound, PAGE } from '@/libs/routes'
 import { getLatestSeason } from '@/services/dbSeason'
 import { getConnection } from '@/libs/databases'
+import { getLatestArena } from '@/services/dbArena'
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 const latestSeason = await getLatestSeason(connection)
+const latestArena = await getLatestArena(connection)
 ---
 
 <!-- TODO: login & user profile menu -->
@@ -23,11 +25,7 @@ const latestSeason = await getLatestSeason(connection)
       isRoundBounded={true}
       params={latestSeason?._id}
     />
-    <NavLink
-      pageName={PAGE.ARENA_INFO}
-      isRoundBounded={true}
-      params={'/* TODO: current season */'}
-    />
+    <NavLink pageName={PAGE.ARENA_INFO} isRoundBounded={true} params={latestArena?._id} />
   </NavLinkGroup>
   <!-- TODO: user's favorite company list -->
   <NavLinkGroup text="其他資訊">

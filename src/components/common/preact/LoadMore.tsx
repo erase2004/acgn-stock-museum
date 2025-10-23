@@ -1,22 +1,35 @@
-import { currentPage, isDataLoading, hasMore } from '@/stores/pagination'
+import { currentPage, isDataLoading, hasMore, isInitialized } from '@/stores/pagination'
 import { useStore } from '@nanostores/preact'
 import { useIntersectionObserver } from 'usehooks-ts'
 import { useEffect } from 'preact/hooks'
 
-export default function LoadMore() {
+type Props = {
+  storeKey: string
+}
+
+export default function LoadMore({ storeKey }: Props) {
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
   const $hasMore = useStore(hasMore)
+  const $isInitialized = useStore(isInitialized)
+
+  if (!$isInitialized[storeKey]) {
+    isInitialized.setKey(storeKey, true)
+    currentPage.setKey(storeKey, 1)
+    isDataLoading.setKey(storeKey, false)
+    hasMore.setKey(storeKey, true)
+  }
+
   const { isIntersecting, ref } = useIntersectionObserver({})
 
-  if (!$hasMore) return <></>
+  if (!$hasMore[storeKey]) return <></>
 
   useEffect(() => {
     if (isIntersecting) {
-      if (!$hasMore) return
-      if ($isDataLoading) return
+      if (!$hasMore[storeKey]) return
+      if ($isDataLoading[storeKey]) return
 
-      currentPage.set($currentPage + 1)
+      currentPage.setKey(storeKey, $currentPage[storeKey] + 1)
     }
   }, [isIntersecting])
 

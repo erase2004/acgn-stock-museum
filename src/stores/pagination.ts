@@ -1,7 +1,9 @@
-import { atom } from 'nanostores'
+import { map } from 'nanostores'
 
-export const currentPage = atom(1)
+export const isInitialized = map<Record<string, boolean>>({})
 
-export const isDataLoading = atom(false)
+export const currentPage = map<Record<string, number>>({})
 
-export const hasMore = atom(true)
+export const isDataLoading = map<Record<string, boolean>>({})
+
+export const hasMore = map<Record<string, boolean>>({})

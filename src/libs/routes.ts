@@ -253,3 +253,11 @@ export function getProductCenterByCompanyUrl(round: string, companyId: string) {
     params: companyId,
   })
 }
+
+export function getArenaInfoUrl(round: string, arenaId: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.ARENA_INFO,
+    params: arenaId,
+  })
+}
