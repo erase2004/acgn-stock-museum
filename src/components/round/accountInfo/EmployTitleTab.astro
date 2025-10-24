@@ -1,0 +1,41 @@
+---
+import EmployeeTitleList from './preact/EmployeeTitleList'
+import { z } from 'astro/zod'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound } from '@/libs/routes'
+import { getDBEmployees, schema as schemaEmployee } from '@/services/dbEmployees'
+import { getDBCompanies, schema as schemaCompany } from '@/services/dbCompanies'
+import { handlePromiseParser } from '@/utils/helpers'
+import { map, zipObject } from 'lodash-es'
+
+const userId = Astro.params['userId'] ?? ''
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)!
+const dbEmployees = getDBEmployees(connection)
+const dbCompanies = getDBCompanies(connection)
+
+const employments =
+  (await handlePromiseParser(
+    z
+      .promise(schemaEmployee.array())
+      .parse(dbEmployees.find({ userId, resigned: false }, { sort: { employed: -1 } }).toArray()),
+  )) ?? []
+
+const companies =
+  (await handlePromiseParser(
+    z
+      .promise(schemaCompany.array())
+      // @ts-expect-error: valid ObjectId
+      .parse(dbCompanies.find({ _id: { $in: map(employments, 'companyId') } }).toArray()),
+  )) ?? []
+
+const companyDict = zipObject(map(companies, '_id'), map(companies, 'isSeal'))
+
+const data = employments.map((item) =>
+  Object.assign({}, item, {
+    isSeal: item.companyId in companyDict ? companyDict[item.companyId] : false,
+  }),
+)
+---
+
+<EmployeeTitleList client:only="preact" round={round} data={data} />

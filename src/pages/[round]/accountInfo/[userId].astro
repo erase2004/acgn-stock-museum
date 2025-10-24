@@ -1,0 +1,30 @@
+---
+export const prerender = false
+
+import RoundLayout from '@/layouts/Round.astro'
+import BasicInfo from '@/components/round/accountInfo/BasicInfo.astro'
+import { getConnection } from '@/libs/databases'
+import { getCurrentPageFullTitle, getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
+import { getDBUsers, schema as schemaUser } from '@/services/dbUsers'
+import { handlePromiseParser } from '@/utils/helpers'
+import { z } from 'astro/zod'
+
+const userId = Astro.params['userId'] ?? ''
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)
+const dbUsers = getDBUsers(connection)
+
+const user = await handlePromiseParser(
+  // @ts-expect-error: userId is valid ObjectId
+  z.promise(schemaUser).parse(dbUsers.findOne({ _id: userId })),
+)
+if (!user) {
+  return Astro.redirect(getMuseumMainPageUrl())
+}
+
+const title = getCurrentPageFullTitle(Astro, user.profile.name)
+---
+
+<RoundLayout title={title}>
+  <BasicInfo round={round} user={user} />
+</RoundLayout>

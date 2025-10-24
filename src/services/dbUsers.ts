@@ -1,6 +1,15 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 
+export const BanTypeList = [
+  'accuse', // 所有舉報違規行為
+  'deal', // 所有投資下單行為
+  'chat', // 所有聊天發言行為
+  'advertise', // 所有廣告宣傳行為
+  'editUserAbout', // 編輯個人簡介
+  'manager', // 擔任經理人的資格
+] as const
+
 export const SpecialUser = {
   NONE: '!none',
   SYSTEM: '!system',
@@ -33,6 +42,10 @@ export const UserRole = {
   },
 }
 
+export function hasRole(user: Pick<User, 'profile'>, role: string) {
+  return user.profile && user.profile.roles && user.profile.roles.includes(role)
+}
+
 export function roleDisplayName(role: string) {
   return (
     Object.values(UserRole).find((user) => user.name === role) ?? {
@@ -56,6 +69,42 @@ const profileSchema = z.object({
       }
       return true
     }),
+  /** 帳號驗證來源 */
+  validateType: z.enum(['Google', 'PTT', 'Bahamut']),
+  /** 被禁止的權限 */
+  ban: z.enum(BanTypeList).array(),
+  /** 未登入天數次數紀錄 */
+  noLoginDayCount: z.number().int().min(0),
+  lastSeasonTotalWealth: z.number().int().default(0),
+  /** 金錢數量 */
+  money: z.number().int().min(0),
+  /** 消費券的數量 */
+  vouchers: z.number().int().min(0),
+  /** 推薦票數量 */
+  voteTickets: z.number().int().min(0).default(0),
+  /** 是否處於渡假模式 */
+  isInVacation: z.boolean().default(false),
+  /** 是否將要收假 */
+  isEndingVacation: z.boolean().default(false),
+})
+
+const statusSchema = z.object({
+  /** 最後上線資訊 */
+  lastLogin: z
+    .object({
+      /** 日期 */
+      date: z.coerce.date().optional(),
+      /** IP 地址 */
+      ipAddr: z.string().optional(),
+      /** 使用瀏覽器 */
+      userAgent: z.string().optional(),
+    })
+    .optional(),
+})
+
+const aboutSchema = z.object({
+  description: z.string().max(300).default(''),
+  picture: z.string().url().optional(),
 })
 
 export const schema = z.object({
@@ -65,7 +114,11 @@ export const schema = z.object({
   /** 驗證成功日期 */
   createdAt: z.coerce.date(),
   profile: profileSchema,
+  status: statusSchema.optional(),
+  about: aboutSchema,
 })
+
+export type User = z.infer<typeof schema>
 
 export function getDBUsers(db: Db) {
   return db.collection('users')

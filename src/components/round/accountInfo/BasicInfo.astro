@@ -1,0 +1,120 @@
+---
+import { type User, BanTypeList, roleDisplayName } from '@/services/dbUsers'
+import AccountCard from './AccountCard.astro'
+import AccountCompanyTitle from './AccountCompanyTitle.astro'
+import { currencyFormat, styledValidateTypeMarkHtml } from '@/utils/helpers'
+import { formatDateTimeText } from '@/libs/timeFormat'
+
+type BanType = (typeof BanTypeList)[number]
+
+type Props = {
+  round: string
+  user: User
+}
+
+const { round, user } = Astro.props
+
+const banMessage: Partial<Record<BanType, string>> = {
+  accuse: '目前被禁止舉報違規。',
+  deal: '目前被禁止投資下單。',
+  chat: '目前被禁止聊天發言。',
+  advertise: '目前被禁止廣告宣傳。',
+  editUserAbout: '目前被禁止編輯個人簡介。',
+}
+
+function isBanned(user: User, type: BanType) {
+  return user.profile.ban.includes(type)
+}
+
+function showValidateType(user: User) {
+  switch (user.profile.validateType) {
+    case 'Google': {
+      return `【Google帳號】${user.profile.name}`
+    }
+    case 'PTT': {
+      return `【PTT帳號】${user.username}`
+    }
+    case 'Bahamut': {
+      return `【巴哈姆特帳號】${user.username?.replace('?', '')}`
+    }
+  }
+}
+---
+
+<h1
+  class="round-block-title max-h-36 min-h-14 overflow-x-hidden overflow-y-auto leading-normal break-words overflow-ellipsis"
+>
+  使用者「<span set:html={styledValidateTypeMarkHtml(user.profile.validateType)} />{
+    user.profile.name
+  }」帳號資訊
+</h1>
+<div class="divider"></div>
+{
+  BanTypeList.map((type) => {
+    if (isBanned(user, type)) {
+      const message = banMessage[type]
+
+      if (message) {
+        return <p class="text-error">{message}</p>
+      }
+    }
+    return ''
+  })
+}
+<div class="flex w-full flex-wrap gap-y-2">
+  <div class="w-full md:w-1/3">
+    <p>
+      使用者識別碼：{user._id}
+    </p>
+    <p>
+      帳號驗證方式：{showValidateType(user)}
+    </p>
+    <p>
+      帳號啟動日期：{formatDateTimeText(user.createdAt)}
+    </p>
+    <p>
+      上次登入時間：{formatDateTimeText(user.status?.lastLogin?.date)}
+    </p>
+    <p>
+      上次登入IP：{user.status?.lastLogin?.ipAddr}
+    </p>
+    <p>
+      本季度未登入天數：{user.profile.noLoginDayCount}
+    </p>
+    <p>
+      上季度財富統計：{user.profile.lastSeasonTotalWealth}
+    </p>
+    <p>
+      帳號當前餘額：{currencyFormat(user.profile.money)}
+    </p>
+    <p>
+      帳號剩餘消費券：{currencyFormat(user.profile.vouchers)}
+    </p>
+    <p>
+      帳號剩餘推薦票：{user.profile.voteTickets}
+    </p>
+  </div>
+  <div class="w-full md:w-2/3">
+    <AccountCard {...user} round={round} />
+  </div>
+  <div class="w-full">
+    {
+      user.profile.isInVacation && (
+        <Fragment>
+          <p class="text-info">目前正在渡假中。</p>
+          {user.profile.isEndingVacation && <p class="text-info">將於本商業季度結束渡假。</p>}
+        </Fragment>
+      )
+    }
+    <div class="flex flex-wrap gap-x-1">
+      {
+        user.profile.roles.map((role) => (
+          <span class="badge badge-warning">{roleDisplayName(role)}</span>
+        ))
+      }
+    </div>
+    <!-- TODO: 可能是 legacy 資料行為 -->
+    <!-- {user.profile.revokeQualification && <p class="text-alert">被撤銷了擔任經理人的資格！</p>} -->
+  </div>
+  <AccountCompanyTitle />
+</div>

@@ -1,0 +1,123 @@
+---
+import ChairmanTitleList from './preact/ChairmanTitleList'
+import ManagerTitleList from './preact/ManagerTitleList'
+import FounderTitleList from './preact/FounderTitleList'
+import EmployeeTitleList from './preact/EmployeeTitleList'
+import VipTitleList from './preact/VipTitleList'
+import { z } from 'astro/zod'
+import { map, zipObject } from 'lodash-es'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound } from '@/libs/routes'
+import { getDBCompanies, schema as schemaCompany } from '@/services/dbCompanies'
+import { getDBEmployees, schema as schemaEmployee } from '@/services/dbEmployees'
+import { getDBVips, schema as schemaVip } from '@/services/dbVips'
+import { handlePromiseParser } from '@/utils/helpers'
+
+const TITLE_MAP = {
+  chairman: '董事長',
+  manager: '經理人',
+  founder: '創立人',
+  employee: '員工',
+  vip: 'VIP',
+}
+
+const userId = Astro.params['userId'] ?? ''
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)!
+const dbCompanies = getDBCompanies(connection)
+
+// chairman
+const chairmanTitles =
+  (await handlePromiseParser(
+    z
+      .promise(schemaCompany.array())
+      .parse(
+        dbCompanies.find({ chairman: userId, isSeal: false }, { sort: { createdAt: -1 } }).toArray()
+      )
+  )) ?? []
+
+// manager
+const managerTitles =
+  (await handlePromiseParser(
+    z
+      .promise(schemaCompany.array())
+      .parse(
+        dbCompanies.find({ manager: userId, isSeal: false }, { sort: { createdAt: -1 } }).toArray()
+      )
+  )) ?? []
+
+// founder
+const founderTitles =
+  (await handlePromiseParser(
+    z
+      .promise(schemaCompany.array())
+      .parse(
+        dbCompanies.find({ founder: userId, isSeal: false }, { sort: { createdAt: -1 } }).toArray()
+      )
+  )) ?? []
+
+// employee
+const dbEmployees = getDBEmployees(connection)
+const employments =
+  (await handlePromiseParser(
+    z
+      .promise(schemaEmployee.array())
+      .parse(dbEmployees.find({ userId, resigned: false }, { sort: { employed: -1 } }).toArray())
+  )) ?? []
+const companies =
+  (await handlePromiseParser(
+    z
+      .promise(schemaCompany.array())
+      // @ts-expect-error: valid ObjectId
+      .parse(dbCompanies.find({ _id: { $in: map(employments, 'companyId') } }).toArray())
+  )) ?? []
+
+const companyDict = zipObject(map(companies, '_id'), map(companies, 'isSeal'))
+const employeeTitles = employments.map((item) =>
+  Object.assign({}, item, {
+    isSeal: item.companyId in companyDict ? companyDict[item.companyId] : false,
+  })
+)
+
+// vip
+const dbVips = getDBVips(connection)
+const vipTitles =
+  (await handlePromiseParser(
+    z.promise(schemaVip.array()).parse(dbVips.find({ userId }, { sort: { level: -1 } }).toArray())
+  )) ?? []
+---
+
+<div class="tabs-lift tabs w-full">
+  {
+    Object.values(TITLE_MAP).map((value, index) => {
+      return (
+        <Fragment>
+          <input
+            type="radio"
+            name="title"
+            class="tab [--tab-border-color:var(--color-neutral-content)]"
+            aria-label={value}
+            checked={index === 0}
+          />
+          <div class="tab-content max-h-60 overflow-y-auto border-neutral-content p-4">
+            {value === TITLE_MAP.chairman && (
+              <ChairmanTitleList client:only="preact" round={round} data={chairmanTitles} />
+            )}
+            {value === TITLE_MAP.manager && (
+              <ManagerTitleList client:only="preact" round={round} data={managerTitles} />
+            )}
+            {value === TITLE_MAP.founder && (
+              <FounderTitleList client:only="preact" round={round} data={founderTitles} />
+            )}
+            {value === TITLE_MAP.employee && (
+              <EmployeeTitleList client:only="preact" round={round} data={employeeTitles} />
+            )}
+            {value === TITLE_MAP.vip && (
+              <VipTitleList client:only="preact" round={round} data={vipTitles} />
+            )}
+          </div>
+        </Fragment>
+      )
+    })
+  }
+</div>

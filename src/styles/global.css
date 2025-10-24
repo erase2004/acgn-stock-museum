@@ -205,6 +205,45 @@
   .sticky-control {
     @apply sticky top-0 z-10 bg-base-100;
   }
+
+  .account-card-default {
+    background: #fff;
+  }
+  .account-card-super-admin {
+    background: #a80000;
+    background: -webkit-linear-gradient(160deg, #fffbd5, #a80000 100%);
+    background: -o-linear-gradient(160deg, #fffbd5, #a80000 100%);
+    background: -moz-linear-gradient(160deg, #fffbd5, #a80000 100%);
+    background: linear-gradient(160deg, #fffbd5, #a80000 100%);
+  }
+  .account-card-general-manager {
+    background: #a80000;
+    background: -webkit-linear-gradient(160deg, #fffbd5, #a80000 100%);
+    background: -o-linear-gradient(160deg, #fffbd5, #a80000 100%);
+    background: -moz-linear-gradient(160deg, #fffbd5, #a80000 100%);
+    background: linear-gradient(160deg, #fffbd5, #a80000 100%);
+  }
+  .account-card-developer {
+    background: #39c5bb;
+    background: -webkit-linear-gradient(160deg, #fffbd5, #39c5bb 120%);
+    background: -o-linear-gradient(160deg, #fffbd5, #39c5bb 120%);
+    background: -moz-linear-gradient(160deg, #fffbd5, #39c5bb 120%);
+    background: linear-gradient(160deg, #fffbd5, #39c5bb 120%);
+  }
+  .account-card-planner {
+    background: #ff1493;
+    background: -webkit-linear-gradient(160deg, #fffbd5, #ff1493 100%);
+    background: -o-linear-gradient(160deg, #fffbd5, #ff1493 100%);
+    background: -moz-linear-gradient(160deg, #fffbd5, #ff1493 100%);
+    background: linear-gradient(160deg, #fffbd5, #ff1493 100%);
+  }
+  .account-card-fsc {
+    background: #f1c40f;
+    background: -webkit-linear-gradient(160deg, #fffbd5, #f1c40f 100%);
+    background: -o-linear-gradient(160deg, #fffbd5, #f1c40f 100%);
+    background: -moz-linear-gradient(160deg, #fffbd5, #f1c40f 100%);
+    background: linear-gradient(160deg, #fffbd5, #f1c40f 100%);
+  }
 }
 
 @layer utilities {
