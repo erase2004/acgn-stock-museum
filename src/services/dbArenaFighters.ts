@@ -39,9 +39,9 @@ export const schema = z.object({
   /** 公司 ID */
   companyId: z.string(),
   /** 報名截止時，該報名角色的經理 User ID (決定該次大賽戰鬥時決策的經理 User ID) */
-  manager: z.string().optional(),
+  manager: z.string().nullish(),
   /** 亂鬥名次（於亂鬥結束時產生） */
-  rank: z.number().int().optional(),
+  rank: z.number().int().nullish(),
   /** 總投資額 */
   totalInvestedAmount: investmentSchema,
   /** 目前已投資在 hp 屬性上的總資金量 */

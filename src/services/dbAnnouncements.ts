@@ -35,7 +35,7 @@ export const rejectionPetitionSchema = z.object({
   /** 截止時間 */
   dueAt: z.coerce.date(),
   /** 通過時間 */
-  passedAt: z.coerce.date().optional(),
+  passedAt: z.coerce.date().nullish(),
   /** 連署人列表 */
   signers: z.string().array(),
 })
@@ -70,15 +70,15 @@ export const schema = z.object({
   /** 是否已作廢 */
   voided: z.boolean().default(false),
   /** 作廢原因 */
-  voidedReason: z.string().min(1).max(100).optional(),
+  voidedReason: z.string().min(1).max(100).nullish(),
   /** 作廢的使用者 */
-  voidedBy: z.string().optional(),
+  voidedBy: z.string().nullish(),
   /** 作廢時間 */
-  voidedAt: z.coerce.date().optional(),
+  voidedAt: z.coerce.date().nullish(),
   /** 否決連署 */
-  rejectionPetition: rejectionPetitionSchema.optional(),
+  rejectionPetition: rejectionPetitionSchema.nullish(),
   /** 否決投票 */
-  rejectionPoll: rejectionPollSchema.optional(),
+  rejectionPoll: rejectionPollSchema.nullish(),
 })
 
 export const listItemSchema = schema.pick({

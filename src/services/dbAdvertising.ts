@@ -11,7 +11,7 @@ export const schema = z.object({
   /** 廣告訊息 */
   message: z.string().min(1),
   /** 廣告連結 */
-  url: z.string().url().optional(),
+  url: z.string().url().nullish(),
   /** 申請廣告日期 */
   createdAt: z.coerce.date(),
 })

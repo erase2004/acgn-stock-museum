@@ -93,28 +93,28 @@ const statusSchema = z.object({
   lastLogin: z
     .object({
       /** 日期 */
-      date: z.coerce.date().optional(),
+      date: z.coerce.date().nullish(),
       /** IP 地址 */
-      ipAddr: z.string().optional(),
+      ipAddr: z.string().nullish(),
       /** 使用瀏覽器 */
-      userAgent: z.string().optional(),
+      userAgent: z.string().nullish(),
     })
-    .optional(),
+    .nullish(),
 })
 
 const aboutSchema = z.object({
   description: z.string().max(300).default(''),
-  picture: z.string().url().optional(),
+  picture: z.string().url().nullish(),
 })
 
 export const schema = z.object({
   _id: z.string(),
   /** 使用者 PTT 帳號名稱 */
-  username: z.string().optional(),
+  username: z.string().nullish(),
   /** 驗證成功日期 */
   createdAt: z.coerce.date(),
   profile: profileSchema,
-  status: statusSchema.optional(),
+  status: statusSchema.nullish(),
   about: aboutSchema,
 })
 

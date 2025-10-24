@@ -17,7 +17,7 @@ const defaultText = '???'
 
 type Props = {
   round: string
-  userId?: string
+  userId?: string | null
 }
 
 export default function UserLink({ round, userId }: Props) {

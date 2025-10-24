@@ -24,7 +24,7 @@ export const schema = z.object({
   /** 紀錄防禦者被攻擊後的 HP */
   defenderHp: z.number().int(),
   /** 紀錄若防禦者被擊倒，攻擊者得到的收益 */
-  profit: z.number().optional(),
+  profit: z.number().nullish(),
 })
 
 function getCollectionName(arenaId: string) {
