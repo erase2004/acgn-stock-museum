@@ -37,7 +37,7 @@ function simpleValidateTypeText(validateType: VALIDATE_TYPE) {
 }
 
 export function styledValidateTypeMarkHtml(validateType: VALIDATE_TYPE) {
-  return `<span class="text-xs align-top">⟨${simpleValidateTypeText(validateType)}⟩</span>`
+  return `<span class="text-[60%] align-top">⟨${simpleValidateTypeText(validateType)}⟩</span>`
 }
 
 // TODO: sync with dbCompanyStones
