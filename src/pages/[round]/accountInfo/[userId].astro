@@ -3,11 +3,14 @@ export const prerender = false
 
 import RoundLayout from '@/layouts/Round.astro'
 import BasicInfo from '@/components/round/accountInfo/BasicInfo.astro'
+import PanelFolder from '@/components/common/preact/PanelFolder'
+import TaxList from '@/components/round/accountInfo/preact/TaxList'
+import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentPageFullTitle, getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
 import { getDBUsers, schema as schemaUser } from '@/services/dbUsers'
+import { getDBTaxes, schema as schemaTax } from '@/services/dbTaxes'
 import { handlePromiseParser } from '@/utils/helpers'
-import { z } from 'astro/zod'
 
 const userId = Astro.params['userId'] ?? ''
 const round = getCurrentRound(Astro)!
@@ -23,8 +26,28 @@ if (!user) {
 }
 
 const title = getCurrentPageFullTitle(Astro, user.profile.name)
+
+// tax info
+const dbTaxes = getDBTaxes(connection)
+const taxInfo =
+  (await handlePromiseParser(
+    z.promise(schemaTax.array()).parse(
+      dbTaxes
+        .find({
+          userId,
+        })
+        .toArray(),
+    ),
+  )) ?? []
 ---
 
 <RoundLayout title={title}>
   <BasicInfo round={round} user={user} />
+  <div class="account-detail">
+    <div>
+      <PanelFolder client:only="preact" title="稅務資訊" classes="text-2xl" state={false}>
+        <TaxList client:only="preact" data={taxInfo} />
+      </PanelFolder>
+    </div>
+  </div>
 </RoundLayout>

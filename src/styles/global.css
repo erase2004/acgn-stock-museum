@@ -244,6 +244,14 @@
     background: -moz-linear-gradient(160deg, #fffbd5, #f1c40f 100%);
     background: linear-gradient(160deg, #fffbd5, #f1c40f 100%);
   }
+
+  .account-detail {
+    @apply mt-4 flex w-full flex-col *:overflow-y-hidden *:border *:border-base-content/25;
+
+    & > div {
+      @apply flex max-h-80 flex-col gap-y-2 p-2 md:p-4;
+    }
+  }
 }
 
 @layer utilities {
