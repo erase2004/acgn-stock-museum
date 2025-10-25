@@ -1,3 +1,4 @@
+// 公司持股董事資料集
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
@@ -18,8 +19,52 @@ export function getDBDirectors(db: Db) {
 
 export const stocksWithCountSchema = withCountSchema(schema)
 
-export async function getAccountOwnStocks(db: Db, userId: string) {
+export async function getAccountOwnStocks(db: Db, userId: string, includeSeal: boolean = false) {
   const dbDirectors = getDBDirectors(db)
+
+  if (!includeSeal) {
+    return handlePromiseParser(
+      z.promise(stocksWithCountSchema).parse(
+        dbDirectors
+          .aggregate([
+            {
+              $lookup: {
+                from: 'companies',
+                localField: 'companyId',
+                foreignField: '_id',
+                as: 'companyInfo',
+              },
+            },
+            {
+              $replaceRoot: {
+                newRoot: { $mergeObjects: [{ $arrayElemAt: ['$companyInfo', 0] }, '$$ROOT'] },
+              },
+            },
+            { $project: { fromItems: 0 } },
+            {
+              $match: {
+                userId: {
+                  $eq: userId,
+                },
+                isSeal: false,
+              },
+            },
+            {
+              $sort: {
+                createdAt: -1,
+              },
+            },
+            {
+              $facet: {
+                total: [{ $count: 'total' }],
+                data: [],
+              },
+            },
+          ])
+          .toArray(),
+      ),
+    )
+  }
 
   return handlePromiseParser(
     z.promise(stocksWithCountSchema).parse(

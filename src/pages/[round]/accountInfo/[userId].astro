@@ -5,11 +5,13 @@ import RoundLayout from '@/layouts/Round.astro'
 import BasicInfo from '@/components/round/accountInfo/BasicInfo.astro'
 import PanelFolder from '@/components/common/preact/PanelFolder'
 import TaxList from '@/components/round/accountInfo/preact/TaxList'
+import StockList from '@/components/round/accountInfo/preact/StockList'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentPageFullTitle, getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
 import { getDBUsers, schema as schemaUser } from '@/services/dbUsers'
 import { getDBTaxes, schema as schemaTax } from '@/services/dbTaxes'
+import { getAccountOwnStocks } from '@/services/dbDirectors'
 import { handlePromiseParser } from '@/utils/helpers'
 
 const userId = Astro.params['userId'] ?? ''
@@ -39,6 +41,9 @@ const taxInfo =
         .toArray(),
     ),
   )) ?? []
+
+// stock info
+const stockInfo = await getAccountOwnStocks(connection, userId, true)
 ---
 
 <RoundLayout title={title}>
@@ -49,5 +54,10 @@ const taxInfo =
         <TaxList client:only="preact" data={taxInfo} />
       </PanelFolder>
     </div>
+  </div>
+  <div>
+    <PanelFolder client:only="preact" title="持股資訊" classes="text-2xl" state={false}>
+      <StockList client:only="preact" round={round} data={stockInfo?.[0]?.data ?? []} />
+    </PanelFolder>
   </div>
 </RoundLayout>
