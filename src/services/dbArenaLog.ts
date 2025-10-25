@@ -2,27 +2,28 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
+import { integer, itemId, objectId } from './schema'
 
 export const schema = z.object({
-  _id: z.coerce.string(),
+  _id: objectId,
   /** 紀錄的順序 */
-  sequence: z.number().int(),
+  sequence: integer,
   /** 紀錄的回合數 */
-  round: z.number().int(),
+  round: integer,
   /** 紀錄相關的公司ID陣列, 0 為攻擊者, 1 為防禦者 */
-  companyId: z.string().array(),
+  companyId: itemId.array(),
   /**
    * 紀錄攻擊者使用的招式 index，
    * 正數 -1 對應 dbArenaFighters 資料集的 normalManner 陣列 index，
    * 負數 +1 對應 specialManner 的陣列 index
    */
-  attackManner: z.number().int(),
+  attackManner: integer,
   /** 紀錄當次攻擊動作造成的傷害，0 為未命中 */
-  damage: z.number().int(),
+  damage: integer,
   /** 紀錄攻擊者發動攻擊時的 SP */
-  attackerSp: z.number().int(),
+  attackerSp: integer,
   /** 紀錄防禦者被攻擊後的 HP */
-  defenderHp: z.number().int(),
+  defenderHp: integer,
   /** 紀錄若防禦者被擊倒，攻擊者得到的收益 */
   profit: z.number().nullish(),
 })

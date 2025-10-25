@@ -1,22 +1,23 @@
 // 季度資料集
+import type { Db } from 'mongodb'
 import { handlePromiseParser } from '@/utils/helpers'
 import { z } from 'astro/zod'
-import type { Db } from 'mongodb'
+import { datetime, integer, objectId } from './schema'
 
 export const schema = z.object({
-  _id: z.coerce.string(),
+  _id: objectId,
   /** 賽季的第幾季度 */
-  ordinal: z.number().int(),
+  ordinal: integer,
   /** 起始日期 */
-  beginDate: z.coerce.date(),
+  beginDate: datetime,
   /** 結束日期 */
-  endDate: z.coerce.date(),
+  endDate: datetime,
   /** 當季有多少驗證通過的使用者 */
-  userCount: z.number().int(),
+  userCount: integer,
   /** 當季起始時有多少未被查封的公司 */
-  companiesCount: z.number().int(),
+  companiesCount: integer,
   /** 當季有多少推出的新產品 */
-  productCount: z.number().int(),
+  productCount: integer,
 })
 
 export function getDBSeason(db: Db) {

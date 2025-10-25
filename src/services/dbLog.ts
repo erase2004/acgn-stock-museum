@@ -3,6 +3,7 @@ import type { Db, Document } from 'mongodb'
 import { z } from 'astro/zod'
 import { schema as schemaRound } from './dbRound'
 import { handlePromiseParser } from '@/utils/helpers'
+import { datetime, itemId, objectId, withCountSchema } from './schema'
 
 type LOG_TYPE = (typeof logTypeList)[number]
 
@@ -529,17 +530,17 @@ export const importantFscLogTypeList: LOG_TYPE[] = [
 ]
 
 export const schema = z.object({
-  _id: z.coerce.string(),
+  _id: objectId,
   /** 紀錄類別 */
   logType: z.enum(logTypeList),
   /** 相關的使用者 ID 陣列 */
-  userId: z.string().array().nullish(),
+  userId: itemId.array().nullish(),
   /** 相關的公司 ID */
-  companyId: z.string().nullish(),
+  companyId: itemId.nullish(),
   /** 額外資料 */
   data: z.any().nullish(),
   /** 紀錄日期 */
-  createdAt: z.coerce.date(),
+  createdAt: datetime,
 })
 
 export function getDBLog(db: Db) {
@@ -563,17 +564,7 @@ function getPipeline(filter: Document = { $match: {} }): Document[] {
   ]
 }
 
-export const logsWithCountSchema = z
-  .object({
-    total: z
-      .object({
-        total: z.number().int(),
-      })
-      .array()
-      .max(1),
-    data: schema.array(),
-  })
-  .array()
+export const logsWithCountSchema = withCountSchema(schema)
 
 export async function getFSCLogs(db: Db, currentRound: z.infer<typeof schemaRound>) {
   const dbLog = getDBLog(db)

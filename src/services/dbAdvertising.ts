@@ -2,18 +2,19 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
+import { datetime, integer, itemId } from './schema'
 
 export const schema = z.object({
   /** 廣告者的帳號ID */
-  userId: z.string(),
+  userId: itemId,
   /** 廣告付費額度 */
-  paid: z.number().int().min(0),
+  paid: integer.min(0),
   /** 廣告訊息 */
   message: z.string().min(1),
   /** 廣告連結 */
   url: z.string().url().nullish(),
   /** 申請廣告日期 */
-  createdAt: z.coerce.date(),
+  createdAt: datetime,
 })
 
 export function getDBAdvertising(db: Db) {

@@ -2,9 +2,10 @@
 import type { Db } from 'mongodb'
 import { handlePromiseParser } from '@/utils/helpers'
 import { z } from 'astro/zod'
+import { objectId } from './schema'
 
 export const schema = z.object({
-  _id: z.coerce.string(),
+  _id: objectId,
   /** 公司名稱 */
   companyName: z.string(),
   /** 保管狀態 */

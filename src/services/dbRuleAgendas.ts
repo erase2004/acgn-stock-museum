@@ -4,29 +4,30 @@ import type { Document } from 'mongodb'
 import { z } from 'astro/zod'
 import { schema as schemaRound } from './dbRound'
 import { handlePromiseParser } from '@/utils/helpers'
+import { datetime, integer, itemId, objectId } from './schema'
 
 export const schema = z.object({
-  _id: z.coerce.string(),
+  _id: objectId,
   /** 議程標題 */
   title: z.string().min(1).max(100),
   /** 議程討論 URL */
   discussionUrl: z.string().url(),
   /** 議程建立時間 */
-  createdAt: z.coerce.date(),
+  createdAt: datetime,
   /** 議程長度(小時) */
-  duration: z.number().int().default(72),
+  duration: integer.default(72),
   /** 議程描述 */
   description: z.string().min(10).max(3000),
   /** 提案人 User ID */
-  proposer: z.string(),
+  proposer: itemId,
   /** 議程建立委員 User ID */
-  creator: z.string(),
+  creator: itemId,
   /** 議題列表 */
-  issues: z.string().array(),
+  issues: itemId.array(),
   /** 已投票使用者 User ID */
-  votes: z.string().array(),
+  votes: itemId.array(),
   /** 活躍玩家人數 */
-  activeUserCount: z.number().int().min(0),
+  activeUserCount: integer.min(0),
 })
 
 export function getDBRuleAgendas(db: Db) {
@@ -42,7 +43,7 @@ export const agendaListSchema = schema
   })
   .extend({
     /** 議程結束時間  */
-    endedAt: z.coerce.date(),
+    endedAt: datetime,
     /** 議程是否已結束 */
     isEnded: z.boolean(),
   })

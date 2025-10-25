@@ -1,5 +1,6 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
+import { datetime, integer, objectId } from './schema'
 
 export const BanTypeList = [
   'accuse', // 所有舉報違規行為
@@ -74,14 +75,14 @@ const profileSchema = z.object({
   /** 被禁止的權限 */
   ban: z.enum(BanTypeList).array(),
   /** 未登入天數次數紀錄 */
-  noLoginDayCount: z.number().int().min(0),
-  lastSeasonTotalWealth: z.number().int().default(0),
+  noLoginDayCount: integer.min(0),
+  lastSeasonTotalWealth: integer.default(0),
   /** 金錢數量 */
-  money: z.number().int().min(0),
+  money: integer.min(0),
   /** 消費券的數量 */
-  vouchers: z.number().int().min(0),
+  vouchers: integer.min(0),
   /** 推薦票數量 */
-  voteTickets: z.number().int().min(0).default(0),
+  voteTickets: integer.min(0).default(0),
   /** 是否處於渡假模式 */
   isInVacation: z.boolean().default(false),
   /** 是否將要收假 */
@@ -93,7 +94,7 @@ const statusSchema = z.object({
   lastLogin: z
     .object({
       /** 日期 */
-      date: z.coerce.date().nullish(),
+      date: datetime.nullish(),
       /** IP 地址 */
       ipAddr: z.string().nullish(),
       /** 使用瀏覽器 */
@@ -108,11 +109,11 @@ const aboutSchema = z.object({
 })
 
 export const schema = z.object({
-  _id: z.string(),
+  _id: objectId,
   /** 使用者 PTT 帳號名稱 */
   username: z.string().nullish(),
   /** 驗證成功日期 */
-  createdAt: z.coerce.date(),
+  createdAt: datetime,
   profile: profileSchema,
   status: statusSchema.nullish(),
   about: aboutSchema,

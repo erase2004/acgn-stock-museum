@@ -1,13 +1,14 @@
 // 賽季資料集
+import type { Db } from 'mongodb'
 import { handlePromiseParser } from '@/utils/helpers'
 import { z } from 'astro/zod'
-import type { Db } from 'mongodb'
+import { datetime } from './schema'
 
 export const schema = z.object({
   /** 起始日期 */
-  beginDate: z.coerce.date(),
+  beginDate: datetime,
   /** 結束日期 */
-  endDate: z.coerce.date(),
+  endDate: datetime,
 })
 
 export function getDBRound(db: Db) {

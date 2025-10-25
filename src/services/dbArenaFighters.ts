@@ -2,6 +2,7 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
+import { datetime, integer, itemId, objectId } from './schema'
 
 const MAX_MANNER_SIZE = 3
 
@@ -29,19 +30,19 @@ export function getAttributeNumber(attribute: keyof typeof attributeParameters, 
   return base + Math.floor(amount / cost)
 }
 
-const investmentSchema = z.number().int().default(0)
+const investmentSchema = integer.default(0)
 const mannerSchema = z.array(z.string().min(1).max(150)).max(MAX_MANNER_SIZE)
 
 export const schema = z.object({
-  _id: z.coerce.string(),
+  _id: objectId,
   /** 對應的大賽 ID */
-  arenaId: z.string(),
+  arenaId: itemId,
   /** 公司 ID */
-  companyId: z.string(),
+  companyId: itemId,
   /** 報名截止時，該報名角色的經理 User ID (決定該次大賽戰鬥時決策的經理 User ID) */
-  manager: z.string().nullish(),
+  manager: itemId.nullish(),
   /** 亂鬥名次（於亂鬥結束時產生） */
-  rank: z.number().int().nullish(),
+  rank: integer.nullish(),
   /** 總投資額 */
   totalInvestedAmount: investmentSchema,
   /** 目前已投資在 hp 屬性上的總資金量 */
@@ -55,9 +56,9 @@ export const schema = z.object({
   /** 目前已投資在 agi 屬性上的總資金量 */
   agi: investmentSchema,
   /** 公司上市日期，在 agi 相等時排列攻擊順序使用 */
-  createdAt: z.coerce.date(),
+  createdAt: datetime,
   /** 特攻消耗數值 */
-  spCost: z.number().int().min(1).default(5),
+  spCost: integer.min(1).default(5),
   /** 一般攻擊招式表 */
   normalManner: mannerSchema,
   /** 特殊攻擊招式表 */

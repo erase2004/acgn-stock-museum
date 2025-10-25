@@ -1,31 +1,22 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
+import { integer, itemId, withCountSchema } from './schema'
 
 export const schema = z.object({
   /** 公司 ID */
-  companyId: z.string(),
+  companyId: itemId,
   /** 董事 user ID */
-  userId: z.string(),
+  userId: itemId,
   /** 擁有股份 */
-  stocks: z.number().int().min(1),
+  stocks: integer.min(1),
 })
 
 export function getDBDirectors(db: Db) {
   return db.collection('directors')
 }
 
-export const stocksWithCountSchema = z
-  .object({
-    total: z
-      .object({
-        total: z.number().int(),
-      })
-      .array()
-      .max(1),
-    data: schema.array(),
-  })
-  .array()
+export const stocksWithCountSchema = withCountSchema(schema)
 
 export async function getAccountOwnStocks(db: Db, userId: string) {
   const dbDirectors = getDBDirectors(db)

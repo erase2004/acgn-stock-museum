@@ -2,6 +2,7 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser, typedObjectKeys } from '@/utils/helpers'
+import { datetime, itemId, objectId, withCountSchema } from './schema'
 
 const violatorTypeList = ['user', 'company', 'product'] as const
 
@@ -45,11 +46,11 @@ export const violatorSchema = z.object({
   /** 違規者的型態 */
   violatorType: z.enum(violatorTypeList),
   /** 違規者的 ID */
-  violatorId: z.string(),
+  violatorId: itemId,
 })
 
 export const schema = z.object({
-  _id: z.coerce.string(),
+  _id: objectId,
   /** 違規案件目前處理狀態 */
   state: z.enum(typedObjectKeys(stateMap)),
   /** 違規案件類型 */
@@ -59,13 +60,13 @@ export const schema = z.object({
   /** 違規名單 */
   violators: violatorSchema.array(),
   /** 未讀的使用者標記 */
-  unreadUsers: z.string().array(),
+  unreadUsers: itemId.array(),
   /** 相關案件 */
-  relatedCases: z.string().array(),
+  relatedCases: itemId.array(),
   /** 建立日期 */
-  createdAt: z.coerce.date(),
+  createdAt: datetime,
   /** 最後更新日期 */
-  updatedAt: z.coerce.date(),
+  updatedAt: datetime,
 })
 
 export const querySchema = schema
@@ -74,7 +75,7 @@ export const querySchema = schema
     state: true,
   })
   .extend({
-    violatorUserId: z.string(),
+    violatorUserId: itemId,
   })
   .partial()
 
@@ -96,17 +97,7 @@ export const listItemSchema = schema
     descriptionOmittedLength: z.number(),
   })
 
-export const casesWithCountSchema = z
-  .object({
-    total: z
-      .object({
-        total: z.number().int(),
-      })
-      .array()
-      .max(1),
-    data: listItemSchema.array(),
-  })
-  .array()
+export const casesWithCountSchema = withCountSchema(listItemSchema)
 
 const DESCRIPTION_DIGEST_LENGTH_LIMIT = 100
 

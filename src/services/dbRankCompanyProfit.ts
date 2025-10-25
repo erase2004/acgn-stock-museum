@@ -2,14 +2,15 @@
 import type { Db } from 'mongodb'
 import { handlePromiseParser } from '@/utils/helpers'
 import { z } from 'astro/zod'
+import { integer, itemId } from './schema'
 
 export const schema = z.object({
   /** 商業季度 */
-  seasonId: z.string(),
+  seasonId: itemId,
   /** 公司 ID */
-  companyId: z.string(),
+  companyId: itemId,
   /** 總釋出股票 */
-  totalRelease: z.number().int(),
+  totalRelease: integer,
   /** 平均股價 */
   avgPrice: z.number(),
   /** 營利額 */

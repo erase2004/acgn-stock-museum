@@ -2,11 +2,12 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
+import { objectId } from './schema'
 
 export type VALIDATE_TYPE = z.infer<typeof schema>['validateType']
 
 export const schema = z.object({
-  _id: z.coerce.string(),
+  _id: objectId,
   /** 保管狀態 */
   status: z.enum(['archived', 'registered']),
   /** 使用者顯示名稱(如驗證來源為Google，則保存Email) */

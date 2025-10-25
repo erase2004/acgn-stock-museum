@@ -3,6 +3,7 @@ import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser, typedObjectKeys } from '@/utils/helpers'
 import { stateMap, violatorSchema } from './dbViolationCases'
+import { datetime, itemId, objectId } from './schema'
 
 const reasonSchema = z.object({
   reason: z.string().min(1).max(2000),
@@ -33,7 +34,7 @@ export const actionMap = {
     displayName: '增加相關案件',
     dataSchema: z
       .object({
-        relatedCaseId: z.string(),
+        relatedCaseId: itemId,
       })
       .merge(reasonSchema),
   },
@@ -41,7 +42,7 @@ export const actionMap = {
     displayName: '移除相關案件',
     dataSchema: z
       .object({
-        relatedCaseId: z.string(),
+        relatedCaseId: itemId,
       })
       .merge(reasonSchema),
   },
@@ -49,7 +50,7 @@ export const actionMap = {
     displayName: '從相關案件合併違規名單',
     dataSchema: z
       .object({
-        relatedCaseId: z.string(),
+        relatedCaseId: itemId,
         newViolators: violatorSchema.array(),
       })
       .merge(reasonSchema),
@@ -74,17 +75,17 @@ export const actionMap = {
 
 export const schema = z
   .object({
-    _id: z.coerce.string(),
+    _id: objectId,
     /** 案件 ID */
-    violationCaseId: z.string(),
+    violationCaseId: itemId,
     /** 執行的動作 */
     action: z.enum(typedObjectKeys(actionMap)),
     /** 執行人 User ID */
-    executor: z.string(),
+    executor: itemId,
     /** 額外資料 */
     data: z.any(),
     /** 執行時間 */
-    executedAt: z.coerce.date(),
+    executedAt: datetime,
   })
   .refine(
     (val) => {

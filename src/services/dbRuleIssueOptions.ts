@@ -2,15 +2,16 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
+import { itemId, objectId } from './schema'
 
 export const schema = z.object({
-  _id: z.coerce.string(),
+  _id: objectId,
   /** 議題選項標題 */
   title: z.string().min(1).max(100),
   /** 議題選項順序 */
   order: z.number(),
   /** 支持此選項的使用者 User ID */
-  votes: z.string().array(),
+  votes: itemId.array(),
 })
 
 export function getDBRuleIssueOptions(db: Db) {

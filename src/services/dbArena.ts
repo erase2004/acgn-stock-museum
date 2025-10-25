@@ -2,15 +2,16 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
+import { datetime, objectId } from './schema'
 
 export const schema = z.object({
-  _id: z.coerce.string(),
+  _id: objectId,
   /** 起始日期 */
-  beginDate: z.coerce.date(),
+  beginDate: datetime,
   /** 結束日期 */
-  endDate: z.coerce.date(),
+  endDate: datetime,
   /** 報名截止日期 */
-  joinEndDate: z.coerce.date(),
+  joinEndDate: datetime,
 })
 
 export function getDBArena(db: Db) {

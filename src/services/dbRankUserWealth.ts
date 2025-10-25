@@ -2,16 +2,17 @@
 import type { Db } from 'mongodb'
 import { handlePromiseParser } from '@/utils/helpers'
 import { z } from 'astro/zod'
+import { integer, itemId } from './schema'
 
 export const schema = z.object({
   /** 商業季度 */
-  seasonId: z.string(),
+  seasonId: itemId,
   /** 使用者 ID */
-  userId: z.string(),
+  userId: itemId,
   /** 擁有現金 */
-  money: z.number().int(),
+  money: integer,
   /** 持股總價值 */
-  stocksValue: z.number().int(),
+  stocksValue: integer,
 })
 
 export function getDBRankUserWealth(db: Db) {

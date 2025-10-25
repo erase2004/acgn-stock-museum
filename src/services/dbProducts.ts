@@ -1,18 +1,19 @@
 // 公司產品資料集
+import type { Db } from 'mongodb'
 import { handlePromiseParser } from '@/utils/helpers'
 import { z } from 'astro/zod'
-import type { Db } from 'mongodb'
+import { integer, itemId, objectId } from './schema'
 
 const productTypeList = ['未分類', '繪圖', 'ANSI', '影音', '文字', '三次元'] as const
 
 const productRatingList = ['一般向', '18禁'] as const
 
 export const schema = z.object({
-  _id: z.coerce.string(),
+  _id: objectId,
   /** 產品名稱 */
   productName: z.string().min(4).max(255),
   /** 公司 ID */
-  companyId: z.string(),
+  companyId: itemId,
   /** 產品類別 */
   type: z.enum(productTypeList),
   /** 產品連結 */
@@ -22,7 +23,7 @@ export const schema = z.object({
   /** 產品描述 */
   description: z.string().max(500).nullish(),
   /** 推薦票的總票數 */
-  voteCount: z.number().int().default(0),
+  voteCount: integer.default(0),
 })
 
 export function getDBProducts(db: Db) {

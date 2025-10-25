@@ -2,6 +2,7 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
+import { itemId } from './schema'
 
 export const schema = z.object({
   /** 議題標題 */
@@ -11,7 +12,7 @@ export const schema = z.object({
   /** 議題順序 */
   order: z.number(),
   /** 議題列表 */
-  options: z.string().array(),
+  options: itemId.array(),
 })
 
 export function getDBRuleIssues(db: Db) {
