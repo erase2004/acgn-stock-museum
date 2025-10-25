@@ -6,12 +6,14 @@ import BasicInfo from '@/components/round/accountInfo/BasicInfo.astro'
 import PanelFolder from '@/components/common/preact/PanelFolder'
 import TaxList from '@/components/round/accountInfo/preact/TaxList'
 import StockList from '@/components/round/accountInfo/preact/StockList'
+import StoneList from '@/components/round/accountInfo/preact/StoneList'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentPageFullTitle, getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
 import { getDBUsers, schema as schemaUser } from '@/services/dbUsers'
 import { getDBTaxes, schema as schemaTax } from '@/services/dbTaxes'
 import { getAccountOwnStocks } from '@/services/dbDirectors'
+import { getDBCompanyStones, schema as schemaCompanyStone } from '@/services/dbCompanyStones'
 import { handlePromiseParser } from '@/utils/helpers'
 
 const userId = Astro.params['userId'] ?? ''
@@ -44,6 +46,24 @@ const taxInfo =
 
 // stock info
 const stockInfo = await getAccountOwnStocks(connection, userId, true)
+
+// stone info
+const dbCompanyStones = getDBCompanyStones(connection)
+const stoneInfo =
+  (await handlePromiseParser(
+    z.promise(schemaCompanyStone.array()).parse(
+      dbCompanyStones
+        .find(
+          {
+            userId,
+          },
+          {
+            sort: { placedAt: -1 },
+          },
+        )
+        .toArray(),
+    ),
+  )) ?? []
 ---
 
 <RoundLayout title={title}>
@@ -58,6 +78,11 @@ const stockInfo = await getAccountOwnStocks(connection, userId, true)
   <div>
     <PanelFolder client:only="preact" title="持股資訊" classes="text-2xl" state={false}>
       <StockList client:only="preact" round={round} data={stockInfo?.[0]?.data ?? []} />
+    </PanelFolder>
+  </div>
+  <div class="max-md:max-h-screen">
+    <PanelFolder client:only="preact" title="石頭資訊" classes="text-2xl" state={false}>
+      <StoneList client:only="preact" round={round} profile={user.profile} data={stoneInfo} />
     </PanelFolder>
   </div>
 </RoundLayout>

@@ -1,6 +1,8 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { datetime, integer, objectId } from './schema'
+import { stoneTypeList } from './dbCompanyStones'
+import { zipObject } from 'lodash-es'
 
 export const BanTypeList = [
   'accuse', // 所有舉報違規行為
@@ -87,6 +89,16 @@ const profileSchema = z.object({
   isInVacation: z.boolean().default(false),
   /** 是否將要收假 */
   isEndingVacation: z.boolean().default(false),
+  /** 各類石頭的數量 */
+  stones: z
+    .object(
+      zipObject(
+        stoneTypeList,
+        stoneTypeList.map(() => integer.min(0).default(0)),
+      ),
+    )
+    .partial()
+    .default({}),
 })
 
 const statusSchema = z.object({

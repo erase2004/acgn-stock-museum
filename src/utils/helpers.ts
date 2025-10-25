@@ -1,5 +1,11 @@
 import type { VALIDATE_TYPE } from '@/services/dbUserArchive'
+import type { StoneType } from '@/services/dbCompanyStones'
 import type { Chart } from 'chart.js'
+import IconBirth from '@/assets/icons/stones/birth.png'
+import IconQeust from '@/assets/icons/stones/quest.png'
+import IconRainbow from '@/assets/icons/stones/rainbow.png'
+import IconRainbowFragment from '@/assets/icons/stones/rainbow-fragment.png'
+import IconSaint from '@/assets/icons/stones/saint.png'
 import xss from 'xss'
 import showdown from 'showdown'
 // @ts-expect-error: no type definition for showdown-footnotes
@@ -40,8 +46,7 @@ export function styledValidateTypeMarkHtml(validateType: VALIDATE_TYPE) {
   return `<span class="text-[60%] align-top">⟨${simpleValidateTypeText(validateType)}⟩</span>`
 }
 
-// TODO: sync with dbCompanyStones
-export function stoneDisplayName(stoneType: string) {
+export function stoneDisplayName(stoneType: StoneType) {
   switch (stoneType) {
     case 'saint':
       return '聖晶石'
@@ -55,6 +60,26 @@ export function stoneDisplayName(stoneType: string) {
       return '任務石'
     default:
       return `未知的石頭(${stoneType})`
+  }
+}
+
+export function getStoneIcon(stoneType: StoneType) {
+  switch (stoneType) {
+    case 'birth':
+      return IconBirth.src
+    case 'quest':
+      return IconQeust.src
+    case 'rainbow':
+      return IconRainbow.src
+    case 'rainbowFragment':
+      return IconRainbowFragment.src
+    case 'saint':
+      return IconSaint.src
+    default: {
+      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+      const unreachable: never = stoneType
+      return undefined
+    }
   }
 }
 
