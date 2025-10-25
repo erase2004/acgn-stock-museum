@@ -1,0 +1,17 @@
+// 使用者持有產品資料集
+import type { Db } from 'mongodb'
+import { z } from 'astro/zod'
+import { integer, itemId } from './schema'
+
+export const schema = z.object({
+  /** 產品公司 ID */
+  companyId: itemId,
+  /** 產品 ID */
+  productId: itemId,
+  /** 持有數量 */
+  amount: integer.min(1),
+})
+
+export function getDBUserOwnedProduct(db: Db) {
+  return db.collection('userOwnedProducts')
+}

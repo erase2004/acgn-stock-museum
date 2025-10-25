@@ -7,6 +7,7 @@ import PanelFolder from '@/components/common/preact/PanelFolder'
 import TaxList from '@/components/round/accountInfo/preact/TaxList'
 import StockList from '@/components/round/accountInfo/preact/StockList'
 import StoneList from '@/components/round/accountInfo/preact/StoneList'
+import ProductList from '@/components/round/accountInfo/preact/ProductList'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentPageFullTitle, getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
@@ -14,6 +15,10 @@ import { getDBUsers, schema as schemaUser } from '@/services/dbUsers'
 import { getDBTaxes, schema as schemaTax } from '@/services/dbTaxes'
 import { getAccountOwnStocks } from '@/services/dbDirectors'
 import { getDBCompanyStones, schema as schemaCompanyStone } from '@/services/dbCompanyStones'
+import {
+  getDBUserOwnedProduct,
+  schema as schemaUserOwnedProduct,
+} from '@/services/dbUserOwnedProduct'
 import { handlePromiseParser } from '@/utils/helpers'
 
 const userId = Astro.params['userId'] ?? ''
@@ -64,6 +69,24 @@ const stoneInfo =
         .toArray(),
     ),
   )) ?? []
+
+// product info
+const dbUserOwnedProduct = getDBUserOwnedProduct(connection)
+const productInfo =
+  (await handlePromiseParser(
+    z.promise(schemaUserOwnedProduct.array()).parse(
+      dbUserOwnedProduct
+        .find(
+          {
+            userId,
+          },
+          {
+            sort: { createdAt: 1 },
+          },
+        )
+        .toArray(),
+    ),
+  )) ?? []
 ---
 
 <RoundLayout title={title}>
@@ -83,6 +106,11 @@ const stoneInfo =
   <div class="max-md:max-h-screen">
     <PanelFolder client:only="preact" title="石頭資訊" classes="text-2xl" state={false}>
       <StoneList client:only="preact" round={round} profile={user.profile} data={stoneInfo} />
+    </PanelFolder>
+  </div>
+  <div>
+    <PanelFolder client:only="preact" title="持有產品" classes="text-2xl" state={false}>
+      <ProductList client:only="preact" round={round} data={productInfo} />
     </PanelFolder>
   </div>
 </RoundLayout>
