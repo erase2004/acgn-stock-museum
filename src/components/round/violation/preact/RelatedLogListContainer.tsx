@@ -1,9 +1,7 @@
 import DisplayLog from '@/components/common/preact/DisplayLog'
 import { z } from 'astro/zod'
 import { logsWithCountSchema } from '@/services/dbLog'
-import { useMemo } from 'preact/hooks'
-import { useStore } from '@nanostores/preact'
-import { currentPage, hasMore } from '@/stores/pagination'
+import { useDisplayItems } from '@/utils/hooks'
 
 type Props = {
   storeKey: string
@@ -14,13 +12,7 @@ type Props = {
 }
 
 export default function RelatedLogListContainer({ storeKey, round, pageSize, total, data }: Props) {
-  const $currentPage = useStore(currentPage)
-
-  const displayItems = useMemo(() => {
-    const newList = data.slice(0, pageSize * $currentPage[storeKey])
-    hasMore.setKey(storeKey, newList.length < total)
-    return newList
-  }, [$currentPage[storeKey]])
+  const displayItems = useDisplayItems(data, storeKey, pageSize)
 
   if (!total) return <em class="mx-4">沒有任何紀錄！</em>
 
