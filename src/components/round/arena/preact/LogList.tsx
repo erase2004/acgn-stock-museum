@@ -5,11 +5,10 @@ import type { Dictionary } from 'lodash'
 import type { TargetedEvent } from 'preact'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { currentPage, hasMore, isDataLoading } from '@/stores/pagination'
-import { useStore } from '@nanostores/preact'
-import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
-import { filter, map, zipObject } from 'lodash-es'
+import { useMemo, useRef, useState } from 'preact/hooks'
+import { isArray, map, zipObject } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
+import { useFilter } from '@/utils/hooks'
 
 type Fighter = z.infer<typeof schemaFighter>
 type FighterDict = Dictionary<Fighter>
@@ -75,15 +74,49 @@ function displayAttackManaer(log: Log, fighterDict: FighterDict) {
 }
 
 export default function LogList({ storeKey, round, pageSize, fighters, logs }: Props) {
-  const $isDataLoading = useStore(isDataLoading)
-  const $currentPage = useStore(currentPage)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [showClear, setShowClear] = useState(false)
-  const [displayLogs, setDisplayLogs] = useState(logs.slice(0, pageSize))
-
   const fighterDict = useMemo(() => {
     return zipObject(map(fighters, 'companyId'), fighters)
   }, [fighters])
+
+  const { setFilterValue, filteredItems } = useFilter(
+    storeKey,
+    pageSize,
+    logs,
+    {
+      companyId: {
+        isEqualFn: (item, target) => {
+          if (isArray(target)) return false
+
+          return item['companyId'].includes(target)
+        },
+      },
+    },
+    false,
+  )
+
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [showClear, setShowClear] = useState(false)
+
+  function updateShowClear(value: string) {
+    if (value !== '') setShowClear(true)
+    else setShowClear(false)
+  }
+
+  function handleInputChange(e: TargetedEvent<HTMLInputElement>) {
+    const value = e.currentTarget.value
+    updateShowClear(value)
+  }
+
+  function onSubmit(e: TargetedEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setFilterValue('companyId', inputRef.current?.value ?? '')
+  }
+
+  function clear() {
+    updateShowClear('')
+    if (inputRef.current) inputRef.current.value = ''
+    setFilterValue('companyId', '')
+  }
 
   function formatLog(log: Log) {
     const attacker = <CompanyLink round={round} companyId={getAttacker(log)} />
@@ -111,59 +144,6 @@ export default function LogList({ storeKey, round, pageSize, fighters, logs }: P
     )
   }
 
-  useEffect(() => {
-    if ($isDataLoading[storeKey]) return
-    if ($currentPage[storeKey] === 1) return
-
-    search()
-  }, [$currentPage[storeKey]])
-
-  function search(reset: boolean = false) {
-    if ($isDataLoading[storeKey]) return
-    isDataLoading.setKey(storeKey, true)
-
-    let newList = logs
-
-    const companyId = inputRef.current?.value ?? ''
-    if (companyId) {
-      newList = filter(newList, (log) => log.companyId.includes(companyId))
-    }
-
-    const totalAmount = newList.length
-
-    if (reset) {
-      newList = newList.slice(0, pageSize)
-      currentPage.setKey(storeKey, 1)
-    } else {
-      newList = newList.slice(0, pageSize * $currentPage[storeKey])
-    }
-
-    setDisplayLogs(newList)
-    hasMore.setKey(storeKey, newList.length < totalAmount)
-    isDataLoading.setKey(storeKey, false)
-  }
-
-  function onSubmit(e: TargetedEvent<HTMLFormElement>) {
-    e.preventDefault()
-    search(true)
-  }
-
-  function updateShowClear(value: string) {
-    if (value !== '') setShowClear(true)
-    else setShowClear(false)
-  }
-
-  function handleInputChange(e: TargetedEvent<HTMLInputElement>) {
-    const value = e.currentTarget.value
-    updateShowClear(value)
-  }
-
-  function clear() {
-    updateShowClear('')
-    if (inputRef.current) inputRef.current.value = ''
-    search(true)
-  }
-
   return (
     <div>
       <form class="sticky-control join py-4" onSubmit={onSubmit}>
@@ -181,7 +161,7 @@ export default function LogList({ storeKey, round, pageSize, fighters, logs }: P
           <i class="fa fa-search"></i>
         </button>
       </form>
-      <div>{displayLogs.map(formatLog)}</div>
+      <div>{filteredItems.map(formatLog)}</div>
       <LoadMore storeKey={storeKey} />
     </div>
   )

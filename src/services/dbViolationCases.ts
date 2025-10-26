@@ -69,16 +69,6 @@ export const schema = z.object({
   updatedAt: datetime,
 })
 
-export const querySchema = schema
-  .pick({
-    category: true,
-    state: true,
-  })
-  .extend({
-    violatorUserId: itemId,
-  })
-  .partial()
-
 export function getDBViolationCase(db: Db) {
   return db.collection('violationCases')
 }

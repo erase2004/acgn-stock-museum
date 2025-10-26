@@ -98,12 +98,6 @@ export function getDBAnnouncements(db: Db) {
   return db.collection('announcements')
 }
 
-export const querySchema = schema
-  .pick({
-    category: true,
-  })
-  .partial()
-
 export function getAnnouncements(db: Db) {
   const dbAnnouncements = getDBAnnouncements(db)
 
