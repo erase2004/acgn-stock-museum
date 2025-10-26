@@ -2,7 +2,7 @@ import type { TargetedEvent } from 'preact'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { categoryMap, stateMap, type simpleSchema } from '@/services/dbViolationCases'
 import { z } from 'astro/zod'
-import { useFilter } from '@/utils/hooks'
+import { useFilter, type FilterConfig } from '@/utils/hooks'
 import { formatDateTimeText } from '@/libs/timeFormat'
 import { categoryDisplayName, stateBadgeClass, stateDisplayName } from '@/utils/violation'
 import { getViolationCaseUrl } from '@/libs/routes'
@@ -25,22 +25,24 @@ export default function ViolationCaseList({ round, pageSize, data }: Props) {
     pageSize,
     data,
     {
+      // @ts-expect-error: it should be ok
       category: {
         schema: z.enum(typedObjectKeys(categoryMap)).optional(),
-        isEqualFn: (item, target) => {
+        isEqualFn: (field, target) => {
           if (isArray(target)) return false
 
-          return item['category'] === target
+          return field === target
         },
-      },
+      } satisfies FilterConfig<Case, 'category'>,
+      // @ts-expect-error: it should be ok
       state: {
         schema: z.enum(typedObjectKeys(stateMap)).optional(),
-        isEqualFn: (item, target) => {
+        isEqualFn: (field, target) => {
           if (isArray(target)) return false
 
-          return item['state'] === target
+          return field === target
         },
-      },
+      } satisfies FilterConfig<Case, 'state'>,
     },
     false,
   )

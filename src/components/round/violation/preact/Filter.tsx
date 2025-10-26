@@ -4,15 +4,17 @@ import { categoryMap, stateMap, listItemSchema } from '@/services/dbViolationCas
 import { isArray, some } from 'lodash-es'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { stateDisplayName, categoryDisplayName } from '@/utils/violation'
-import { useFilter } from '@/utils/hooks'
+import { useFilter, type FilterConfig } from '@/utils/hooks'
 import { typedObjectKeys } from '@/utils/helpers'
 import { itemId } from '@/services/schema'
 import { setItems } from '@/stores/violation'
 
+type Data = z.infer<typeof listItemSchema>
+
 type Props = {
   storeKey: string
   pageSize: number
-  data: z.infer<typeof listItemSchema>[]
+  data: Data[]
 }
 
 export default function Filter({ storeKey, pageSize, data }: Props) {
@@ -24,33 +26,36 @@ export default function Filter({ storeKey, pageSize, data }: Props) {
     pageSize,
     data,
     {
+      // @ts-expect-error: it should be ok
       category: {
         schema: z.enum(typedObjectKeys(categoryMap)).optional(),
-        isEqualFn: (item, target) => {
+        isEqualFn: (field, target) => {
           if (isArray(target)) return false
 
-          return item['category'] === target
+          return field === target
         },
-      },
+      } satisfies FilterConfig<Data, 'category'>,
+      // @ts-expect-error: it should be ok
       state: {
         schema: z.enum(typedObjectKeys(stateMap)).optional(),
-        isEqualFn: (item, target) => {
+        isEqualFn: (field, target) => {
           if (isArray(target)) return false
 
-          return item['state'] === target
+          return field === target
         },
-      },
+      } satisfies FilterConfig<Data, 'state'>,
+      // @ts-expect-error: it should be ok
       violators: {
         schema: itemId.optional(),
-        isEqualFn: (item, target) => {
+        isEqualFn: (field, target) => {
           if (isArray(target)) return false
 
           return some(
-            item.violators,
+            field,
             (violator) => violator.violatorType === 'user' && violator.violatorId === target,
           )
         },
-      },
+      } satisfies FilterConfig<Data, 'violators'>,
     },
     true,
   )

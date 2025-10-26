@@ -5,8 +5,9 @@ import { currentPage, hasMore, isDataLoading } from '@/stores/pagination'
 import { useEffect, useState, useMemo } from 'preact/hooks'
 import { filter, isArray, isEqual, isString, pickBy, transform } from 'lodash-es'
 
-type FilterConfig<T> = {
-  isEqualFn: (item: T, target: string | string[]) => boolean
+export type FilterConfig<T, S extends keyof T = keyof T> = {
+  isEqualFn: (field: T[S], target: string | string[], item: T) => boolean
+  /** 當 shouldSyncUrl 為 true 時，schema 會作為處理 URL 資訊使用 */
   schema?: ZodTypeAny
 }
 
@@ -74,7 +75,7 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
     ) {
       const isEqualFn = filterConfig[key]?.isEqualFn ?? isEqual
 
-      return filter(list, (item) => isEqualFn(item, target))
+      return filter(list, (item) => isEqualFn(item[key], target, item))
     }, newList)
 
     const totalAmount = newList.length

@@ -8,7 +8,7 @@ import LoadMore from '@/components/common/preact/LoadMore'
 import { useMemo, useRef, useState } from 'preact/hooks'
 import { isArray, map, zipObject } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
-import { useFilter } from '@/utils/hooks'
+import { useFilter, type FilterConfig } from '@/utils/hooks'
 
 type Fighter = z.infer<typeof schemaFighter>
 type FighterDict = Dictionary<Fighter>
@@ -83,13 +83,14 @@ export default function LogList({ storeKey, round, pageSize, fighters, logs }: P
     pageSize,
     logs,
     {
+      // @ts-expect-error: it should be ok
       companyId: {
-        isEqualFn: (item, target) => {
+        isEqualFn: (field, target) => {
           if (isArray(target)) return false
 
-          return item['companyId'].includes(target)
+          return field.includes(target)
         },
-      },
+      } satisfies FilterConfig<Log, 'companyId'>,
     },
     false,
   )

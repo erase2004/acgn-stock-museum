@@ -4,13 +4,15 @@ import { announcementCategoryMap, listItemSchema } from '@/services/dbAnnounceme
 import { setItems } from '@/stores/announcement'
 import { useEffect } from 'preact/hooks'
 import { categoryDisplayName } from '@/utils/announcement'
-import { useFilter } from '@/utils/hooks'
+import { useFilter, type FilterConfig } from '@/utils/hooks'
 import { typedObjectKeys } from '@/utils/helpers'
 import { isArray } from 'lodash-es'
 
+type Data = z.infer<typeof listItemSchema>
+
 type Props = {
   storeKey: string
-  data: z.infer<typeof listItemSchema>[]
+  data: Data[]
   pageSize: number
 }
 
@@ -21,14 +23,15 @@ export default function Filter({ storeKey, data, pageSize }: Props) {
     pageSize,
     data,
     {
+      // @ts-expect-error: it should be ok
       category: {
         schema: z.enum(typedObjectKeys(announcementCategoryMap)).optional(),
-        isEqualFn: (item, target) => {
+        isEqualFn: (field, target) => {
           if (isArray(target)) return false
 
-          return item['category'] === target
+          return field === target
         },
-      },
+      } satisfies FilterConfig<Data, 'category'>,
     },
     true,
   )
