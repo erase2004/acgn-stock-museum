@@ -7,7 +7,7 @@ import {
   type schema as schemaCompanyStone,
 } from '@/services/dbCompanyStones'
 import { schema as schemaUser } from '@/services/dbUsers'
-import { useDisplayItems } from '@/utils/account'
+import { useDisplayItems } from '@/utils/hooks'
 import { getStoneIcon, stoneDisplayName } from '@/utils/helpers'
 
 type Props = {

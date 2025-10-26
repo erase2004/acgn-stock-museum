@@ -2,7 +2,7 @@ import type { z } from 'astro/zod'
 import type { schema } from '@/services/dbDirectors'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { useDisplayItems } from '@/utils/account'
+import { useDisplayItems } from '@/utils/hooks'
 
 type Props = {
   round: string

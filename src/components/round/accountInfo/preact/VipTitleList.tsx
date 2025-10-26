@@ -2,7 +2,7 @@ import type { schema as schemaVip } from '@/services/dbVips'
 import type { z } from 'astro/zod'
 import CompanyTitle from './CompanyTitle'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { useDisplayItems } from '@/utils/account'
+import { useDisplayItems } from '@/utils/hooks'
 
 type VIP = z.infer<typeof schemaVip>
 

@@ -3,7 +3,7 @@ import type { schema } from '@/services/dbTaxes'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { formatDateTimeText } from '@/libs/timeFormat'
 import { currencyFormat } from '@/utils/helpers'
-import { useDisplayItems } from '@/utils/account'
+import { useDisplayItems } from '@/utils/hooks'
 
 type Props = {
   data: z.infer<typeof schema>[]

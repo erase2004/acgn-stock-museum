@@ -2,7 +2,7 @@ import type { schema as schemaEmployee } from '@/services/dbEmployees'
 import type { z } from 'astro/zod'
 import CompanyTitle from './CompanyTitle'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { useDisplayItems } from '@/utils/account'
+import { useDisplayItems } from '@/utils/hooks'
 
 type Employee = z.infer<typeof schemaEmployee>
 

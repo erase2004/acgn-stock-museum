@@ -2,7 +2,7 @@ import type { ZodTypeAny } from 'astro/zod'
 import { z } from 'astro/zod'
 import { useStore } from '@nanostores/preact'
 import { currentPage, hasMore, isDataLoading } from '@/stores/pagination'
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useState, useMemo } from 'preact/hooks'
 import { filter, isArray, isEqual, isString, pickBy, transform } from 'lodash-es'
 
 type FilterConfig<T> = {
@@ -130,4 +130,17 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
     filterObject,
     filteredItems,
   }
+}
+
+export function useDisplayItems<T>(data: T[], storeKey: string, pageSize: number) {
+  const totalAmount = data.length
+  const $currentPage = useStore(currentPage)
+
+  const displayItems = useMemo(() => {
+    const newList = data.slice(0, pageSize * $currentPage[storeKey])
+    hasMore.setKey(storeKey, newList.length < totalAmount)
+    return newList
+  }, [data, $currentPage[storeKey]])
+
+  return displayItems
 }

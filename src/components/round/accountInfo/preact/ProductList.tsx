@@ -3,7 +3,7 @@ import type { schema } from '@/services/dbUserOwnedProduct'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import ProductLink from '@/components/common/preact/ProductLink'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { useDisplayItems } from '@/utils/account'
+import { useDisplayItems } from '@/utils/hooks'
 
 type Props = {
   round: string

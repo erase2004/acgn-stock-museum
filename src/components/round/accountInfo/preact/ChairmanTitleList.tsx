@@ -2,7 +2,7 @@ import type { schema as schemaCompany } from '@/services/dbCompanies'
 import type { z } from 'astro/zod'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { useDisplayItems } from '@/utils/account'
+import { useDisplayItems } from '@/utils/hooks'
 
 type Company = z.infer<typeof schemaCompany>
 
