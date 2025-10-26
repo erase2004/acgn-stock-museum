@@ -8,6 +8,8 @@ import TaxList from '@/components/round/accountInfo/preact/TaxList'
 import StockList from '@/components/round/accountInfo/preact/StockList'
 import StoneList from '@/components/round/accountInfo/preact/StoneList'
 import ProductList from '@/components/round/accountInfo/preact/ProductList'
+import ViolationCaseInfo from '@/components/common/ViolationCaseInfo.astro'
+import LogList from '@/components/round/accountInfo/preact/LogList'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentPageFullTitle, getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
@@ -19,8 +21,8 @@ import {
   getDBUserOwnedProduct,
   schema as schemaUserOwnedProduct,
 } from '@/services/dbUserOwnedProduct'
+import { getAccountLogs } from '@/services/dbLog'
 import { handlePromiseParser } from '@/utils/helpers'
-import ViolationCaseInfo from '@/components/common/ViolationCaseInfo.astro'
 
 const userId = Astro.params['userId'] ?? ''
 const round = getCurrentRound(Astro)!
@@ -88,6 +90,9 @@ const productInfo =
         .toArray(),
     ),
   )) ?? []
+
+// log info
+const logs = (await getAccountLogs(connection, userId)) ?? []
 ---
 
 <RoundLayout title={title}>
@@ -116,6 +121,11 @@ const productInfo =
     <div class="max-md:max-h-screen">
       <PanelFolder client:only="preact" title="違規案件列表" classes="text-2xl" state={false}>
         <ViolationCaseInfo type="userViolated" targetId={userId} pageSize={10} />
+      </PanelFolder>
+    </div>
+    <div class="max-h-screen">
+      <PanelFolder client:only="preact" title="玩家紀錄" classes="text-2xl" state={false}>
+        <LogList client:only="preact" round={round} data={logs} />
       </PanelFolder>
     </div>
   </div>

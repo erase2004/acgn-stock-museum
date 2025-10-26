@@ -409,6 +409,7 @@ type LOG_TYPE_GROUP = {
   logTypes: LOG_TYPE[]
 }
 
+// log 的分組，方便以群組方式 filtering 之用
 export const logTypeGroupMap = {
   login: {
     displayName: '登入紀錄',
@@ -612,6 +613,27 @@ export async function getViolationCaseRelatedLogs(db: Db, violationCaseId: strin
               'data.violationCaseId': violationCaseId,
             },
           }),
+        )
+        .toArray(),
+    ),
+  )
+}
+
+export async function getAccountLogs(db: Db, userId: string) {
+  const dbLog = getDBLog(db)
+
+  return handlePromiseParser(
+    z.promise(schema.array()).parse(
+      dbLog
+        .find(
+          {
+            userId: { $in: [userId, '!all'] },
+          },
+          {
+            sort: {
+              createdAt: -1,
+            },
+          },
         )
         .toArray(),
     ),

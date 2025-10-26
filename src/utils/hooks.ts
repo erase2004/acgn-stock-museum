@@ -20,7 +20,7 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
 ) {
   const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
-  const [filteredItems, setFilteredItems] = useState(data)
+  const [filteredItems, setFilteredItems] = useState(data.slice(0, pageSize))
   const [isInitialized, setIsInitialized] = useState(false)
   const [filterObject, setFilterObject] = useState<Record<string, string | string[]>>({})
 
