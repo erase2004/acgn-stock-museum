@@ -1,0 +1,35 @@
+---
+import type { simpleSchema } from '@/services/dbViolationCases'
+import ViolationCaseList from '@/components/common/preact/ViolationCaseList'
+import { z } from 'astro/zod'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound } from '@/libs/routes'
+import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
+import {
+  getViolationCasesByUserId,
+  getViolationCasesByCompanyId,
+} from '@/services/dbViolationCases'
+
+type Props = {
+  type: 'userViolated' | 'companyViolated'
+  targetId: string
+  pageSize: number
+}
+const { type, targetId, pageSize } = Astro.props
+
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)!
+const roundData = await getCurrentRoundFromDB(connection)
+
+let data: z.infer<typeof simpleSchema>[] = []
+if (type === 'userViolated') {
+  data = (await getViolationCasesByUserId(connection, targetId)) ?? []
+} else if (type === 'companyViolated') {
+  data = (await getViolationCasesByCompanyId(connection, targetId, roundData!.beginDate)) ?? []
+} else {
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  const unreachable: never = type
+}
+---
+
+<ViolationCaseList client:only="preact" round={round} pageSize={pageSize} data={data} />

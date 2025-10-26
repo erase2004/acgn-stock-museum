@@ -140,3 +140,46 @@ export async function getViolationCaseById(db: Db, caseId: string) {
   // @ts-expect-error: caseId is valid ObjectId
   return handlePromiseParser(z.promise(schema).parse(dbViolationCases.findOne({ _id: caseId })))
 }
+
+export const simpleSchema = schema.pick({
+  _id: true,
+  category: true,
+  state: true,
+  createdAt: true,
+})
+
+export async function getViolationCasesByUserId(db: Db, userId: string) {
+  const dbViolationCases = getDBViolationCase(db)
+
+  return handlePromiseParser(
+    z
+      .promise(simpleSchema.array())
+      .parse(
+        dbViolationCases
+          .find(
+            { 'violators.violatorType': 'user', 'violators.violatorId': userId },
+            { sort: { createdAt: -1 } },
+          )
+          .toArray(),
+      ),
+  )
+}
+
+export async function getViolationCasesByCompanyId(db: Db, companyId: string, roundBegin: Date) {
+  const dbViolationCases = getDBViolationCase(db)
+
+  return handlePromiseParser(
+    z.promise(simpleSchema.array()).parse(
+      dbViolationCases
+        .find(
+          {
+            'violators.violatorType': 'company',
+            'violators.violatorId': companyId,
+            createdAt: { $gt: roundBegin },
+          },
+          { sort: { createdAt: -1 } },
+        )
+        .toArray(),
+    ),
+  )
+}

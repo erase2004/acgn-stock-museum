@@ -20,6 +20,7 @@ import {
   schema as schemaUserOwnedProduct,
 } from '@/services/dbUserOwnedProduct'
 import { handlePromiseParser } from '@/utils/helpers'
+import ViolationCaseInfo from '@/components/common/ViolationCaseInfo.astro'
 
 const userId = Astro.params['userId'] ?? ''
 const round = getCurrentRound(Astro)!
@@ -97,20 +98,25 @@ const productInfo =
         <TaxList client:only="preact" data={taxInfo} />
       </PanelFolder>
     </div>
-  </div>
-  <div>
-    <PanelFolder client:only="preact" title="持股資訊" classes="text-2xl" state={false}>
-      <StockList client:only="preact" round={round} data={stockInfo?.[0]?.data ?? []} />
-    </PanelFolder>
-  </div>
-  <div class="max-md:max-h-screen">
-    <PanelFolder client:only="preact" title="石頭資訊" classes="text-2xl" state={false}>
-      <StoneList client:only="preact" round={round} profile={user.profile} data={stoneInfo} />
-    </PanelFolder>
-  </div>
-  <div>
-    <PanelFolder client:only="preact" title="持有產品" classes="text-2xl" state={false}>
-      <ProductList client:only="preact" round={round} data={productInfo} />
-    </PanelFolder>
+    <div>
+      <PanelFolder client:only="preact" title="持股資訊" classes="text-2xl" state={false}>
+        <StockList client:only="preact" round={round} data={stockInfo?.[0]?.data ?? []} />
+      </PanelFolder>
+    </div>
+    <div class="max-md:max-h-screen">
+      <PanelFolder client:only="preact" title="石頭資訊" classes="text-2xl" state={false}>
+        <StoneList client:only="preact" round={round} profile={user.profile} data={stoneInfo} />
+      </PanelFolder>
+    </div>
+    <div>
+      <PanelFolder client:only="preact" title="持有產品" classes="text-2xl" state={false}>
+        <ProductList client:only="preact" round={round} data={productInfo} />
+      </PanelFolder>
+    </div>
+    <div class="max-md:max-h-screen">
+      <PanelFolder client:only="preact" title="違規案件列表" classes="text-2xl" state={false}>
+        <ViolationCaseInfo type="userViolated" targetId={userId} pageSize={10} />
+      </PanelFolder>
+    </div>
   </div>
 </RoundLayout>
