@@ -1,5 +1,16 @@
 import type { z } from 'astro/zod'
 import type { listItemSchema } from '@/services/dbAnnouncements'
-import { atom } from 'nanostores'
+import { computed } from 'nanostores'
+import { items as baseItems } from './pagination'
 
-export const items = atom<Array<z.infer<typeof listItemSchema>>>([])
+type Data = Array<z.infer<typeof listItemSchema>>
+
+export const STORE_KEY = 'announcement'
+
+export const items = computed(baseItems, (item) => {
+  return (item[STORE_KEY] ?? []) as Data
+})
+
+export function setItems(data: Data) {
+  baseItems.setKey(STORE_KEY, data)
+}

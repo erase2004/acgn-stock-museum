@@ -8,8 +8,7 @@ import LoadMore from '@/components/common/preact/LoadMore'
 import { getCurrentRound, getRoundData } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAnnouncements } from '@/services/dbAnnouncements'
-
-const STORE_KEY = 'announcement'
+import { STORE_KEY } from '@/stores/announcement'
 
 const round = getCurrentRound(Astro)!
 const roundData = getRoundData(round)!

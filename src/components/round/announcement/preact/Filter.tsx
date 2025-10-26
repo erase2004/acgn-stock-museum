@@ -1,7 +1,7 @@
 import type { TargetedEvent } from 'preact'
 import { z } from 'astro/zod'
 import { announcementCategoryMap, listItemSchema } from '@/services/dbAnnouncements'
-import { items } from '@/stores/announcement'
+import { setItems } from '@/stores/announcement'
 import { useEffect } from 'preact/hooks'
 import { categoryDisplayName } from '@/utils/announcement'
 import { useFilter } from '@/utils/hooks'
@@ -39,7 +39,7 @@ export default function Filter({ storeKey, data, pageSize }: Props) {
   }
 
   useEffect(() => {
-    items.set(filteredItems)
+    setItems(filteredItems)
   }, [filteredItems])
 
   return (

@@ -7,7 +7,7 @@ import { stateDisplayName, categoryDisplayName } from '@/utils/violation'
 import { useFilter } from '@/utils/hooks'
 import { typedObjectKeys } from '@/utils/helpers'
 import { itemId } from '@/services/schema'
-import { items } from '@/stores/violation'
+import { setItems } from '@/stores/violation'
 
 type Props = {
   storeKey: string
@@ -56,7 +56,7 @@ export default function Filter({ storeKey, pageSize, data }: Props) {
   )
 
   useEffect(() => {
-    items.set(filteredItems)
+    setItems(filteredItems)
   }, [filteredItems])
 
   const categoryList = Object.keys(categoryMap)
