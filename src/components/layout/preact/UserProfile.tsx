@@ -1,5 +1,5 @@
 import type { ValidateType } from '@/services/dbUsers'
-import { useRef, useState } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import { actions } from 'astro:actions'
 import { useUser } from '@/utils/hooks'
 import {
@@ -72,6 +72,22 @@ export default function UserProfile({ round }: Props) {
         : validateMethod === 'Bahamut'
           ? '請輸入您的巴哈姆特帳號'
           : '不支援的認證方式'
+
+  useEffect(() => {
+    if (user) {
+      // 處理使用者在賽季間切換的情況
+      actions.user
+        .login({
+          round,
+          name: user.profile.name,
+          type: user.profile.validateType,
+        })
+        .then(({ data }) => {
+          if (data) setUser(data)
+          else resetUser()
+        })
+    }
+  }, [])
 
   return (
     <details class="group/user dropdown absolute z-20 mr-2 md:relative" ref={dropdownRef}>
