@@ -1,9 +1,8 @@
 import type { z } from 'astro/zod'
 import type { schema as schemaProduct } from '@/services/dbProducts'
-import { currentPage, hasMore } from '@/stores/pagination'
-import { useStore } from '@nanostores/preact'
 import { useMemo, useState } from 'preact/hooks'
 import { orderBy } from 'lodash-es'
+import { useDisplayItems } from './hooks'
 
 type SortOrder<T = 1 | 0> = {
   type?: T
@@ -20,34 +19,24 @@ export function useProductCenter(
   pageSize: number,
   storeKey: string,
 ) {
-  const totalAmount = data.length
-  const $currentPage = useStore(currentPage)
   const [sortOrder, setSortOrder] = useState<SortOrder>({ voteCount: 0 })
 
-  const displayItems = useMemo(() => {
-    let key: keyof SortOrder = 'voteCount'
-    let order: 'asc' | 'desc' = 'desc'
+  const sortedData = useMemo(() => {
+    const keys: (keyof SortOrder)[] = []
+    const orders: ('asc' | 'desc')[] = []
 
-    if (typeof sortOrder['type'] === 'number') {
-      key = 'type'
-      order = sortOrder['type'] ? 'asc' : 'desc'
-    }
+    Object.entries(sortOrder).forEach(([type, value]) => {
+      if (typeof value === 'number') {
+        // @ts-expect-error: type should be keyof SortOrder
+        keys.push(type)
+        orders.push(value ? 'asc' : 'desc')
+      }
+    })
 
-    if (typeof sortOrder['rating'] === 'number') {
-      key = 'rating'
-      order = sortOrder['rating'] ? 'asc' : 'desc'
-    }
+    return orderBy(data, keys, orders)
+  }, [data, sortOrder])
 
-    if (typeof sortOrder['voteCount'] === 'number') {
-      key = 'voteCount'
-      order = sortOrder['voteCount'] ? 'asc' : 'desc'
-    }
-
-    const sorted = orderBy(data, [key], [order])
-    const newList = sorted.slice(0, pageSize * $currentPage[storeKey])
-    hasMore.setKey(storeKey, newList.length < totalAmount)
-    return newList
-  }, [data, sortOrder, $currentPage[storeKey]])
+  const displayItems = useDisplayItems(sortedData, storeKey, pageSize)
 
   function handleSortChange(key: keyof SortOrder) {
     if (typeof sortOrder[key] === 'number') {
