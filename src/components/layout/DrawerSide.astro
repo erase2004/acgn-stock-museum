@@ -8,7 +8,7 @@ const round = getCurrentRound(Astro)
 const isValidRound = checkIsValidRound(round)
 ---
 
-<div class="drawer-side">
+<div class="drawer-side z-50 **:not-[.ignore-inherit]:text-inherit">
   <label for="hidden-drawer-input" aria-label="close sidebar" class="drawer-overlay"></label>
   <div class="flex h-screen min-w-1/2 flex-col overflow-y-hidden bg-base-100 **:bg-base-100">
     <div class="flex justify-end p-1">

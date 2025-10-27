@@ -74,7 +74,7 @@ export default function UserProfile({ round }: Props) {
           : '不支援的認證方式'
 
   return (
-    <details class="group/user dropdown absolute z-0 mr-2 md:relative" ref={dropdownRef}>
+    <details class="group/user dropdown absolute z-20 mr-2 md:relative" ref={dropdownRef}>
       {user ? (
         <>
           <summary

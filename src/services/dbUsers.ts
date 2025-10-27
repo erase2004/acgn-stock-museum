@@ -84,7 +84,7 @@ const profileSchema = z.object({
   noLoginDayCount: integer.min(0),
   lastSeasonTotalWealth: integer.default(0),
   /** 金錢數量 */
-  money: integer.min(0),
+  money: integer,
   /** 消費券的數量 */
   vouchers: integer.min(0),
   /** 推薦票數量 */
@@ -132,7 +132,7 @@ export const schema = z.object({
   createdAt: datetime,
   profile: profileSchema,
   status: statusSchema.nullish(),
-  about: aboutSchema,
+  about: aboutSchema.optional().default({}),
   favorite: itemId.array().default([]),
 })
 

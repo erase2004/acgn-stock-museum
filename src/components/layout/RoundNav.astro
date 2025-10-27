@@ -1,5 +1,6 @@
 ---
 import UserProfile from './preact/UserProfile'
+import UserFavoriteList from './preact/UserFavoriteList'
 import NavLinkGroup from './NavLinkGroup.astro'
 import NavLink from './NavLink.astro'
 import ThemeToggle from './ThemeToggle.astro'
@@ -28,7 +29,7 @@ const latestArena = await getLatestArena(connection)
     />
     <NavLink pageName={PAGE.ARENA_INFO} isRoundBounded={true} params={latestArena?._id} />
   </NavLinkGroup>
-  <!-- TODO: user's favorite company list -->
+  <UserFavoriteList client:only="preact" round={round} />
   <NavLinkGroup text="其他資訊">
     <NavLink pageName={PAGE.TUTORIAL} isRoundBounded={true} />
     <NavLink pageName={PAGE.SEASONAL_REPORT} isRoundBounded={true} params={latestSeason?._id} />
