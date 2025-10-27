@@ -1,4 +1,5 @@
 ---
+import UserProfile from './preact/UserProfile'
 import NavLinkGroup from './NavLinkGroup.astro'
 import NavLink from './NavLink.astro'
 import ThemeToggle from './ThemeToggle.astro'
@@ -13,7 +14,7 @@ const latestSeason = await getLatestSeason(connection)
 const latestArena = await getLatestArena(connection)
 ---
 
-<!-- TODO: login & user profile menu -->
+<UserProfile client:only="preact" round={round} />
 <ul class="menu menu-horizontal hidden text-base md:inline-flex">
   <NavLink pageName={PAGE.MAIN} isRoundBounded={true} />
   <NavLink pageName={PAGE.ANNOUNCEMENT_LIST} isRoundBounded={true} />

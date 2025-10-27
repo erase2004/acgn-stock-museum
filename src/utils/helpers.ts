@@ -1,4 +1,4 @@
-import type { VALIDATE_TYPE } from '@/services/dbUserArchive'
+import type { ValidateType } from '@/services/dbUsers'
 import type { StoneType } from '@/services/dbCompanyStones'
 import type { Chart } from 'chart.js'
 import IconBirth from '@/assets/icons/stones/birth.png'
@@ -31,7 +31,7 @@ export function toCurrencyAbbr(value: number) {
   }).format(value)
 }
 
-function simpleValidateTypeText(validateType: VALIDATE_TYPE) {
+function simpleValidateTypeText(validateType: ValidateType) {
   switch (validateType) {
     case 'PTT':
       return 'PTT'
@@ -42,7 +42,7 @@ function simpleValidateTypeText(validateType: VALIDATE_TYPE) {
   }
 }
 
-export function styledValidateTypeMarkHtml(validateType: VALIDATE_TYPE) {
+export function styledValidateTypeMarkHtml(validateType: ValidateType) {
   return `<span class="text-[60%] align-top">⟨${simpleValidateTypeText(validateType)}⟩</span>`
 }
 

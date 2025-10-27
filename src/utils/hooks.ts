@@ -1,9 +1,11 @@
 import type { ZodTypeAny } from 'astro/zod'
+import type { BasicUser } from '@/services/dbUsers'
 import { z } from 'astro/zod'
 import { useStore } from '@nanostores/preact'
 import { currentPage, hasMore, isDataLoading } from '@/stores/pagination'
 import { useEffect, useState, useMemo } from 'preact/hooks'
 import { filter, isArray, isEqual, isString, pickBy, transform } from 'lodash-es'
+import { useLocalStorage } from 'usehooks-ts'
 
 export type FilterConfig<T, S extends keyof T = keyof T> = {
   isEqualFn: (field: T[S], target: string | string[], item: T) => boolean
@@ -144,4 +146,14 @@ export function useDisplayItems<T>(data: T[], storeKey: string, pageSize: number
   }, [data, $currentPage[storeKey]])
 
   return displayItems
+}
+
+export function useUser() {
+  const [value, setValue, removeValue] = useLocalStorage<BasicUser | null>('user', null)
+
+  return {
+    user: value,
+    setUser: setValue,
+    resetUser: removeValue,
+  }
 }

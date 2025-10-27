@@ -1,6 +1,6 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
-import { datetime, integer, objectId } from './schema'
+import { datetime, integer, itemId, objectId } from './schema'
 import { stoneTypeList } from './dbCompanyStones'
 import { zipObject } from 'lodash-es'
 
@@ -57,6 +57,10 @@ export function roleDisplayName(role: string) {
   ).displayName
 }
 
+export const ValidateMethod = ['Google', 'PTT', 'Bahamut'] as const
+
+export type ValidateType = (typeof ValidateMethod)[number]
+
 const profileSchema = z.object({
   /** 使用者名稱 */
   name: z.string(),
@@ -73,7 +77,7 @@ const profileSchema = z.object({
       return true
     }),
   /** 帳號驗證來源 */
-  validateType: z.enum(['Google', 'PTT', 'Bahamut']),
+  validateType: z.enum(ValidateMethod),
   /** 被禁止的權限 */
   ban: z.enum(BanTypeList).array(),
   /** 未登入天數次數紀錄 */
@@ -129,9 +133,30 @@ export const schema = z.object({
   profile: profileSchema,
   status: statusSchema.nullish(),
   about: aboutSchema,
+  favorite: itemId.array().default([]),
 })
 
 export type User = z.infer<typeof schema>
+
+export const basicSchema = schema
+  .pick({
+    _id: true,
+    username: true,
+    favorite: true,
+  })
+  .extend({
+    profile: profileSchema.pick({
+      name: true,
+      roles: true,
+      validateType: true,
+      money: true,
+      vouchers: true,
+      voteTickets: true,
+      stones: true,
+    }),
+  })
+
+export type BasicUser = z.infer<typeof basicSchema>
 
 export function getDBUsers(db: Db) {
   return db.collection('users')

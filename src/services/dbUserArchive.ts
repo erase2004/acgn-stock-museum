@@ -3,8 +3,7 @@ import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
 import { objectId } from './schema'
-
-export type VALIDATE_TYPE = z.infer<typeof schema>['validateType']
+import { ValidateMethod } from './dbUsers'
 
 export const schema = z.object({
   _id: objectId,
@@ -13,7 +12,7 @@ export const schema = z.object({
   /** 使用者顯示名稱(如驗證來源為Google，則保存Email) */
   name: z.string(),
   /** 帳號驗證來源 */
-  validateType: z.enum(['Google', 'PTT', 'Bahamut']),
+  validateType: z.enum(ValidateMethod),
 })
 
 export function getDBUserArchive(db: Db) {

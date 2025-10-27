@@ -1,4 +1,5 @@
 import type { z } from 'astro/zod'
+import type { User } from '@/services/dbUsers'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import LoadMore from '@/components/common/preact/LoadMore'
 import {
@@ -6,13 +7,12 @@ import {
   stoneTypeList,
   type schema as schemaCompanyStone,
 } from '@/services/dbCompanyStones'
-import { schema as schemaUser } from '@/services/dbUsers'
 import { useDisplayItems } from '@/utils/hooks'
 import { getStoneIcon, stoneDisplayName } from '@/utils/helpers'
 
 type Props = {
   round: string
-  profile: z.infer<typeof schemaUser>['profile']
+  profile: User['profile']
   data: z.infer<typeof schemaCompanyStone>[]
 }
 
