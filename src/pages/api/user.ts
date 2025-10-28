@@ -9,12 +9,13 @@ import {
 } from '@/libs/api'
 import { getConnection } from '@/libs/databases'
 import { getArchivedUser } from '@/services/dbUserArchive'
+import { itemId } from '@/services/schema'
 
 export const prerender = false
 
 const schema = z.object({
   round: schemaRound,
-  userId: z.string(),
+  userId: itemId,
 })
 
 export const GET: APIRoute = async ({ request }) => {

@@ -8,14 +8,15 @@ import {
   createJSONResponse,
 } from '@/libs/api'
 import { getConnection } from '@/libs/databases'
-import { getProduct } from '@/services/dbProducts'
+import { getDBDirectors, simpleSchema } from '@/services/dbDirectors'
 import { itemId } from '@/services/schema'
+import { handlePromiseParser } from '@/utils/helpers'
 
 export const prerender = false
 
 const schema = z.object({
   round: schemaRound,
-  productId: itemId,
+  userId: itemId,
 })
 
 export const GET: APIRoute = async ({ request }) => {
@@ -24,10 +25,23 @@ export const GET: APIRoute = async ({ request }) => {
   if (!success) {
     return badRequest
   }
-  const { round, productId } = input
+  const { round, userId } = input
   const connection = getConnection(round)
+  const dbDirectors = getDBDirectors(connection)
 
-  const result = await getProduct(connection, productId)
+  const result = await handlePromiseParser(
+    z.promise(simpleSchema.array()).parse(
+      dbDirectors
+        .find(
+          {
+            userId,
+          },
+          // @ts-expect-error: companyId field exists
+          { companyId: 1 },
+        )
+        .toArray(),
+    ),
+  )
 
   if (typeof result === 'undefined') return internalServerError
   return createJSONResponse(result)

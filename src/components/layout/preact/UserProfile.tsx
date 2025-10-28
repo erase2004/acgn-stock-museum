@@ -1,4 +1,5 @@
 import type { ValidateType } from '@/services/dbUsers'
+import { z } from 'astro/zod'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { actions } from 'astro:actions'
 import { useUser } from '@/utils/hooks'
@@ -10,13 +11,29 @@ import {
 } from '@/utils/helpers'
 import { getAccountUrl, getPageTitle, PAGE } from '@/libs/routes'
 import { stoneTypeList } from '@/services/dbCompanyStones'
+import { simpleSchema } from '@/services/dbDirectors'
+import { getUserStock } from '@/libs/request'
+import { ownStocks } from '@/stores/account'
+import { map } from 'lodash-es'
 
 type Props = {
   round: string
 }
 
+async function updateUserStock(round: string, userId: string) {
+  return await getUserStock(round, userId)
+    .then(async (response) => {
+      const data = await z.promise(simpleSchema.array()).parse(response.json())
+      ownStocks.set(map(data, 'companyId'))
+    })
+    .catch(() => {
+      ownStocks.set([])
+    })
+}
+
 export default function UserProfile({ round }: Props) {
   const { user, setUser, resetUser } = useUser()
+  const [isInitialized, setIsInitialized] = useState(false)
   const [validateMethod, setValidateMethod] = useState<ValidateType | ''>('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [shouldShowError, setShouldShowError] = useState(false)
@@ -55,6 +72,7 @@ export default function UserProfile({ round }: Props) {
     }
     setUser(data)
     dropdownRef.current?.removeAttribute('open')
+    updateUserStock(round, data._id)
   }
 
   async function logout() {
@@ -62,6 +80,7 @@ export default function UserProfile({ round }: Props) {
     resetForm()
     resetUser()
     dropdownRef.current?.removeAttribute('open')
+    ownStocks.set([])
   }
 
   const placeHolder =
@@ -83,11 +102,19 @@ export default function UserProfile({ round }: Props) {
           type: user.profile.validateType,
         })
         .then(({ data }) => {
-          if (data) setUser(data)
-          else resetUser()
+          if (data) {
+            setUser(data)
+            return updateUserStock(round, data._id)
+          } else resetUser()
         })
+        .finally(() => setIsInitialized(true))
+    } else {
+      setIsInitialized(true)
     }
   }, [])
+
+  if (!isInitialized)
+    return <div class="loading absolute mx-4 inline-block h-8 loading-bars md:relative"></div>
 
   return (
     <details class="group/user dropdown absolute z-20 mr-2 md:relative" ref={dropdownRef}>
@@ -104,8 +131,8 @@ export default function UserProfile({ round }: Props) {
               }}
             />
             <p class="inline-block truncate">{user.profile.name}</p>
-            <i class="fa fa-chevron-up group-open/user:hidden!"></i>
-            <i class="fa fa-chevron-down hidden! group-open/user:inline-block!"></i>
+            <i class="fa fa-chevron-down group-open/user:hidden!"></i>
+            <i class="fa fa-chevron-up hidden! group-open/user:inline-block!"></i>
           </summary>
           <div class="dropdown-content menu w-40 gap-y-1 rounded-box bg-base-300 text-base shadow-sm *:flex *:items-center *:justify-between">
             <a href={getAccountUrl(round, user._id)} class="ignore-inherit" title="帳號資訊">
@@ -141,8 +168,8 @@ export default function UserProfile({ round }: Props) {
         <>
           <summary class="ignore-nherit btn">
             未登入
-            <i class="fa fa-chevron-up group-open/user:hidden!"></i>
-            <i class="fa fa-chevron-down hidden! group-open/user:inline-block!"></i>
+            <i class="fa fa-chevron-down group-open/user:hidden!"></i>
+            <i class="fa fa-chevron-up hidden! group-open/user:inline-block!"></i>
           </summary>
           <ul class="dropdown-content menu rounded-box bg-base-300 shadow-sm">
             {validateMethod !== '' ? (
