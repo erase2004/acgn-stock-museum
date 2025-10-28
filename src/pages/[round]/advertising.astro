@@ -5,18 +5,18 @@ import dayjs from 'dayjs'
 import RoundLayout from '@/layouts/Round.astro'
 import UserLink from '@/components/common/preact/UserLink'
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound, getRoundData } from '@/libs/routes'
+import { getCurrentRound } from '@/libs/routes'
 import { getAdvertisements } from '@/services/dbAdvertising'
 import { currencyFormat } from '@/utils/helpers'
 import { formatDateTimeText } from '@/libs/timeFormat'
+import { advertisingExpireTime, displayAdvertisingNumber } from '@/configs/general'
 
 const round = getCurrentRound(Astro)!
-const roundData = getRoundData(round)!
 const connection = getConnection(round)!
 const advertisements = (await getAdvertisements(connection)) ?? []
 
 function formatExpireDate(begin: Date) {
-  const expire = dayjs(begin).add(roundData.config.advertisingExpireTime, 'ms')
+  const expire = dayjs(begin).add(advertisingExpireTime, 'ms')
   return formatDateTimeText(expire)
 }
 ---
@@ -42,7 +42,7 @@ function formatExpireDate(begin: Date) {
             <tr
               class:list={[
                 {
-                  'bg-success/10': index < roundData.config.displayAdvertisingNumber,
+                  'bg-success/10': index < displayAdvertisingNumber,
                 },
               ]}
             >

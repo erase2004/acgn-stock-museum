@@ -2,7 +2,8 @@
 import StatusItem from './StatusItem.astro'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
-import { getCurrentRound, getMuseumMainPageUrl, getRoundData } from '@/libs/routes'
+import { announceSalaryTime, companyProfitDistribution } from '@/configs/general'
+import { getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getDBVariables } from '@/services/dbVariables'
@@ -13,7 +14,6 @@ import { getLatestSeason } from '@/services/dbSeason'
 dayjs.extend(isBetween)
 
 const round = getCurrentRound(Astro)!
-const roundData = getRoundData(round)!
 const connection = getConnection(round)
 const dbVariables = getDBVariables(connection)
 
@@ -37,10 +37,10 @@ if (!latestSeason) {
 const seasonStartTime = formatDateTimeText(latestSeason.beginDate)
 const seasonEndTime = formatDateTimeText(latestSeason.endDate)
 const updateSalaryDeadline = formatDateTimeText(
-  dayjs(latestSeason.endDate).subtract(roundData.config.announceSalaryTime, 'ms'),
+  dayjs(latestSeason.endDate).subtract(announceSalaryTime, 'ms'),
 )
 const updateProfitDistributionDeadline = formatDateTimeText(
-  dayjs(latestSeason.endDate).subtract(roundData.config.companyProfitDistribution.lockTime, 'ms'),
+  dayjs(latestSeason.endDate).subtract(companyProfitDistribution.lockTime, 'ms'),
 )
 
 function createFormatter(formatter: (v: any) => any) {

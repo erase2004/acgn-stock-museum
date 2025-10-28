@@ -11,22 +11,16 @@ import { getConnection } from '@/libs/databases'
 import { getViolationCaseById } from '@/services/dbViolationCases'
 import { getRelatedActionLog } from '@/services/dbViolationCaseActionLogs'
 import { getViolationCaseRelatedLogs } from '@/services/dbLog'
-import {
-  getCurrentRound,
-  getViolationCaseUrl,
-  getRoundData,
-  getMuseumMainPageUrl,
-} from '@/libs/routes'
+import { getCurrentRound, getViolationCaseUrl, getMuseumMainPageUrl } from '@/libs/routes'
 import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/violation'
+import { dataStoreKey } from '@/configs/general'
 
 import { markdownToHtml } from '@/utils/helpers'
 import { formatDateTimeText } from '@/libs/timeFormat'
 
-const STORE_KEY = 'violation-case'
+const STORE_KEY = dataStoreKey.violationRelatedLog
 
 const round = getCurrentRound(Astro)!
-const roundData = getRoundData(round)!
-const pageSize = roundData.config.dataNumberPerPage.violationRelatedLog
 const connection = getConnection(round)
 
 const { caseId = '' } = Astro.params
@@ -120,7 +114,6 @@ const relatedLogs = result?.[0]?.data ?? []
           client:only="preact"
           storeKey={STORE_KEY}
           round={round}
-          pageSize={pageSize}
           total={totalAmount}
           data={relatedLogs}
         />

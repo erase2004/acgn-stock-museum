@@ -5,16 +5,16 @@ import RoundLayout from '@/layouts/Round.astro'
 import ListContainer from '@/components/round/fscStock/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound, getRoundData } from '@/libs/routes'
+import { getCurrentRound } from '@/libs/routes'
 import { getAccountOwnStocks } from '@/services/dbDirectors'
 import { SpecialUser } from '@/services/dbUsers'
+import { dataStoreKey } from '@/configs/general'
 
-const STORE_KEY = 'fsc-stock'
+const STORE_KEY = dataStoreKey.fscStock
+
 const userId = SpecialUser.FSC
 
 const round = getCurrentRound(Astro)!
-const roundData = getRoundData(round)!
-const pageSize = roundData.config.dataNumberPerPage.fscStock
 const connection = getConnection(round)!
 const result = await getAccountOwnStocks(connection, userId)
 const total = result?.[0]?.total[0]?.total ?? 0
@@ -27,7 +27,6 @@ const data = result?.[0]?.data ?? []
   <ListContainer
     client:only="preact"
     round={round}
-    pageSize={pageSize}
     total={total}
     data={data}
     storeKey={STORE_KEY}

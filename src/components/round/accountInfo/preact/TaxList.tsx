@@ -4,13 +4,14 @@ import LoadMore from '@/components/common/preact/LoadMore'
 import { formatDateTimeText } from '@/libs/timeFormat'
 import { currencyFormat } from '@/utils/helpers'
 import { useDisplayItems } from '@/utils/hooks'
+import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 
 type Props = {
   data: z.infer<typeof schema>[]
 }
 
-const STORE_KEY = 'tax-info'
-const PAGE_SIZE = 10
+const STORE_KEY = dataStoreKey.account.tax
+const PAGE_SIZE = dataNumberPerPage.account.tax
 
 export default function TaxList({ data }: Props) {
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)

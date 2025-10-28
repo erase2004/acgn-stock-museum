@@ -23,6 +23,7 @@ import {
 } from '@/services/dbUserOwnedProduct'
 import { getAccountLogs } from '@/services/dbLog'
 import { handlePromiseParser } from '@/utils/helpers'
+import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 
 const userId = Astro.params['userId'] ?? ''
 const round = getCurrentRound(Astro)!
@@ -120,7 +121,12 @@ const logs = (await getAccountLogs(connection, userId)) ?? []
     </div>
     <div class="max-md:max-h-screen">
       <PanelFolder client:only="preact" title="違規案件列表" classes="text-2xl" state={false}>
-        <ViolationCaseInfo type="userViolated" targetId={userId} pageSize={10} />
+        <ViolationCaseInfo
+          type="userViolated"
+          targetId={userId}
+          storeKey={dataStoreKey.account.violation}
+          pageSize={dataNumberPerPage.account.violation}
+        />
       </PanelFolder>
     </div>
     <div class="max-h-screen">

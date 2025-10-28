@@ -3,6 +3,7 @@ import { z } from 'astro/zod'
 import { datetime, integer, itemId, objectId } from './schema'
 import { stoneTypeList } from './dbCompanyStones'
 import { zipObject } from 'lodash-es'
+import { productVoucherAmount } from '@/configs/general'
 
 export const BanTypeList = [
   'accuse', // 所有舉報違規行為
@@ -86,7 +87,7 @@ const profileSchema = z.object({
   /** 金錢數量 */
   money: integer,
   /** 消費券的數量 */
-  vouchers: integer.min(0),
+  vouchers: integer.min(0).default(productVoucherAmount),
   /** 推薦票數量 */
   voteTickets: integer.min(0).default(0),
   /** 是否處於渡假模式 */

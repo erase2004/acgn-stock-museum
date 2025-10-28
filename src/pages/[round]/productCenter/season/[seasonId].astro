@@ -5,18 +5,12 @@ import RoundLayout from '@/layouts/Round.astro'
 import SeasonNavbar from '@/components/common/preact/SeasonNavbar'
 import SeasonListContainer from '@/components/round/productCenter/preact/SeasonListContainer'
 import { getConnection } from '@/libs/databases'
-import {
-  getCurrentRound,
-  getMuseumMainPageUrl,
-  getProductCenterBySeasonUrl,
-  getRoundData,
-} from '@/libs/routes'
+import { getCurrentRound, getMuseumMainPageUrl, getProductCenterBySeasonUrl } from '@/libs/routes'
 import { getNextSeason, getPreviousSeason, getSeasonById } from '@/services/dbSeason'
 import { getProductsBySeason } from '@/services/dbProducts'
 
 const seasonId = Astro.params['seasonId']!
 const round = getCurrentRound(Astro)!
-const roundData = getRoundData(round)!
 const connection = getConnection(round)!
 
 const homepage = getMuseumMainPageUrl()
@@ -47,10 +41,5 @@ const data = (await getProductsBySeason(connection, seasonId)) ?? []
     nextSeasonUrl={nextSeasonUrl}
   />
   <div class="divider"></div>
-  <SeasonListContainer
-    client:only="preact"
-    round={round}
-    pageSize={roundData.config.dataNumberPerPage.productCenter}
-    data={data}
-  />
+  <SeasonListContainer client:only="preact" round={round} data={data} />
 </RoundLayout>

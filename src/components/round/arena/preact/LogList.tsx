@@ -9,15 +9,17 @@ import { useMemo, useRef, useState } from 'preact/hooks'
 import { isArray, map, zipObject } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
 import { useFilter, type FilterConfig } from '@/utils/hooks'
+import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+
+const STORE_KEY = dataStoreKey.arena.log
+const PAGE_SIZE = dataNumberPerPage.arena.log
 
 type Fighter = z.infer<typeof schemaFighter>
 type FighterDict = Dictionary<Fighter>
 type Log = z.infer<typeof schemaLog>
 
 type Props = {
-  storeKey: string
   round: string
-  pageSize: number
   fighters: Fighter[]
   logs: Log[]
 }
@@ -73,14 +75,14 @@ function displayAttackManaer(log: Log, fighterDict: FighterDict) {
   return '???'
 }
 
-export default function LogList({ storeKey, round, pageSize, fighters, logs }: Props) {
+export default function LogList({ round, fighters, logs }: Props) {
   const fighterDict = useMemo(() => {
     return zipObject(map(fighters, 'companyId'), fighters)
   }, [fighters])
 
   const { setFilterValue, filteredItems } = useFilter(
-    storeKey,
-    pageSize,
+    STORE_KEY,
+    PAGE_SIZE,
     logs,
     {
       // @ts-expect-error: it should be ok
@@ -163,7 +165,7 @@ export default function LogList({ storeKey, round, pageSize, fighters, logs }: P
         </button>
       </form>
       <div>{filteredItems.map(formatLog)}</div>
-      <LoadMore storeKey={storeKey} />
+      <LoadMore storeKey={STORE_KEY} />
     </div>
   )
 }

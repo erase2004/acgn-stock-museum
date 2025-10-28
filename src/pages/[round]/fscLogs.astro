@@ -5,15 +5,14 @@ import RoundLayout from '@/layouts/Round.astro'
 import ListContainer from '@/components/round/fscLog/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound, getRoundData } from '@/libs/routes'
+import { getCurrentRound } from '@/libs/routes'
 import { getFSCLogs } from '@/services/dbLog'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
+import { dataStoreKey } from '@/configs/general'
 
-const STORE_KEY = 'fsc-logs'
+const STORE_KEY = dataStoreKey.fscLogs
 
 const round = getCurrentRound(Astro)!
-const roundData = getRoundData(round)!
-const pageSize = roundData.config.dataNumberPerPage.fscLogs
 const connection = getConnection(round)!
 
 const currentRound = await getCurrentRoundFromDB(connection)
@@ -28,7 +27,6 @@ const data = result?.[0]?.data ?? []
   <ListContainer
     client:only="preact"
     round={round}
-    pageSize={pageSize}
     total={total}
     data={data}
     storeKey={STORE_KEY}

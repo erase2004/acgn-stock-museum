@@ -2,17 +2,19 @@ import CompanyLink from '@/components/common/preact/CompanyLink'
 import { z } from 'astro/zod'
 import { stocksWithCountSchema } from '@/services/dbDirectors'
 import { useDisplayItems } from '@/utils/hooks'
+import { dataNumberPerPage } from '@/configs/general'
+
+const PAGE_SIZE = dataNumberPerPage.fscStock
 
 type Props = {
   storeKey: string
   round: string
-  pageSize: number
   total: number
   data: z.infer<typeof stocksWithCountSchema>[number]['data']
 }
 
-export default function ListContainer({ storeKey, round, pageSize, total, data }: Props) {
-  const displayItems = useDisplayItems(data, storeKey, pageSize)
+export default function ListContainer({ storeKey, round, total, data }: Props) {
+  const displayItems = useDisplayItems(data, storeKey, PAGE_SIZE)
 
   let tbodyContent
 

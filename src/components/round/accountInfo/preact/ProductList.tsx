@@ -4,14 +4,15 @@ import CompanyLink from '@/components/common/preact/CompanyLink'
 import ProductLink from '@/components/common/preact/ProductLink'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { useDisplayItems } from '@/utils/hooks'
+import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 
 type Props = {
   round: string
   data: z.infer<typeof schema>[]
 }
 
-const STORE_KEY = 'product-info'
-const PAGE_SIZE = 10
+const STORE_KEY = dataStoreKey.account.product
+const PAGE_SIZE = dataNumberPerPage.account.product
 
 export default function ProductList({ round, data }: Props) {
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)

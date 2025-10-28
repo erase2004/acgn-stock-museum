@@ -6,14 +6,13 @@ import CompanyLink from '@/components/common/preact/CompanyLink'
 import CompanyListContainer from '@/components/round/productCenter/preact/CompanyListContainer'
 
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound, getMuseumMainPageUrl, getRoundData } from '@/libs/routes'
+import { getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
 import { getArchivedCompany } from '@/services/dbCompanyArchive'
 import { getProductsByCompany } from '@/services/dbProducts'
 import { getCurrentPageFullTitle } from '@/libs/routes'
 
 const companyId = Astro.params['companyId']!
 const round = getCurrentRound(Astro)!
-const roundData = getRoundData(round)!
 const connection = getConnection(round)!
 
 const homepage = getMuseumMainPageUrl()
@@ -33,10 +32,5 @@ const data = (await getProductsByCompany(connection, companyId)) ?? []
     <CompanyLink client:only="preact" round={round} companyId={companyId} />
   </h2>
   <div class="divider"></div>
-  <CompanyListContainer
-    client:only="preact"
-    round={round}
-    pageSize={roundData.config.dataNumberPerPage.productCenter}
-    data={data}
-  />
+  <CompanyListContainer client:only="preact" round={round} data={data} />
 </RoundLayout>

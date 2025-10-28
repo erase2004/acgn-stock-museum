@@ -13,9 +13,10 @@ import {
 type Props = {
   type: 'userViolated' | 'companyViolated'
   targetId: string
+  storeKey: string
   pageSize: number
 }
-const { type, targetId, pageSize } = Astro.props
+const { type, targetId, storeKey, pageSize } = Astro.props
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
@@ -32,4 +33,10 @@ if (type === 'userViolated') {
 }
 ---
 
-<ViolationCaseList client:only="preact" round={round} pageSize={pageSize} data={data} />
+<ViolationCaseList
+  client:only="preact"
+  round={round}
+  storeKey={storeKey}
+  pageSize={pageSize}
+  data={data}
+/>

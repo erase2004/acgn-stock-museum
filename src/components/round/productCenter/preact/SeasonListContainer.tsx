@@ -4,19 +4,20 @@ import CompanyLink from '@/components/common/preact/CompanyLink'
 import ProductLink from '@/components/common/preact/ProductLink'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { isRestrictedRating, useProductCenter } from '@/utils/product'
+import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 
-const STORE_KEY = 'product'
+const STORE_KEY = dataStoreKey.productCenter.season
+const PAGE_SIZE = dataNumberPerPage.productCenter.season
 
 type Props = {
   round: string
-  pageSize: number
   data: z.infer<typeof schemaProduct>[]
 }
 
-export default function SeasonListContainer({ round, pageSize, data }: Props) {
+export default function SeasonListContainer({ round, data }: Props) {
   const { displayItems, handleSortChange, getSortButtonClass, getSortIcon } = useProductCenter(
     data,
-    pageSize,
+    PAGE_SIZE,
     STORE_KEY,
   )
 

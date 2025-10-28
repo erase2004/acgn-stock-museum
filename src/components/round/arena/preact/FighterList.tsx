@@ -12,6 +12,7 @@ import { useStore } from '@nanostores/preact'
 import { useMemo, useState } from 'preact/hooks'
 import { orderBy } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
+import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 
 type OrderKey = (typeof arenaFighterSortableFields)[number]
 type SortOrder<T = 1 | 0> = Partial<Record<OrderKey, T>>
@@ -26,23 +27,17 @@ const fieldNameMap: Record<OrderKey, string> = {
   totalInvestedAmount: '總投資額',
 }
 
+const PAGE_SIZE = dataNumberPerPage.arena.fighter
+const STORE_KEY = dataStoreKey.arena.fighter
+
 type Props = {
-  storeKey: string
   round: string
   isArenaEnded: boolean
-  pageSize: number
   minInvestment: number
   data: z.infer<typeof schemaFighter>[]
 }
 
-export default function FighterList({
-  storeKey,
-  round,
-  isArenaEnded,
-  minInvestment,
-  pageSize,
-  data,
-}: Props) {
+export default function FighterList({ round, isArenaEnded, minInvestment, data }: Props) {
   const totalAmount = data.length
   const $currentPage = useStore(currentPage)
   const [sortOrder, setSortOrder] = useState<SortOrder>(isArenaEnded ? { rank: 1 } : { agi: 0 })
@@ -63,10 +58,10 @@ export default function FighterList({
         ? orderBy(data, [key, 'createdAt'], [order, order === 'desc' ? 'asc' : 'desc'])
         : orderBy(data, [key], [order])
 
-    const newList = sorted.slice(0, pageSize * $currentPage[storeKey])
-    hasMore.setKey(storeKey, newList.length < totalAmount)
+    const newList = sorted.slice(0, PAGE_SIZE * $currentPage[STORE_KEY])
+    hasMore.setKey(STORE_KEY, newList.length < totalAmount)
     return newList
-  }, [data, sortOrder, $currentPage[storeKey]])
+  }, [data, sortOrder, $currentPage[STORE_KEY]])
 
   function handleSortChange(key: keyof SortOrder) {
     if (typeof sortOrder[key] === 'number') {
@@ -169,7 +164,7 @@ export default function FighterList({
           )}
         </tbody>
       </table>
-      <LoadMore storeKey={storeKey} />
+      <LoadMore storeKey={STORE_KEY} />
     </div>
   )
 }

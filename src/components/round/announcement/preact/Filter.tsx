@@ -7,20 +7,22 @@ import { categoryDisplayName } from '@/utils/announcement'
 import { useFilter, type FilterConfig } from '@/utils/hooks'
 import { typedObjectKeys } from '@/utils/helpers'
 import { isArray } from 'lodash-es'
+import { dataNumberPerPage } from '@/configs/general'
+
+const PAGE_SIZE = dataNumberPerPage.announcements
 
 type Data = z.infer<typeof listItemSchema>
 
 type Props = {
   storeKey: string
   data: Data[]
-  pageSize: number
 }
 
-export default function Filter({ storeKey, data, pageSize }: Props) {
+export default function Filter({ storeKey, data }: Props) {
   const categoryList = Object.keys(announcementCategoryMap)
   const { setFilterValue, filterObject, filteredItems } = useFilter(
     storeKey,
-    pageSize,
+    PAGE_SIZE,
     data,
     {
       // @ts-expect-error: it should be ok

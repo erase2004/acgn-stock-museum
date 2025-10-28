@@ -7,17 +7,16 @@ import PanelFolder from '@/components/common/preact/PanelFolder'
 import FighterList from '@/components/round/arena/preact/FighterList'
 import LogList from '@/components/round/arena/preact/LogList'
 import { getConnection } from '@/libs/databases'
-import { getRoundData } from '@/libs/routes'
 import { getCurrentRound, getMuseumMainPageUrl, getArenaInfoUrl } from '@/libs/routes'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getArenaById, getPreviousArena, getNextArena } from '@/services/dbArena'
 import { getFighters } from '@/services/dbArenaFighters'
 import { getArenaLogs } from '@/services/dbArenaLog'
 import { isArenaEnded, isArenaJoinEnded } from '@/utils/arena'
+import { arenaMinInvestedAmount } from '@/configs/general'
 
 const arenaId = Astro.params['arenaId']!
 const round = getCurrentRound(Astro)!
-const roundData = getRoundData(round)!
 const connection = getConnection(round)!
 const currentRound = await getCurrentRoundFromDB(connection)
 
@@ -68,11 +67,9 @@ const logs = (await getArenaLogs(connection, arenaId)) ?? []
   >
     <FighterList
       client:only="preact"
-      storeKey={'fighter'}
       round={round}
       isArenaEnded={isEnded}
-      pageSize={roundData.config.dataNumberPerPage.arenaFighterList}
-      minInvestment={roundData.config.arenaMinInvestedAmount}
+      minInvestment={arenaMinInvestedAmount}
       data={fighters}
     />
   </PanelFolder>
@@ -81,14 +78,7 @@ const logs = (await getArenaLogs(connection, arenaId)) ?? []
       <Fragment>
         <div class="divider" />
         <PanelFolder client:only="preact" title={'戰鬥紀錄'} classes="text-2xl" state={false}>
-          <LogList
-            client:only="preact"
-            storeKey="log"
-            round={round}
-            pageSize={roundData.config.dataNumberPerPage.arenaLog}
-            fighters={fighters}
-            logs={logs}
-          />
+          <LogList client:only="preact" round={round} fighters={fighters} logs={logs} />
         </PanelFolder>
       </Fragment>
     )

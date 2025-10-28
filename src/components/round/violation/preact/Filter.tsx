@@ -8,22 +8,24 @@ import { useFilter, type FilterConfig } from '@/utils/hooks'
 import { typedObjectKeys } from '@/utils/helpers'
 import { itemId } from '@/services/schema'
 import { setItems } from '@/stores/violation'
+import { dataNumberPerPage } from '@/configs/general'
+
+const PAGE_SIZE = dataNumberPerPage.violations
 
 type Data = z.infer<typeof listItemSchema>
 
 type Props = {
   storeKey: string
-  pageSize: number
   data: Data[]
 }
 
-export default function Filter({ storeKey, pageSize, data }: Props) {
+export default function Filter({ storeKey, data }: Props) {
   const [showClear, setShowClear] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const { setFilterValue, filteredItems, filterObject } = useFilter(
     storeKey,
-    pageSize,
+    PAGE_SIZE,
     data,
     {
       // @ts-expect-error: it should be ok

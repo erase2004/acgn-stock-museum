@@ -3,6 +3,7 @@ import type { z } from 'astro/zod'
 import CompanyTitle from './CompanyTitle'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { useDisplayItems } from '@/utils/hooks'
+import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 
 type VIP = z.infer<typeof schemaVip>
 
@@ -11,8 +12,8 @@ type Props = {
   data: Pick<VIP, 'companyId' | 'level'>[]
 }
 
-const PAGE_SIZE = 10
-const STORE_KEY = 'vip-title'
+const PAGE_SIZE = dataNumberPerPage.account.vip
+const STORE_KEY = dataStoreKey.account.vip
 
 export default function VipTitleList({ round, data }: Props) {
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)

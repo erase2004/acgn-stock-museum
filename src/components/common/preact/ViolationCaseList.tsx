@@ -13,15 +13,14 @@ type Case = z.infer<typeof simpleSchema>
 
 type Props = {
   round: string
+  storeKey: string
   pageSize: number
   data: Case[]
 }
 
-const STORE_KEY = 'violation-case'
-
-export default function ViolationCaseList({ round, pageSize, data }: Props) {
+export default function ViolationCaseList({ round, storeKey, pageSize, data }: Props) {
   const { setFilterValue, filteredItems, filterObject } = useFilter(
-    STORE_KEY,
+    storeKey,
     pageSize,
     data,
     {
@@ -127,7 +126,7 @@ export default function ViolationCaseList({ round, pageSize, data }: Props) {
             )}
           </tbody>
         </table>
-        <LoadMore storeKey={STORE_KEY} />
+        <LoadMore storeKey={storeKey} />
       </div>
     </>
   )

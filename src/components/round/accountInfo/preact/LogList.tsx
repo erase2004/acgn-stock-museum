@@ -1,13 +1,14 @@
 import DisplayLog from '@/components/common/preact/DisplayLog'
+import LoadMore from '@/components/common/preact/LoadMore'
 import { z } from 'astro/zod'
 import { useFilter, type FilterConfig } from '@/utils/hooks'
 import { logTypeGroupMap, type schema } from '@/services/dbLog'
 import { flatten, isArray, without } from 'lodash-es'
 import { useEffect, useRef } from 'preact/hooks'
-import LoadMore from '@/components/common/preact/LoadMore'
+import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 
-const PAGE_SIZE = 10
-const STORE_KEY = 'account-log'
+const PAGE_SIZE = dataNumberPerPage.account.log
+const STORE_KEY = dataStoreKey.account.log
 
 type Data = z.infer<typeof schema>
 

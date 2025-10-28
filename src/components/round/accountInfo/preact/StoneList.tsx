@@ -9,6 +9,7 @@ import {
 } from '@/services/dbCompanyStones'
 import { useDisplayItems } from '@/utils/hooks'
 import { getStoneIcon, stoneDisplayName } from '@/utils/helpers'
+import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 
 type Props = {
   round: string
@@ -16,8 +17,8 @@ type Props = {
   data: z.infer<typeof schemaCompanyStone>[]
 }
 
-const STORE_KEY = 'stone-info'
-const PAGE_SIZE = 10
+const STORE_KEY = dataStoreKey.account.stone
+const PAGE_SIZE = dataNumberPerPage.account.stone
 
 export default function StoneList({ round, profile, data }: Props) {
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
