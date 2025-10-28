@@ -198,3 +198,19 @@ export function markdownToHtml(content: string, advanced = false) {
 export function typedObjectKeys<T extends object>(obj: T) {
   return Object.keys(obj) as [keyof typeof obj]
 }
+
+function escapeRegExp(str: string) {
+  // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+export function buildSearchRegExp(keyword: string, matchType: 'exact' | 'fuzzy') {
+  if (matchType === 'exact') {
+    // 直接照原樣比對關鍵字
+    return new RegExp(escapeRegExp(keyword), 'i')
+  }
+
+  // 將關鍵字拆成一個一個字，比對中間插入任何字元的狀況
+  const patternString = keyword.split('').map(escapeRegExp).join('.*')
+  return new RegExp(patternString, 'i')
+}

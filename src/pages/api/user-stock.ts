@@ -37,7 +37,7 @@ export const GET: APIRoute = async ({ request }) => {
             userId,
           },
           // @ts-expect-error: companyId field exists
-          { companyId: 1 },
+          { companyId: 1, stocks: 1 },
         )
         .toArray(),
     ),

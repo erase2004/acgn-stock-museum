@@ -1,7 +1,9 @@
 // 公司資料集
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
-import { objectId } from './schema'
+import { datetime, integer, itemId, objectId } from './schema'
+import { handlePromiseParser } from '@/utils/helpers'
+import { companyProfitDistribution } from '@/configs/general'
 
 export const schema = z.object({
   _id: objectId,
@@ -9,8 +11,85 @@ export const schema = z.object({
   chairmanTitle: z.string().max(20).default('董事長'),
   /** 是否被金管會查封關停 */
   isSeal: z.boolean().default(false),
+  /** 公司名稱 */
+  companyName: z.string().min(1).max(100),
+  /** 創立者 User ID */
+  founder: itemId,
+  /** 經理人 User ID */
+  manager: itemId,
+  /** 董事長 User ID */
+  chairman: itemId,
+  /** 小圖 */
+  pictureSmall: z.string().url().optional(),
+  /** 違規描述 */
+  illegalReason: z.string().max(10).optional(),
+  /** 目前總釋出股份 */
+  totalRelease: integer.min(0),
+  /** 最後成交價格 */
+  lastPrice: integer.min(0),
+  /** 參考每股單價 */
+  listPrice: integer.min(0),
+  /** 當季已營利 */
+  profit: z.number().min(0).default(0),
+  /** 資本額 */
+  capital: integer.min(0),
+  /** 參考總市值 */
+  totalValue: integer.min(0),
+  /** 公司上市日期 */
+  createdAt: datetime,
+  /** 員工分紅佔比 */
+  employeeBonusRatePercent: z
+    .number()
+    .default(companyProfitDistribution.employeeBonusRatePercent.default),
+  /** 經理分紅佔比 */
+  managerBonusRatePercent: z
+    .number()
+    .default(companyProfitDistribution.managerBonusRatePercent.default),
+  /** 營利投入資本額佔比 */
+  capitalIncreaseRatePercent: z
+    .number()
+    .default(companyProfitDistribution.capitalIncreaseRatePercent.default),
+  tags: z.string().array().max(50),
+})
+
+export const simpleSchema = schema.pick({
+  _id: true,
+  chairmanTitle: true,
+  isSeal: true,
+})
+
+export const listItemSchema = schema.pick({
+  _id: true,
+  companyName: true,
+  founder: true,
+  manager: true,
+  chairmanTitle: true,
+  chairman: true,
+  pictureSmall: true,
+  illegalReason: true,
+  totalRelease: true,
+  lastPrice: true,
+  listPrice: true,
+  profit: true,
+  capital: true,
+  totalValue: true,
+  createdAt: true,
+  employeeBonusRatePercent: true,
+  managerBonusRatePercent: true,
+  capitalIncreaseRatePercent: true,
+  tags: true,
 })
 
 export function getDBCompanies(db: Db) {
   return db.collection('companies')
+}
+
+export function getCompanies(db: Db) {
+  const dbCompanies = getDBCompanies(db)
+
+  return handlePromiseParser(
+    z
+      .promise(listItemSchema.array())
+      .parse(dbCompanies.find({ isSeal: false }, { sort: { lastPrice: -1 } }).toArray()),
+  )
 }

@@ -7,8 +7,8 @@ export const PAGE = {
   ANNOUNCEMENT_DETAIL: 'announcement/view',
   ANNOUNCEMENT_REJECTION: 'announcement/reject',
   TUTORIAL: 'tutorial',
-  COMPANY_LIST: 'companyList',
-  COMPANY_DETAIL: 'companyDetail',
+  COMPANY_LIST: 'company',
+  COMPANY_DETAIL: 'company/detail',
   ADVERTISING: 'advertising',
   PRODUCT_CENTER_BY_SEASON: 'productCenter/season',
   PRODUCT_CENTER_BY_COMPANY: 'productCenter/company',
@@ -50,11 +50,6 @@ const pageNameHash = {
 const routesWithView = {
   [PAGE.RULE_AGENDA_LIST]: PAGE.RULE_AGENDA_DETAIL,
   [PAGE.VIOLATION_CASE_LIST]: PAGE.VIOLATION_CASE_DETAIL,
-  [PAGE.ANNOUNCEMENT_LIST]: PAGE.ANNOUNCEMENT_DETAIL,
-}
-
-const routesWithRejection = {
-  [PAGE.ANNOUNCEMENT_LIST]: PAGE.ANNOUNCEMENT_REJECTION,
 }
 
 export function getCurrentPage(astro: APIContext) {
@@ -70,10 +65,18 @@ export function getCurrentPage(astro: APIContext) {
       : path
   }
 
-  if (path in routesWithRejection) {
-    path = new RegExp(`/${path}/reject/`).test(pathname)
-      ? routesWithRejection[path as keyof typeof routesWithRejection]
-      : path
+  if (path === PAGE.ANNOUNCEMENT_LIST) {
+    path = new RegExp(`/${PAGE.ANNOUNCEMENT_LIST}/reject/`).test(pathname)
+      ? PAGE.ANNOUNCEMENT_REJECTION
+      : new RegExp(`/${PAGE.ANNOUNCEMENT_LIST}/view/`).test(pathname)
+        ? PAGE.ANNOUNCEMENT_DETAIL
+        : PAGE.ANNOUNCEMENT_LIST
+  }
+
+  if (path === PAGE.COMPANY_LIST) {
+    path = new RegExp(`/${PAGE.COMPANY_LIST}/detail/`).test(pathname)
+      ? PAGE.COMPANY_DETAIL
+      : PAGE.COMPANY_LIST
   }
 
   if (new RegExp('/productCenter/season/').test(pathname)) {

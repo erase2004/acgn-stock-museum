@@ -41,7 +41,9 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
 
   function getQuery() {
     return pickBy(filterObject, (value) => {
-      return isString(value) ? value.length > 0 : isArray(value) && value.every(isString)
+      return isString(value)
+        ? value.length > 0
+        : isArray(value) && value.length > 0 && value.every(isString)
     })
   }
 
@@ -114,7 +116,7 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
 
     if (shouldSyncUrl) updateURL()
     search(true)
-  }, [filterObject, isInitialized])
+  }, [filterObject, isInitialized, data])
 
   useEffect(() => {
     if (!isInitialized) return

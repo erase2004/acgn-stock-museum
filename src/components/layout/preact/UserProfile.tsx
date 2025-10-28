@@ -14,7 +14,7 @@ import { stoneTypeList } from '@/services/dbCompanyStones'
 import { simpleSchema } from '@/services/dbDirectors'
 import { getUserStock } from '@/libs/request'
 import { ownStocks } from '@/stores/account'
-import { map } from 'lodash-es'
+import { map, zipObject } from 'lodash-es'
 
 type Props = {
   round: string
@@ -24,10 +24,10 @@ async function updateUserStock(round: string, userId: string) {
   return await getUserStock(round, userId)
     .then(async (response) => {
       const data = await z.promise(simpleSchema.array()).parse(response.json())
-      ownStocks.set(map(data, 'companyId'))
+      ownStocks.set(zipObject(map(data, 'companyId'), map(data, 'stocks')))
     })
     .catch(() => {
-      ownStocks.set([])
+      ownStocks.set({})
     })
 }
 
@@ -80,7 +80,7 @@ export default function UserProfile({ round }: Props) {
     resetForm()
     resetUser()
     dropdownRef.current?.removeAttribute('open')
-    ownStocks.set([])
+    ownStocks.set({})
   }
 
   const placeHolder =

@@ -252,6 +252,87 @@
       @apply flex max-h-80 flex-col gap-y-2 p-2 md:p-4;
     }
   }
+
+  .company-card {
+    .title {
+      background: #000; /* For browsers that do not support gradients */
+      background: -webkit-linear-gradient(
+        left,
+        transparent,
+        #000 5%,
+        #000 95%,
+        transparent
+      ); /* Safari */
+      background: -o-linear-gradient(
+        left,
+        transparent,
+        #000 5%,
+        #000 95%,
+        transparent
+      ); /* Opera 11.6 to 12.0 */
+      background: -moz-linear-gradient(
+        left,
+        transparent,
+        #000 5%,
+        #000 95%,
+        transparent
+      ); /* Firefox 3.6 to 15 */
+      background: linear-gradient(
+        left,
+        transparent,
+        #000 5%,
+        #000 95%,
+        transparent
+      ); /* Standard syntax */
+    }
+  }
+
+  .company-card-default {
+    @apply bg-white dark:bg-[rgb(0,43,54)];
+  }
+  .company-card-chairman {
+    background: #f8b500;
+    background: -webkit-linear-gradient(135deg, #fceabb, #f8b500);
+    background: -o-linear-gradient(135deg, #fceabb, #f8b500);
+    background: -moz-linear-gradient(135deg, #fceabb, #f8b500);
+    background: linear-gradient(135deg, #fceabb, #f8b500);
+  }
+  .company-card-manager {
+    background: #b20a2c;
+    background: -webkit-linear-gradient(225deg, #fffbd5, #b20a2c);
+    background: -o-linear-gradient(225deg, #fffbd5, #b20a2c);
+    background: -moz-linear-gradient(225deg, #fffbd5, #b20a2c);
+    background: linear-gradient(225deg, #fffbd5, #b20a2c);
+  }
+  .company-card-founder {
+    background: #39c5bb;
+    background: -webkit-linear-gradient(225deg, #fffbd5, #39c5bb);
+    background: -o-linear-gradient(225deg, #fffbd5, #39c5bb);
+    background: -moz-linear-gradient(225deg, #fffbd5, #39c5bb);
+    background: linear-gradient(225deg, #fffbd5, #39c5bb);
+  }
+  .company-card-holder {
+    background: #8e9eab;
+    background: -webkit-linear-gradient(135deg, #eef2f3, #8e9eab);
+    background: -o-linear-gradient(135deg, #eef2f3, #8e9eab);
+    background: -moz-linear-gradient(135deg, #eef2f3, #8e9eab);
+    background: linear-gradient(135deg, #eef2f3, #8e9eab);
+  }
+
+  .company-row {
+    @apply gap-[1px] bg-base-content/25;
+
+    & > * {
+      @apply bg-base-100 px-4;
+    }
+
+    .title {
+      @apply col-span-1 truncate text-right;
+    }
+    .content {
+      @apply col-span-2 truncate text-right lg:col-span-1;
+    }
+  }
 }
 
 @layer utilities {

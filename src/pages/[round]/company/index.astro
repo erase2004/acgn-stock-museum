@@ -1,0 +1,60 @@
+---
+export const prerender = false
+
+import type { ListItem } from '@/stores/company'
+import RoundLayout from '@/layouts/Round.astro'
+import Filter from '@/components/round/company/preact/Filter'
+import ListContainer from '@/components/round/company/preact/ListContainer'
+import LoadMore from '@/components/common/preact/LoadMore'
+import { z } from 'astro/zod'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound } from '@/libs/routes'
+import { getCompanies } from '@/services/dbCompanies'
+import { getDBEmployees, schema as schemaEmployee } from '@/services/dbEmployees'
+import { handlePromiseParser } from '@/utils/helpers'
+import { getCompanyEPS } from '@/utils/company'
+import { countBy } from 'lodash-es'
+import { LIST_STORE_KEY } from '@/stores/company'
+
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)!
+const dbEmployees = getDBEmployees(connection)
+
+const simpleSchema = schemaEmployee.pick({ companyId: true })
+const employees =
+  (await handlePromiseParser(
+    z.promise(simpleSchema.array()).parse(
+      dbEmployees
+        .find(
+          {
+            employed: true,
+          },
+          // @ts-expect-error: companyId field exists
+          { companyId: 1 },
+        )
+        .toArray(),
+    ),
+  )) ?? []
+const employeeMap = countBy(employees, (item) => item.companyId)
+
+const companies = (await getCompanies(connection)) ?? []
+const data: ListItem[] = companies.map((company) => {
+  const employeeCount = employeeMap[company._id] || 0
+  const eps = getCompanyEPS({ ...company, employeeCount })
+
+  return {
+    ...company,
+    employeeCount,
+    eps,
+  }
+})
+---
+
+<RoundLayout>
+  <h1 class="round-block-title">股市總覽</h1>
+  <div class="divider"></div>
+  <Filter client:only="preact" data={data} />
+  <div class="divider"></div>
+  <ListContainer client:only="preact" round={round} />
+  <LoadMore client:only="preact" storeKey={LIST_STORE_KEY} />
+</RoundLayout>

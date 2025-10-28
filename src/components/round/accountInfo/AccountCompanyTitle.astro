@@ -8,7 +8,7 @@ import { z } from 'astro/zod'
 import { map, zipObject } from 'lodash-es'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
-import { getDBCompanies, schema as schemaCompany } from '@/services/dbCompanies'
+import { getDBCompanies, simpleSchema } from '@/services/dbCompanies'
 import { getDBEmployees, schema as schemaEmployee } from '@/services/dbEmployees'
 import { getDBVips, schema as schemaVip } from '@/services/dbVips'
 import { handlePromiseParser } from '@/utils/helpers'
@@ -30,30 +30,32 @@ const dbCompanies = getDBCompanies(connection)
 const chairmanTitles =
   (await handlePromiseParser(
     z
-      .promise(schemaCompany.array())
+      .promise(simpleSchema.array())
       .parse(
-        dbCompanies.find({ chairman: userId, isSeal: false }, { sort: { createdAt: -1 } }).toArray()
-      )
+        dbCompanies
+          .find({ chairman: userId, isSeal: false }, { sort: { createdAt: -1 } })
+          .toArray(),
+      ),
   )) ?? []
 
 // manager
 const managerTitles =
   (await handlePromiseParser(
     z
-      .promise(schemaCompany.array())
+      .promise(simpleSchema.array())
       .parse(
-        dbCompanies.find({ manager: userId, isSeal: false }, { sort: { createdAt: -1 } }).toArray()
-      )
+        dbCompanies.find({ manager: userId, isSeal: false }, { sort: { createdAt: -1 } }).toArray(),
+      ),
   )) ?? []
 
 // founder
 const founderTitles =
   (await handlePromiseParser(
     z
-      .promise(schemaCompany.array())
+      .promise(simpleSchema.array())
       .parse(
-        dbCompanies.find({ founder: userId, isSeal: false }, { sort: { createdAt: -1 } }).toArray()
-      )
+        dbCompanies.find({ founder: userId, isSeal: false }, { sort: { createdAt: -1 } }).toArray(),
+      ),
   )) ?? []
 
 // employee
@@ -62,28 +64,28 @@ const employments =
   (await handlePromiseParser(
     z
       .promise(schemaEmployee.array())
-      .parse(dbEmployees.find({ userId, resigned: false }, { sort: { employed: -1 } }).toArray())
+      .parse(dbEmployees.find({ userId, resigned: false }, { sort: { employed: -1 } }).toArray()),
   )) ?? []
 const companies =
   (await handlePromiseParser(
     z
-      .promise(schemaCompany.array())
+      .promise(simpleSchema.array())
       // @ts-expect-error: valid ObjectId
-      .parse(dbCompanies.find({ _id: { $in: map(employments, 'companyId') } }).toArray())
+      .parse(dbCompanies.find({ _id: { $in: map(employments, 'companyId') } }).toArray()),
   )) ?? []
 
 const companyDict = zipObject(map(companies, '_id'), map(companies, 'isSeal'))
 const employeeTitles = employments.map((item) =>
   Object.assign({}, item, {
     isSeal: item.companyId in companyDict ? companyDict[item.companyId] : false,
-  })
+  }),
 )
 
 // vip
 const dbVips = getDBVips(connection)
 const vipTitles =
   (await handlePromiseParser(
-    z.promise(schemaVip.array()).parse(dbVips.find({ userId }, { sort: { level: -1 } }).toArray())
+    z.promise(schemaVip.array()).parse(dbVips.find({ userId }, { sort: { level: -1 } }).toArray()),
   )) ?? []
 ---
 
