@@ -2,7 +2,7 @@ import type { ZodTypeAny } from 'astro/zod'
 import type { BasicUser } from '@/services/dbUsers'
 import { z } from 'astro/zod'
 import { useStore } from '@nanostores/preact'
-import { currentPage, hasMore, isDataLoading } from '@/stores/pagination'
+import { currentPage, hasMore, isDataLoading, isInitialized } from '@/stores/pagination'
 import { useEffect, useState, useMemo } from 'preact/hooks'
 import { filter, isArray, isEqual, isString, pickBy, transform } from 'lodash-es'
 import { useLocalStorage } from 'usehooks-ts'
@@ -140,6 +140,14 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
 export function useDisplayItems<T>(data: T[], storeKey: string, pageSize: number) {
   const totalAmount = data.length
   const $currentPage = useStore(currentPage)
+  const $isInitialized = useStore(isInitialized)
+
+  if (!$isInitialized[storeKey]) {
+    isInitialized.setKey(storeKey, true)
+    currentPage.setKey(storeKey, 1)
+    isDataLoading.setKey(storeKey, false)
+    hasMore.setKey(storeKey, true)
+  }
 
   const displayItems = useMemo(() => {
     const newList = data.slice(0, pageSize * $currentPage[storeKey])
