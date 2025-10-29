@@ -7,7 +7,7 @@ import { getCurrentRound } from '@/libs/routes'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getDBLog } from '@/services/dbLog'
 import { getDBEmployees } from '@/services/dbEmployees'
-import { getDBCompanies, schema } from '@/services/dbCompanies'
+import { getCompanyFilterByCustomSchema, schema } from '@/services/dbCompanies'
 import { currencyFormat, handlePromiseParser } from '@/utils/helpers'
 import {
   getCompanyEPRatio,
@@ -74,8 +74,7 @@ const result = await handlePromiseParser(
 
 const { tradeVolume24h } = result?.[0] ?? {}
 
-const dbCompanies = getDBCompanies(connection)
-const schemaCompany = schema.pick({
+const customSchema = schema.pick({
   _id: true,
   listPrice: true,
   lastPrice: true,
@@ -92,14 +91,7 @@ const schemaCompany = schema.pick({
   capitalIncreaseRatePercent: true,
 })
 
-const company = await handlePromiseParser(
-  z.promise(schemaCompany).parse(
-    dbCompanies.findOne({
-      // @ts-expect-error: companyId is valid ObjectId
-      _id: companyId,
-    }),
-  ),
-)
+const company = await getCompanyFilterByCustomSchema(connection, companyId, customSchema)
 
 const item = Object.assign(company!, {
   employeeCount,

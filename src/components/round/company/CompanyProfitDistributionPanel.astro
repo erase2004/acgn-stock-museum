@@ -1,9 +1,7 @@
 ---
-import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
-import { getDBCompanies, schema } from '@/services/dbCompanies'
-import { handlePromiseParser } from '@/utils/helpers'
+import { getCompanyFilterByCustomSchema, schema } from '@/services/dbCompanies'
 import { companyProfitDistribution } from '@/configs/general'
 
 type Props = {
@@ -15,21 +13,13 @@ const { companyId } = Astro.props
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)
 
-const dbCompanies = getDBCompanies(connection)
-const schemaCompany = schema.pick({
+const customSchema = schema.pick({
   capitalIncreaseRatePercent: true,
   managerBonusRatePercent: true,
   employeeBonusRatePercent: true,
 })
 
-const company = await handlePromiseParser(
-  z.promise(schemaCompany).parse(
-    dbCompanies.findOne({
-      // @ts-expect-error: companyId is valid ObjectId
-      _id: companyId,
-    }),
-  ),
-)
+const company = await getCompanyFilterByCustomSchema(connection, companyId, customSchema)
 
 const { incomeTaxRatePercent, employeeProductVotingRewardRatePercent } = companyProfitDistribution
 const {

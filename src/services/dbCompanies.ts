@@ -1,5 +1,6 @@
 // 公司資料集
 import type { Db } from 'mongodb'
+import type { ZodTypeAny } from 'astro/zod'
 import { z } from 'astro/zod'
 import { datetime, integer, itemId, objectId } from './schema'
 import { handlePromiseParser } from '@/utils/helpers'
@@ -101,5 +102,22 @@ export function getCompanies(db: Db) {
     z
       .promise(listItemSchema.array())
       .parse(dbCompanies.find({ isSeal: false }, { sort: { lastPrice: -1 } }).toArray()),
+  )
+}
+
+export function getCompanyFilterByCustomSchema<T extends ZodTypeAny>(
+  db: Db,
+  companyId: string,
+  schema: T,
+) {
+  const dbCompanies = getDBCompanies(db)
+
+  return handlePromiseParser(
+    z.promise(schema).parse(
+      dbCompanies.findOne({
+        // @ts-expect-error: companyId is valid ObjectId
+        _id: companyId,
+      }),
+    ),
   )
 }

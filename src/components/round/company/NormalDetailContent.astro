@@ -5,15 +5,14 @@ import CompanyDetailTable from './CompanyDetailTable.astro'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
-import { getDBCompanies, schema } from '@/services/dbCompanies'
-import { handlePromiseParser, markdownToHtml } from '@/utils/helpers'
+import { getCompanyFilterByCustomSchema, schema } from '@/services/dbCompanies'
+import { markdownToHtml } from '@/utils/helpers'
 import { fallbackImageUrl } from '@/configs/general'
 
 const companyId = Astro.params['companyId'] ?? ''
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)
-const dbCompanies = getDBCompanies(connection)
-const basicSchema = schema.pick({
+const customSchema = schema.pick({
   companyName: true,
   illegalReason: true,
   tags: true,
@@ -23,14 +22,11 @@ const basicSchema = schema.pick({
   pictureBig: true,
   description: true,
 })
-const company = (await handlePromiseParser(
-  z.promise(basicSchema).parse(
-    dbCompanies.findOne({
-      // @ts-expect-error: companyId is valid ObjectId
-      _id: companyId,
-    }),
-  ),
-)) as z.infer<typeof basicSchema>
+const company = (await getCompanyFilterByCustomSchema(
+  connection,
+  companyId,
+  customSchema,
+)) as z.infer<typeof customSchema>
 ---
 
 <h1 class="round-block-title mb-2 truncate">{company.companyName}</h1>
