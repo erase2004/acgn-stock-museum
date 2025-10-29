@@ -1,0 +1,169 @@
+---
+import UserLink from '@/components/common/preact/UserLink'
+import { z } from 'astro/zod'
+import dayjs from 'dayjs'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound } from '@/libs/routes'
+import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
+import { getDBLog } from '@/services/dbLog'
+import { getDBEmployees } from '@/services/dbEmployees'
+import { getDBCompanies, schema } from '@/services/dbCompanies'
+import { currencyFormat, handlePromiseParser } from '@/utils/helpers'
+import {
+  getCompanyEPRatio,
+  getCompanyPERatio,
+  getCompanyEPS,
+  priceDisplayClass,
+} from '@/utils/company'
+import { integer } from '@/services/schema'
+import { formatDateTimeText } from '@/libs/timeFormat'
+
+type Props = {
+  round: string
+  companyId: string
+}
+
+const { companyId } = Astro.props
+
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)
+
+const dbEmployees = getDBEmployees(connection)
+const employeeCount =
+  (await handlePromiseParser(
+    z.promise(z.number()).parse(
+      dbEmployees.countDocuments({
+        employed: true,
+      }),
+    ),
+  )) ?? 0
+
+const currentRound = await getCurrentRoundFromDB(connection)
+const dbLog = getDBLog(connection)
+const result = await handlePromiseParser(
+  z
+    .promise(
+      z
+        .object({
+          tradeVolume24h: integer,
+        })
+        .array(),
+    )
+    .parse(
+      dbLog
+        .aggregate([
+          {
+            $match: {
+              logType: '交易紀錄',
+              companyId,
+              createdAt: {
+                $gte: dayjs(currentRound!.endDate).subtract(1, 'days').toDate(),
+              },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              tradeVolume24h: { $sum: '$data.amount' },
+            },
+          },
+        ])
+        .toArray(),
+    ),
+)
+
+const { tradeVolume24h } = result?.[0] ?? {}
+
+const dbCompanies = getDBCompanies(connection)
+const schemaCompany = schema.pick({
+  _id: true,
+  listPrice: true,
+  lastPrice: true,
+  totalRelease: true,
+  capital: true,
+  totalValue: true,
+  profit: true,
+  grade: true,
+  createdAt: true,
+  founder: true,
+  manager: true,
+  managerBonusRatePercent: true,
+  employeeBonusRatePercent: true,
+  capitalIncreaseRatePercent: true,
+})
+
+const company = await handlePromiseParser(
+  z.promise(schemaCompany).parse(
+    dbCompanies.findOne({
+      // @ts-expect-error: companyId is valid ObjectId
+      _id: companyId,
+    }),
+  ),
+)
+
+const item = Object.assign(company!, {
+  employeeCount,
+})
+
+const PERatio = getCompanyPERatio(item)
+const EPRatio = getCompanyEPRatio(item)
+---
+
+<div class="company-market-data-panel grid grid-cols-12 gap-[1px] bg-base-content/25 pt-[1px]">
+  <div class="col-span-6 md:col-span-3 lg:col-span-2">
+    <p>參考價格</p>
+    <p>$ {currencyFormat(item.listPrice)}</p>
+  </div>
+  <div class="col-span-6 md:col-span-3 lg:col-span-2">
+    <p>最後價格</p>
+    <p class={priceDisplayClass(item)}>$ {currencyFormat(item.lastPrice)}</p>
+  </div>
+  <div class="col-span-6 md:col-span-3 lg:col-span-2">
+    <p>日成交量</p>
+    <p>{tradeVolume24h}</p>
+  </div>
+  <div class="col-span-6 md:col-span-3 lg:col-span-2">
+    <p>總釋股數</p>
+    <p>{item.totalRelease} 股</p>
+  </div>
+  <div class="col-span-6 md:col-span-3 lg:col-span-2">
+    <p>資本額</p>
+    <p>$ {currencyFormat(item.capital)}</p>
+  </div>
+  <div class="col-span-6 md:col-span-3 lg:col-span-2">
+    <p>參考市值</p>
+    <p>$ {currencyFormat(item.totalValue)}</p>
+  </div>
+  <div class="col-span-6 md:col-span-3 lg:col-span-2">
+    <p>本季營利</p>
+    <p>$ {currencyFormat(item.profit)}</p>
+  </div>
+  <div class="col-span-6 md:col-span-3 lg:col-span-2">
+    <p>每股盈餘</p>
+    <p>$ {currencyFormat(getCompanyEPS(item))}</p>
+  </div>
+  <div class="col-span-6 md:col-span-3 lg:col-span-2">
+    <p>本益比</p>
+    <p>{PERatio}</p>
+  </div>
+  <div class="col-span-6 md:col-span-3 lg:col-span-2">
+    <p>益本比</p>
+    <p>{EPRatio}</p>
+  </div>
+  <div class="col-span-6 md:col-span-2 lg:col-span-1">
+    <p>公司評級</p>
+    <p>{item.grade}</p>
+  </div>
+  <div class="col-span-6 md:col-span-4 lg:col-span-3">
+    <p>識別碼</p>
+    <p>{item._id}</p>
+  </div>
+  <div class="col-span-6">
+    <p>創立時間</p>
+    <p>{formatDateTimeText(item.createdAt)}</p>
+  </div>
+  <div class="col-span-6">
+    <p>創立人</p>
+    <p><UserLink client:only="preact" round={round} userId={item.founder} /></p>
+  </div>
+</div>

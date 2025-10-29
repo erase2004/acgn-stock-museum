@@ -4,6 +4,10 @@ import { z } from 'astro/zod'
 import { datetime, integer, itemId, objectId } from './schema'
 import { handlePromiseParser } from '@/utils/helpers'
 import { companyProfitDistribution } from '@/configs/general'
+import { last } from 'lodash-es'
+
+// 公司評等名稱
+const gradeNameList = ['S', 'A', 'B', 'C', 'D'] as const
 
 export const schema = z.object({
   _id: objectId,
@@ -21,6 +25,10 @@ export const schema = z.object({
   chairman: itemId,
   /** 小圖 */
   pictureSmall: z.string().url().optional(),
+  /** 大圖 */
+  pictureBig: z.string().url().optional(),
+  /** 介紹描述 */
+  description: z.string().min(10).max(3000),
   /** 違規描述 */
   illegalReason: z.string().max(10).optional(),
   /** 目前總釋出股份 */
@@ -33,6 +41,8 @@ export const schema = z.object({
   profit: z.number().min(0).default(0),
   /** 資本額 */
   capital: integer.min(0),
+  /** 公司評等 */
+  grade: z.enum(gradeNameList).default(last(gradeNameList)!),
   /** 參考總市值 */
   totalValue: integer.min(0),
   /** 公司上市日期 */

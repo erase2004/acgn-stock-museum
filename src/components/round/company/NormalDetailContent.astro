@@ -1,7 +1,7 @@
 ---
 import UserLink from '@/components/common/preact/UserLink'
 import TagList from './preact/TagList'
-
+import CompanyDetailTable from './CompanyDetailTable.astro'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
@@ -63,3 +63,4 @@ const company = (await handlePromiseParser(
     <div class="markdown-container" set:html={markdownToHtml(company.description)} />
   </div>
 </div>
+<CompanyDetailTable companyId={companyId} />

@@ -1,0 +1,41 @@
+---
+import PanelFolder from '@/components/common/preact/PanelFolder'
+import CompanyMarketDataPanel from './CompanyMarketDataPanel.astro'
+import { getCurrentRound } from '@/libs/routes'
+
+type Props = {
+  companyId: string
+}
+
+const { companyId } = Astro.props
+const round = getCurrentRound(Astro)!
+---
+
+<div class="-mx-4 border border-base-content/25">
+  {/* 股價趨勢 */}
+
+  {/* 數據資訊 */}
+  <PanelFolder client:only="preact" title="數據資訊" state={false} classes="text-2xl px-4">
+    <CompanyMarketDataPanel round={round} companyId={companyId} />
+  </PanelFolder>
+
+  {/* 營利分配資訊 */}
+
+  {/* 交易訂單 */}
+
+  {/* 產品中心 */}
+
+  {/* 董事會 */}
+
+  {/* VIP 名冊 */}
+
+  {/* 員工名冊 */}
+
+  {/* 最萌亂鬥大賽 */}
+
+  {/* 挖礦機 */}
+
+  {/* 違規案件列表 */}
+
+  {/* 所有紀錄 */}
+</div>

@@ -333,6 +333,16 @@
       @apply col-span-2 truncate text-right lg:col-span-1;
     }
   }
+
+  .company-market-data-panel {
+    & > div {
+      @apply flex flex-col items-center justify-between bg-base-100;
+
+      & > p {
+        @apply text-nowrap;
+      }
+    }
+  }
 }
 
 @layer utilities {
