@@ -19,7 +19,11 @@ export default function TagList({ tags }: Props) {
   return (
     <div class="flex flex-wrap gap-1">
       {displayTags.map((tag) => (
-        <span key={tag} class="badge badge-sm font-bold text-nowrap badge-neutral">
+        <span
+          key={tag}
+          class="badge overflow-hidden badge-sm font-bold text-nowrap badge-neutral"
+          title={tag}
+        >
           {tag}
         </span>
       ))}
