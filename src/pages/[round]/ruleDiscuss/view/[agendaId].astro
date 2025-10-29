@@ -5,7 +5,7 @@ import RoundLayout from '@/layouts/Round.astro'
 import UserLink from '@/components/common/preact/UserLink'
 import Issue from '@/components/round/ruleAgenda/Issue.astro'
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound, getCurrentPageFullTitle, getMuseumMainPageUrl } from '@/libs/routes'
+import { getCurrentRound, getCurrentPageFullTitle, getRoundMainPageUrl } from '@/libs/routes'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getAgendaById } from '@/services/dbRuleAgendas'
 import { getRelatedIssues } from '@/services/dbRuleIssues'
@@ -21,7 +21,7 @@ const { agendaId = '' } = Astro.params
 const agenda = await getAgendaById(connection, currentRound!, agendaId)
 
 if (!agenda) {
-  return Astro.redirect(getMuseumMainPageUrl())
+  return Astro.redirect(getRoundMainPageUrl(round))
 }
 
 const title = getCurrentPageFullTitle(Astro, agenda.title)

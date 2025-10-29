@@ -12,7 +12,7 @@ import RoundLayout from '@/layouts/Round.astro'
 import SeasonNavbar from '@/components/common/preact/SeasonNavbar'
 import MainBody from '@/components/round/seasonalReport/preact/MainBody'
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
+import { getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
 import { getAllArchivedCompanies } from '@/services/dbCompanyArchive'
 import { getAllArchivedUsers } from '@/services/dbUserArchive'
 import { getPreviousSeason, getNextSeason, getSeasonById } from '@/services/dbSeason'
@@ -28,7 +28,7 @@ const seasonId = Astro.params['seasonId']!
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 
-const homepage = getMuseumMainPageUrl()
+const homepage = getRoundMainPageUrl(round)
 
 const currentSeason = await getSeasonById(connection, seasonId)
 if (!currentSeason) {

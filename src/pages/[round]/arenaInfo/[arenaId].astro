@@ -7,7 +7,7 @@ import PanelFolder from '@/components/common/preact/PanelFolder'
 import FighterList from '@/components/round/arena/preact/FighterList'
 import LogList from '@/components/round/arena/preact/LogList'
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound, getMuseumMainPageUrl, getArenaInfoUrl } from '@/libs/routes'
+import { getCurrentRound, getArenaInfoUrl, getRoundMainPageUrl } from '@/libs/routes'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getArenaById, getPreviousArena, getNextArena } from '@/services/dbArena'
 import { getFighters } from '@/services/dbArenaFighters'
@@ -20,11 +20,9 @@ const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 const currentRound = await getCurrentRoundFromDB(connection)
 
-const homepage = getMuseumMainPageUrl()
-
 const currentArena = await getArenaById(connection, arenaId)
 if (!currentArena || !currentRound) {
-  return Astro.redirect(homepage)
+  return Astro.redirect(getRoundMainPageUrl(round))
 }
 
 const previousArena = await getPreviousArena(connection, currentArena)

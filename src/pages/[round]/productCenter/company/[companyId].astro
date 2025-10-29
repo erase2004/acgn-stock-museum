@@ -6,7 +6,7 @@ import CompanyLink from '@/components/common/preact/CompanyLink'
 import CompanyListContainer from '@/components/round/productCenter/preact/CompanyListContainer'
 
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
+import { getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
 import { getArchivedCompany } from '@/services/dbCompanyArchive'
 import { getProductsByCompany } from '@/services/dbProducts'
 import { getCurrentPageFullTitle } from '@/libs/routes'
@@ -15,11 +15,9 @@ const companyId = Astro.params['companyId']!
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 
-const homepage = getMuseumMainPageUrl()
-
 const company = await getArchivedCompany(connection, companyId)
 if (!company || company.status !== 'market') {
-  return Astro.redirect(homepage)
+  return Astro.redirect(getRoundMainPageUrl(round))
 }
 
 const title = getCurrentPageFullTitle(Astro, company.companyName)

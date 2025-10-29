@@ -4,7 +4,7 @@ export const prerender = false
 import RoundLayout from '@/layouts/Round.astro'
 import RejectionPetition from '@/components/round/announcement/RejectionPetition.astro'
 import RejectionPoll from '@/components/round/announcement/RejectionPoll.astro'
-import { getCurrentRound, getMuseumMainPageUrl, getAnnouncementUrl } from '@/libs/routes'
+import { getCurrentRound, getAnnouncementUrl, getRoundMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAnnouncementById } from '@/services/dbAnnouncements'
 import { categoryDisplayName } from '@/utils/announcement'
@@ -17,7 +17,7 @@ const { announcementId = '' } = Astro.params
 const announcement = await getAnnouncementById(connection, announcementId)
 
 if (!announcement) {
-  return Astro.redirect(getMuseumMainPageUrl())
+  return Astro.redirect(getRoundMainPageUrl(round))
 }
 
 const title = getCurrentPageFullTitle(Astro, announcement.subject)

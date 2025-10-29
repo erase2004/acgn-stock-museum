@@ -3,7 +3,7 @@ export const prerender = false
 
 import RoundLayout from '@/layouts/Round.astro'
 import UserLink from '@/components/common/preact/UserLink'
-import { getCurrentRound, getMuseumMainPageUrl, getAnnouncementRejectionUrl } from '@/libs/routes'
+import { getCurrentRound, getAnnouncementRejectionUrl, getRoundMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAnnouncementById } from '@/services/dbAnnouncements'
 import { categoryDisplayName } from '@/utils/announcement'
@@ -18,7 +18,7 @@ const { announcementId = '' } = Astro.params
 const announcement = await getAnnouncementById(connection, announcementId)
 
 if (!announcement) {
-  return Astro.redirect(getMuseumMainPageUrl())
+  return Astro.redirect(getRoundMainPageUrl(round))
 }
 
 const title = getCurrentPageFullTitle(Astro, announcement.subject)

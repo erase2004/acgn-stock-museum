@@ -5,7 +5,7 @@ import RoundLayout from '@/layouts/Round.astro'
 import SeasonNavbar from '@/components/common/preact/SeasonNavbar'
 import SeasonListContainer from '@/components/round/productCenter/preact/SeasonListContainer'
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound, getMuseumMainPageUrl, getProductCenterBySeasonUrl } from '@/libs/routes'
+import { getCurrentRound, getProductCenterBySeasonUrl, getRoundMainPageUrl } from '@/libs/routes'
 import { getNextSeason, getPreviousSeason, getSeasonById } from '@/services/dbSeason'
 import { getProductsBySeason } from '@/services/dbProducts'
 
@@ -13,11 +13,9 @@ const seasonId = Astro.params['seasonId']!
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 
-const homepage = getMuseumMainPageUrl()
-
 const currentSeason = await getSeasonById(connection, seasonId)
 if (!currentSeason) {
-  return Astro.redirect(homepage)
+  return Astro.redirect(getRoundMainPageUrl(round))
 }
 
 const previousSeason = await getPreviousSeason(connection, currentSeason)

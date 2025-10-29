@@ -11,7 +11,7 @@ import { getConnection } from '@/libs/databases'
 import { getViolationCaseById } from '@/services/dbViolationCases'
 import { getRelatedActionLog } from '@/services/dbViolationCaseActionLogs'
 import { getViolationCaseRelatedLogs } from '@/services/dbLog'
-import { getCurrentRound, getViolationCaseUrl, getMuseumMainPageUrl } from '@/libs/routes'
+import { getCurrentRound, getViolationCaseUrl, getRoundMainPageUrl } from '@/libs/routes'
 import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/violation'
 import { dataStoreKey } from '@/configs/general'
 
@@ -27,7 +27,7 @@ const { caseId = '' } = Astro.params
 const violation = await getViolationCaseById(connection, caseId)
 
 if (!violation) {
-  return Astro.redirect(getMuseumMainPageUrl())
+  return Astro.redirect(getRoundMainPageUrl(round))
 }
 
 const relatedActionLogs = await getRelatedActionLog(connection, caseId)
