@@ -1,0 +1,19 @@
+---
+import CompanyLogList from './preact/CompanyLogList'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound } from '@/libs/routes'
+import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
+import { getCompanyLog } from '@/services/dbLog'
+
+type Props = {
+  companyId: string
+}
+const { companyId } = Astro.props
+
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)
+const currentRound = await getCurrentRoundFromDB(connection)
+const logs = (await getCompanyLog(connection, companyId, currentRound!.beginDate)) ?? []
+---
+
+<CompanyLogList client:only="preact" round={round} data={logs} />

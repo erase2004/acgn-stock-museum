@@ -639,3 +639,25 @@ export async function getAccountLogs(db: Db, userId: string) {
     ),
   )
 }
+
+export async function getCompanyLog(db: Db, companyId: string, roundBegin: Date) {
+  const dbLog = getDBLog(db)
+
+  return handlePromiseParser(
+    z.promise(schema.array()).parse(
+      dbLog
+        .find(
+          {
+            companyId,
+            createdAt: { $gt: roundBegin },
+          },
+          {
+            sort: {
+              createdAt: -1,
+            },
+          },
+        )
+        .toArray(),
+    ),
+  )
+}

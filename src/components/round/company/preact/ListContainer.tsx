@@ -1,12 +1,14 @@
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import UserLink from '@/components/common/preact/UserLink'
-import { formatDateTimeText } from '@/libs/timeFormat'
 import type { BasicUser } from '@/services/dbUsers'
+import { fallbackImageUrl } from '@/configs/general'
+import { formatDateTimeText } from '@/libs/timeFormat'
 import { ownStocks } from '@/stores/account'
 import { listViewMode, items, type ListItem } from '@/stores/company'
 import { currencyFormat } from '@/utils/helpers'
 import { useUser } from '@/utils/hooks'
 import { useStore } from '@nanostores/preact'
+import { priceDisplayClass } from '@/utils/company'
 
 type Props = {
   round: string
@@ -38,9 +40,6 @@ export default function ListContainer({ round }: Props) {
 }
 
 type User = BasicUser | null
-
-const FALLBACK_IMAGE =
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png'
 
 type CardProps = {
   round: string
@@ -77,7 +76,7 @@ function Card({ round, item, user, ownStocks }: CardProps) {
           <div class="flex flex-col self-center">
             <img
               class="size-40 object-cover"
-              src={item.pictureSmall || FALLBACK_IMAGE}
+              src={item.pictureSmall || fallbackImageUrl}
               alt={`${item.companyName}公司的小圖`}
             />
           </div>
@@ -159,16 +158,6 @@ function isFavorite(companyId: string, user: User) {
   return user.favorite.includes(companyId)
 }
 
-function priceDisplayClass(item: ListItem) {
-  const { lastPrice, listPrice } = item
-
-  if (lastPrice > listPrice) return 'text-error'
-
-  if (listPrice > lastPrice) return 'text-success'
-
-  return ''
-}
-
 function getStockAmount(item: ListItem, ownStocks: Record<string, number>) {
   return ownStocks[item._id] || 0
 }
@@ -188,7 +177,7 @@ function Row({ round, item, user, ownStocks }: RowProps) {
     <div class="flex flex-col md:flex-row">
       <img
         class="size-28 shrink-0 object-cover"
-        src={item.pictureSmall || FALLBACK_IMAGE}
+        src={item.pictureSmall || fallbackImageUrl}
         alt={`${item.companyName}公司的小圖`}
       />
 

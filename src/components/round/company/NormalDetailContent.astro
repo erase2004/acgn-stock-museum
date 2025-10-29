@@ -1,0 +1,65 @@
+---
+import UserLink from '@/components/common/preact/UserLink'
+import TagList from './preact/TagList'
+
+import { z } from 'astro/zod'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound } from '@/libs/routes'
+import { getDBCompanies, schema } from '@/services/dbCompanies'
+import { handlePromiseParser, markdownToHtml } from '@/utils/helpers'
+import { fallbackImageUrl } from '@/configs/general'
+
+const companyId = Astro.params['companyId'] ?? ''
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)
+const dbCompanies = getDBCompanies(connection)
+const basicSchema = schema.pick({
+  companyName: true,
+  illegalReason: true,
+  tags: true,
+  chairmanTitle: true,
+  chairman: true,
+  manager: true,
+  pictureBig: true,
+  description: true,
+})
+const company = (await handlePromiseParser(
+  z.promise(basicSchema).parse(
+    dbCompanies.findOne({
+      // @ts-expect-error: companyId is valid ObjectId
+      _id: companyId,
+    }),
+  ),
+)) as z.infer<typeof basicSchema>
+---
+
+<h1 class="round-block-title mb-2 truncate">{company.companyName}</h1>
+{
+  company.illegalReason && (
+    <p class="mb-2 bg-error px-1 text-neutral-content">
+      <i class="fa fa-warning" />
+      本公司已被標記為違規！原因：{company.illegalReason}
+    </p>
+  )
+}
+<TagList client:only="preact" tags={company.tags} />
+<div class="divider"></div>
+<h2 class="mb-2 text-3xl break-all opacity-75">
+  {company.chairmanTitle}：<UserLink client:only="preact" round={round} userId={company.chairman} />
+</h2>
+<h3 class="text-2xl break-all">
+  經理人：<UserLink client:only="preact" round={round} userId={company.manager} />
+</h3>
+<div class="divider"></div>
+<div class="flex flex-col flex-nowrap gap-8 md:flex-row">
+  <div class="size-80 shrink-0">
+    {/* eslint-disable-next-line astro/jsx-a11y/alt-text  */}
+    <img class="size-full object-scale-down" src={company.pictureBig || fallbackImageUrl} />
+  </div>
+  <div
+    class="-mx-4 max-h-80 grow overflow-y-auto border border-base-content/25 px-4 py-1 md:mx-0 md:border-0 md:p-0"
+  >
+    <h2 class="text-2xl">角色簡介</h2>
+    <div class="markdown-container" set:html={markdownToHtml(company.description)} />
+  </div>
+</div>

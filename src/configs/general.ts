@@ -64,12 +64,15 @@ export const dataNumberPerPage = {
     fighter: 20,
     log: 30,
   },
+  company: {
+    log: 30,
+  },
+  companies: 12,
   fscLogs: 30,
   fscStock: 20,
   violations: 10,
   violationRelatedLog: 30,
   announcements: 20,
-  companies: 12,
 } as const
 
 /** 作為存取 nanostore 使用 */
@@ -95,10 +98,16 @@ export const dataStoreKey = {
     fighter: 'arena-fighter',
     log: 'arena-log',
   },
+  company: {
+    log: 'company-log',
+  },
+  companies: 'company-list',
   fscLogs: 'fsc-logs',
   fscStock: 'fsc-stock',
   violations: 'violations',
   violationRelatedLog: 'violation-log',
   announcements: 'announcements',
-  companies: 'company-list',
 } as const
+
+export const fallbackImageUrl =
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png'

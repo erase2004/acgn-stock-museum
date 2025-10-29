@@ -1,0 +1,9 @@
+---
+import CompanyLogInfo from './CompanyLogInfo.astro'
+
+const companyId = Astro.params['companyId'] ?? ''
+---
+
+<em>該公司已被金融管理委員會查封！</em>
+<div class="divider"></div>
+<CompanyLogInfo companyId={companyId} />
