@@ -1,0 +1,70 @@
+---
+import DirectorList from './preact/DirectorList'
+import ManagerElectionInfo from './preact/ManagerElectionInfo'
+import { z } from 'astro/zod'
+import { getConnection } from '@/libs/databases'
+import { getDBDirectors, schema as schemaDirector } from '@/services/dbDirectors'
+import { getCompanyFilterByCustomSchema, schema as schemaCompany } from '@/services/dbCompanies'
+import { handlePromiseParser } from '@/utils/helpers'
+import { map, zipObject } from 'lodash-es'
+
+type Props = {
+  round: string
+  companyId: string
+}
+const { round, companyId } = Astro.props
+
+const connection = getConnection(round)
+
+const dbDirectors = getDBDirectors(connection)
+const directors =
+  (await handlePromiseParser(
+    z.promise(schemaDirector.array()).parse(
+      dbDirectors
+        .find(
+          {
+            companyId,
+          },
+          {
+            sort: { stocks: -1 },
+          },
+        )
+        .toArray(),
+    ),
+  )) ?? []
+
+const directorStockDict = zipObject(map(directors, 'userId'), map(directors, 'stocks'))
+
+const company = await getCompanyFilterByCustomSchema(
+  connection,
+  companyId,
+  schemaCompany.pick({ totalRelease: true, candidateList: true, voteList: true }),
+)
+
+const voteList = company?.voteList ?? []
+const candidateList = company?.candidateList ?? []
+const candidates = candidateList.map((candidateId, index) => {
+  const list = voteList[index]
+  const votes = list.reduce((sum, directorId) => sum + (directorStockDict[directorId] ?? 0), 0)
+
+  return {
+    id: candidateId,
+    votes,
+    list,
+  }
+})
+---
+
+<DirectorList
+  client:only="preact"
+  round={round}
+  data={directors}
+  totalRelease={company!.totalRelease}
+/>
+<div class="divider"></div>
+<ManagerElectionInfo
+  client:only="preact"
+  round={round}
+  totalRelease={company!.totalRelease}
+  data={candidates}
+/>

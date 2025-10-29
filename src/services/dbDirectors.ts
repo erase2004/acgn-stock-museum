@@ -11,6 +11,8 @@ export const schema = z.object({
   userId: itemId,
   /** 擁有股份 */
   stocks: integer.min(1),
+  /** 要在董事會成員裡留的言 */
+  message: z.string().max(100).optional(),
 })
 
 export function getDBDirectors(db: Db) {

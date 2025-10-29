@@ -63,3 +63,7 @@ export function priceDisplayClass(item: Pick<ListItem, 'lastPrice' | 'listPrice'
 
   return ''
 }
+
+export function getStockPercentage(stocks: number, totalRelease: number) {
+  return Math.round((stocks / totalRelease) * 10000) / 100
+}

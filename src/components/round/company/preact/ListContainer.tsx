@@ -8,7 +8,7 @@ import { listViewMode, items, type ListItem } from '@/stores/company'
 import { currencyFormat } from '@/utils/helpers'
 import { useUser } from '@/utils/hooks'
 import { useStore } from '@nanostores/preact'
-import { priceDisplayClass } from '@/utils/company'
+import { priceDisplayClass, getStockPercentage } from '@/utils/company'
 
 type Props = {
   round: string
@@ -126,7 +126,7 @@ function Card({ round, item, user, ownStocks }: CardProps) {
               <p>持有股份</p>
               <p>
                 {getStockAmount(item, ownStocks)} (
-                {getStockPercentage(item, getStockAmount(item, ownStocks))}%)
+                {getStockPercentage(getStockAmount(item, ownStocks), item.totalRelease)}%)
               </p>
             </div>
           )}
@@ -160,10 +160,6 @@ function isFavorite(companyId: string, user: User) {
 
 function getStockAmount(item: ListItem, ownStocks: Record<string, number>) {
   return ownStocks[item._id] || 0
-}
-
-function getStockPercentage(item: ListItem, stocks: number = 0) {
-  return Math.round((stocks / item.totalRelease) * 10000) / 100
 }
 
 type RowProps = {
@@ -232,7 +228,7 @@ function Row({ round, item, user, ownStocks }: RowProps) {
             </p>
             <p>
               您在該公司持有{getStockAmount(item, ownStocks)}數量的股份，股權比例為
-              {getStockPercentage(item, getStockAmount(item, ownStocks))}%。
+              {getStockPercentage(getStockAmount(item, ownStocks), item.totalRelease)}%。
             </p>
           </div>
         )}

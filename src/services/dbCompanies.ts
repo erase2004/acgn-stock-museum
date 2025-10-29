@@ -61,6 +61,10 @@ export const schema = z.object({
     .number()
     .default(companyProfitDistribution.capitalIncreaseRatePercent.default),
   tags: z.string().array().max(50),
+  /** 選舉經理時的候選者 User ID 列表 */
+  candidateList: itemId.array(),
+  /** 選舉經理時的各候選者的支持董事 User ID 列表 */
+  voteList: itemId.array().array(),
 })
 
 export const simpleSchema = schema.pick({
