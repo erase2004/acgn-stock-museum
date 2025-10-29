@@ -2,6 +2,7 @@
 import PanelFolder from '@/components/common/preact/PanelFolder'
 import CompanyMarketDataPanel from './CompanyMarketDataPanel.astro'
 import CompanyProfitDistributionPanel from './CompanyProfitDistributionPanel.astro'
+import CompanyOrderBook from './CompanyOrderBook.astro'
 import { getCurrentRound } from '@/libs/routes'
 
 type Props = {
@@ -30,6 +31,11 @@ const round = getCurrentRound(Astro)!
   </div>
 
   {/* 交易訂單 */}
+  <div>
+    <PanelFolder client:only="preact" title="交易訂單" state={false} classes="text-2xl px-4">
+      <CompanyOrderBook />
+    </PanelFolder>
+  </div>
 
   {/* 產品中心 */}
 
