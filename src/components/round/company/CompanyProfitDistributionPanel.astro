@@ -1,0 +1,75 @@
+---
+import { z } from 'astro/zod'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound } from '@/libs/routes'
+import { getDBCompanies, schema } from '@/services/dbCompanies'
+import { handlePromiseParser } from '@/utils/helpers'
+import { companyProfitDistribution } from '@/configs/general'
+
+type Props = {
+  companyId: string
+}
+
+const { companyId } = Astro.props
+
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)
+
+const dbCompanies = getDBCompanies(connection)
+const schemaCompany = schema.pick({
+  capitalIncreaseRatePercent: true,
+  managerBonusRatePercent: true,
+  employeeBonusRatePercent: true,
+})
+
+const company = await handlePromiseParser(
+  z.promise(schemaCompany).parse(
+    dbCompanies.findOne({
+      // @ts-expect-error: companyId is valid ObjectId
+      _id: companyId,
+    }),
+  ),
+)
+
+const { incomeTaxRatePercent, employeeProductVotingRewardRatePercent } = companyProfitDistribution
+const {
+  managerBonusRatePercent = 0,
+  employeeBonusRatePercent = 0,
+  capitalIncreaseRatePercent = 0,
+} = company ?? {}
+
+const directorBonusRatePercent =
+  100 -
+  incomeTaxRatePercent -
+  capitalIncreaseRatePercent -
+  managerBonusRatePercent -
+  employeeBonusRatePercent -
+  employeeProductVotingRewardRatePercent
+---
+
+<div class="company-profit-distribution-panel grid grid-cols-12 p-4">
+  <div class="col-span-6 md:col-span-4 lg:col-span-2">
+    <p>公司所得稅</p>
+    <p>{incomeTaxRatePercent}%</p>
+  </div>
+  <div class="col-span-6 md:col-span-4 lg:col-span-2">
+    <p>資本額注入</p>
+    <p>{capitalIncreaseRatePercent}%</p>
+  </div>
+  <div class="col-span-6 md:col-span-4 lg:col-span-2">
+    <p>經理分紅</p>
+    <p>{managerBonusRatePercent}%</p>
+  </div>
+  <div class="col-span-6 md:col-span-4 lg:col-span-2">
+    <p>員工分紅</p>
+    <p>{employeeBonusRatePercent}%</p>
+  </div>
+  <div class="col-span-6 md:col-span-4 lg:col-span-2">
+    <p>員工獎金</p>
+    <p>{employeeProductVotingRewardRatePercent}%</p>
+  </div>
+  <div class="col-span-6 md:col-span-4 lg:col-span-2">
+    <p>股東分紅</p>
+    <p>{directorBonusRatePercent}%</p>
+  </div>
+</div>

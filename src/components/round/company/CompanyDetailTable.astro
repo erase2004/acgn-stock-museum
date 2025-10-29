@@ -1,6 +1,7 @@
 ---
 import PanelFolder from '@/components/common/preact/PanelFolder'
 import CompanyMarketDataPanel from './CompanyMarketDataPanel.astro'
+import CompanyProfitDistributionPanel from './CompanyProfitDistributionPanel.astro'
 import { getCurrentRound } from '@/libs/routes'
 
 type Props = {
@@ -11,15 +12,22 @@ const { companyId } = Astro.props
 const round = getCurrentRound(Astro)!
 ---
 
-<div class="-mx-4 border border-base-content/25">
+<div class="-mx-4 border border-base-content/25 *:border-base-content/25 *:not-last:border-b">
   {/* 股價趨勢 */}
 
   {/* 數據資訊 */}
-  <PanelFolder client:only="preact" title="數據資訊" state={false} classes="text-2xl px-4">
-    <CompanyMarketDataPanel round={round} companyId={companyId} />
-  </PanelFolder>
+  <div>
+    <PanelFolder client:only="preact" title="數據資訊" state={false} classes="text-2xl px-4">
+      <CompanyMarketDataPanel round={round} companyId={companyId} />
+    </PanelFolder>
+  </div>
 
   {/* 營利分配資訊 */}
+  <div>
+    <PanelFolder client:only="preact" title="營利分配資訊" state={false} classes="text-2xl px-4">
+      <CompanyProfitDistributionPanel companyId={companyId} />
+    </PanelFolder>
+  </div>
 
   {/* 交易訂單 */}
 

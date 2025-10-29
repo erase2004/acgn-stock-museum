@@ -343,6 +343,16 @@
       }
     }
   }
+
+  .company-profit-distribution-panel {
+    & > div {
+      @apply flex flex-col items-center justify-between;
+
+      & > p {
+        @apply text-nowrap;
+      }
+    }
+  }
 }
 
 @layer utilities {
