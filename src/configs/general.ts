@@ -66,6 +66,7 @@ export const dataNumberPerPage = {
   },
   company: {
     log: 30,
+    product: 10,
   },
   companies: 12,
   fscLogs: 30,
@@ -100,6 +101,7 @@ export const dataStoreKey = {
   },
   company: {
     log: 'company-log',
+    product: 'company-product',
   },
   companies: 'company-list',
   fscLogs: 'fsc-logs',

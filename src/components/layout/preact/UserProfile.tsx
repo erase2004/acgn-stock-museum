@@ -12,9 +12,10 @@ import {
 import { getAccountUrl, getPageTitle, PAGE } from '@/libs/routes'
 import { stoneTypeList } from '@/services/dbCompanyStones'
 import { simpleSchema } from '@/services/dbDirectors'
-import { getUserStock } from '@/libs/request'
-import { ownStocks } from '@/stores/account'
+import { getUserCompanyProductTotal, getUserStock } from '@/libs/request'
+import { ownStocks, companyProductTotal } from '@/stores/account'
 import { map, zipObject } from 'lodash-es'
+import { integer, itemId } from '@/services/schema'
 
 type Props = {
   round: string
@@ -28,6 +29,19 @@ async function updateUserStock(round: string, userId: string) {
     })
     .catch(() => {
       ownStocks.set({})
+    })
+}
+
+async function updateUserCompanyProductTotal(round: string, userId: string) {
+  const _schema = z.record(itemId, integer)
+
+  return await getUserCompanyProductTotal(round, userId)
+    .then(async (response) => {
+      const data = await z.promise(_schema).parse(response.json())
+      companyProductTotal.set(data)
+    })
+    .catch(() => {
+      companyProductTotal.set({})
     })
 }
 
@@ -73,6 +87,7 @@ export default function UserProfile({ round }: Props) {
     setUser(data)
     dropdownRef.current?.removeAttribute('open')
     updateUserStock(round, data._id)
+    updateUserCompanyProductTotal(round, data._id)
   }
 
   async function logout() {
@@ -81,6 +96,7 @@ export default function UserProfile({ round }: Props) {
     resetUser()
     dropdownRef.current?.removeAttribute('open')
     ownStocks.set({})
+    companyProductTotal.set({})
   }
 
   const placeHolder =
@@ -104,7 +120,10 @@ export default function UserProfile({ round }: Props) {
         .then(({ data }) => {
           if (data) {
             setUser(data)
-            return updateUserStock(round, data._id)
+            return Promise.allSettled([
+              updateUserStock(round, data._id),
+              updateUserCompanyProductTotal(round, data._id),
+            ])
           } else resetUser()
         })
         .finally(() => setIsInitialized(true))

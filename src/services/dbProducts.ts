@@ -8,6 +8,56 @@ const productTypeList = ['未分類', '繪圖', 'ANSI', '影音', '文字', '三
 
 const productRatingList = ['一般向', '18禁'] as const
 
+// 產品補貨的基準值方案
+const productReplenishBaseAmountTypeList = ['stockAmount', 'totalAmount'] as const
+
+export function productReplenishBaseAmountTypeDisplayName(
+  value: (typeof productReplenishBaseAmountTypeList)[number],
+) {
+  switch (value) {
+    case 'stockAmount':
+      return '庫存數'
+    case 'totalAmount':
+      return '總數'
+    default: {
+      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+      const unreachable: never = value
+      return value
+    }
+  }
+}
+
+// 產品補貨的速度方案
+const productReplenishBatchSizeTypeList = [
+  'verySmall',
+  'small',
+  'medium',
+  'large',
+  'veryLarge',
+] as const
+
+export function productReplenishBatchSizeTypeDisplayName(
+  value: (typeof productReplenishBatchSizeTypeList)[number],
+) {
+  switch (value) {
+    case 'verySmall':
+      return '極少量'
+    case 'small':
+      return '少量'
+    case 'medium':
+      return '中量'
+    case 'large':
+      return '大量'
+    case 'veryLarge':
+      return '極大量'
+    default: {
+      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+      const unreachable: never = value
+      return value
+    }
+  }
+}
+
 export const schema = z.object({
   _id: objectId,
   /** 產品名稱 */
@@ -24,6 +74,18 @@ export const schema = z.object({
   description: z.string().max(500).nullish(),
   /** 推薦票的總票數 */
   voteCount: integer.default(0),
+  /** 產品售價 */
+  price: integer.min(1),
+  /** 產品發行總數 */
+  totalAmount: integer.min(1),
+  /** 庫存（未上貨架）的產品總數 */
+  stockAmount: integer.min(0).default(0),
+  /** 現貨（可購買）的產品總數 */
+  availableAmount: integer.min(0).default(0),
+  /** 產品補貨的基準值設定 */
+  replenishBaseAmountType: z.enum(productReplenishBaseAmountTypeList),
+  /** 產品補貨的批次量大小設定 */
+  replenishBatchSizeType: z.enum(productReplenishBatchSizeTypeList),
 })
 
 export function getDBProducts(db: Db) {

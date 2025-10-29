@@ -1,0 +1,81 @@
+---
+import UserProductQuotaInfo from './preact/UserProductQuotaInfo'
+import ProductList from './preact/ProductList'
+import { z } from 'astro/zod'
+import { getConnection } from '@/libs/databases'
+import { getDBProducts, schema as schemaProduct } from '@/services/dbProducts'
+import { getProductCenterByCompanyUrl } from '@/libs/routes'
+import { handlePromiseParser } from '@/utils/helpers'
+import { getCompanyFilterByCustomSchema, schema as schemaCompany } from '@/services/dbCompanies'
+
+type Props = {
+  round: string
+  companyId: string
+}
+const { round, companyId } = Astro.props
+
+const connection = getConnection(round)!
+const dbProducts = getDBProducts(connection)
+
+const planningProductCount =
+  (await handlePromiseParser(
+    z.promise(z.number()).parse(
+      dbProducts.countDocuments({
+        companyId,
+        state: 'planning',
+      }),
+    ),
+  )) ?? 0
+
+const marketingProducts =
+  (await handlePromiseParser(
+    z.promise(schemaProduct.array()).parse(
+      dbProducts
+        .find(
+          {
+            companyId,
+            state: 'marketing',
+          },
+          { sort: { voteCount: -1 } },
+        )
+        .toArray(),
+    ),
+  )) ?? []
+
+const company = await getCompanyFilterByCustomSchema(
+  connection,
+  companyId,
+  schemaCompany.pick({ manager: true, capital: true }),
+)
+---
+
+<div class="p-4">
+  <p>
+    下季度待上架產品：{
+      planningProductCount ? (
+        <span class="text-success">有</span>
+      ) : (
+        <span class="text-error">無</span>
+      )
+    }
+  </p>
+  <div class="divider my-2"></div>
+  <div>
+    <div class="mb-4 flex flex-wrap items-baseline gap-x-4">
+      <p class="text-xl">當季產品販賣區</p>
+      <UserProductQuotaInfo client:only="preact" companyId={companyId} capital={company!.capital} />
+    </div>
+    <div class="grid max-h-96 grid-cols-1 gap-x-6 gap-y-4 overflow-y-auto lg:grid-cols-2">
+      <ProductList
+        client:only="preact"
+        round={round}
+        data={marketingProducts}
+        manager={company!.manager}
+      />
+    </div>
+  </div>
+  <div class="divider my-2"></div>
+  <div class="text-right">
+    <a href={getProductCenterByCompanyUrl(round, companyId)}>觀看所有推出過的產品…</a>
+  </div>
+</div>
