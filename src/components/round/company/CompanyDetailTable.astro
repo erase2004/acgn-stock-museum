@@ -2,10 +2,10 @@
 import PanelFolder from '@/components/common/preact/PanelFolder'
 import CompanyMarketDataPanel from './CompanyMarketDataPanel.astro'
 import CompanyProfitDistributionPanel from './CompanyProfitDistributionPanel.astro'
-import CompanyOrderBook from './CompanyOrderBook.astro'
+import CompanyOrderBookPanel from './CompanyOrderBookPanel.astro'
 import CompanyProductCenterPanel from './CompanyProductCenterPanel.astro'
-import CompanyDirectorInfo from './CompanyDirectorInfo.astro'
-import CompanyVipInfo from './CompanyVipInfo.astro'
+import CompanyDirectorPanel from './CompanyDirectorPanel.astro'
+import CompanyVipPanel from './CompanyVipPanel.astro'
 import { getCurrentRound } from '@/libs/routes'
 
 type Props = {
@@ -36,7 +36,7 @@ const round = getCurrentRound(Astro)!
   {/* 交易訂單 */}
   <div>
     <PanelFolder client:only="preact" title="交易訂單" state={false} classes="text-2xl px-4">
-      <CompanyOrderBook />
+      <CompanyOrderBookPanel />
     </PanelFolder>
   </div>
 
@@ -50,14 +50,14 @@ const round = getCurrentRound(Astro)!
   {/* 董事會 */}
   <div>
     <PanelFolder client:only="preact" title="董事會" state={false} classes="text-2xl px-4">
-      <CompanyDirectorInfo round={round} companyId={companyId} />
+      <CompanyDirectorPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* VIP 名冊 */}
   <div>
     <PanelFolder client:only="preact" title="VIP名冊" state={false} classes="text-2xl px-4">
-      <CompanyVipInfo round={round} companyId={companyId} />
+      <CompanyVipPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
