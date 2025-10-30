@@ -20,8 +20,8 @@ export default function DirectorList({ round, totalRelease, data }: Props) {
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
 
   return (
-    <div class="company-panel-table max-h-72 border-t *:px-4 md:*:gap-x-6">
-      <div class="sticky-control hidden grid-cols-12 text-center text-nowrap md:grid">
+    <div class="company-panel-table max-h-72 border-t *:px-4 md:*:gap-x-4">
+      <div class="sticky-control header">
         <div class="col-span-3">使用者帳號</div>
         <div class="col-span-1">股份數</div>
         <div class="col-span-1">比例</div>
@@ -30,14 +30,16 @@ export default function DirectorList({ round, totalRelease, data }: Props) {
       {displayItems.length > 0 ? (
         displayItems.map((item) => (
           <div key={item.userId} class="grid grid-cols-12">
-            <p class="col-span-4 md:hidden">使用者帳號</p>
+            <p class="col-span-4 text-nowrap md:hidden">使用者帳號</p>
             <div class="col-span-8 truncate md:col-span-3">
               <UserLink round={round} userId={item.userId} />
             </div>
             <p class="col-span-4 md:hidden">股份數</p>
-            <div class="col-span-8 truncate text-right md:col-span-1">{item.stocks}</div>
+            <div class="col-span-8 truncate text-right md:col-span-1" title={`${item.stocks}`}>
+              {item.stocks}
+            </div>
             <p class="col-span-4 md:hidden">比例</p>
-            <div class="col-span-8 truncate text-right md:col-span-1">
+            <div class="col-span-8 text-right md:col-span-1">
               {getStockPercentage(item.stocks, totalRelease)}%
             </div>
             <p class="col-span-4 md:hidden">留言</p>

@@ -356,6 +356,10 @@
 
   .company-panel-table {
     @apply overflow-y-auto border-base-content/25 *:border-dashed *:border-inherit max-md:*:not-last:border-b;
+
+    .header {
+      @apply hidden grid-cols-12 text-center text-nowrap md:grid;
+    }
   }
 
   .vip-level-5 {

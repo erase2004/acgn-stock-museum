@@ -1,0 +1,45 @@
+---
+import EmployeeList from './preact/EmployeeList'
+import { z } from 'astro/zod'
+import { getConnection } from '@/libs/databases'
+import { getDBEmployees, schema } from '@/services/dbEmployees'
+import { handlePromiseParser } from '@/utils/helpers'
+import { dataStoreKey } from '@/configs/general'
+import { dataNumberPerPage } from '@/configs/general'
+
+type Props = {
+  round: string
+  companyId: string
+}
+const { round, companyId } = Astro.props
+
+const connection = getConnection(round)
+const dbEmployees = getDBEmployees(connection)
+const employees =
+  (await handlePromiseParser(
+    z
+      .promise(schema.array())
+      .parse(dbEmployees.find({ companyId }, { sort: { registerAt: 1 } }).toArray()),
+  )) ?? []
+
+const currentSeasonEmployees = employees.filter((i) => i.employed === true)
+const nextSeasonEmployees = employees.filter((i) => i.employed === false)
+---
+
+<EmployeeList
+  client:only="preact"
+  type="current"
+  round={round}
+  storeKey={dataStoreKey.company.employee.current}
+  pageSize={dataNumberPerPage.company.employee.current}
+  data={currentSeasonEmployees}
+/>
+
+<EmployeeList
+  client:only="preact"
+  type="next"
+  round={round}
+  storeKey={dataStoreKey.company.employee.next}
+  pageSize={dataNumberPerPage.company.employee.next}
+  data={nextSeasonEmployees}
+/>

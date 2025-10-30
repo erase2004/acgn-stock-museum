@@ -6,6 +6,7 @@ import CompanyOrderBookPanel from './CompanyOrderBookPanel.astro'
 import CompanyProductCenterPanel from './CompanyProductCenterPanel.astro'
 import CompanyDirectorPanel from './CompanyDirectorPanel.astro'
 import CompanyVipPanel from './CompanyVipPanel.astro'
+import CompanyEmployeePanel from './CompanyEmployeePanel.astro'
 import { getCurrentRound } from '@/libs/routes'
 
 type Props = {
@@ -62,6 +63,11 @@ const round = getCurrentRound(Astro)!
   </div>
 
   {/* 員工名冊 */}
+  <div>
+    <PanelFolder client:only="preact" title="員工名冊" state={false} classes="text-2xl px-4">
+      <CompanyEmployeePanel round={round} companyId={companyId} />
+    </PanelFolder>
+  </div>
 
   {/* 最萌亂鬥大賽 */}
 

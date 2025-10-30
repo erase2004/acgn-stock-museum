@@ -27,10 +27,10 @@ export default function ManagerElectionInfo({ round, totalRelease, data }: Props
     <div class="pb-2 *:px-4">
       <p class="mb-2 text-xl">選舉下個商業季度的負責經理人：</p>
       <div class="company-panel-table max-h-72">
-        <div class="sticky-control hidden grid-cols-12 text-center text-nowrap md:grid">
+        <div class="sticky-control header">
           <div class="col-span-4">候選人</div>
-          <div class="col-span-2">支持率</div>
-          <div class="col-span-6">支持者</div>
+          <div class="col-span-1">支持率</div>
+          <div class="col-span-7">支持者</div>
         </div>
         {displayItems.map((item) => (
           <div key={item.id} class="grid grid-cols-12">
@@ -39,11 +39,11 @@ export default function ManagerElectionInfo({ round, totalRelease, data }: Props
               <UserLink round={round} userId={item.id} />
             </div>
             <p class="col-span-3 md:hidden">支持率</p>
-            <div class="col-span-9 text-right md:col-span-2 md:text-center">
+            <div class="col-span-9 text-right md:col-span-1 md:text-center">
               {getStockPercentage(item.votes, totalRelease)}%
             </div>
             <p class="col-span-3 md:hidden">支持者</p>
-            <div class="col-span-9 md:col-span-6">
+            <div class="col-span-9 md:col-span-7">
               {item.list.length > 0 ? (
                 <div class="collapse">
                   <input type="checkbox" class="peer" />

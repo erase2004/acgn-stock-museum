@@ -70,6 +70,10 @@ export const dataNumberPerPage = {
     director: 10,
     manager: 10,
     vip: 10,
+    employee: {
+      current: 10,
+      next: 10,
+    },
   },
   companies: 12,
   fscLogs: 30,
@@ -108,6 +112,10 @@ export const dataStoreKey = {
     director: 'company-director',
     manager: 'company-manager',
     vip: 'company-vip',
+    employee: {
+      current: 'company-current-employee',
+      next: 'company-next-employee',
+    },
   },
   companies: 'company-list',
   fscLogs: 'fsc-logs',

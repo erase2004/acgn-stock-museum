@@ -70,8 +70,8 @@ export default function VipList({ round, thresholds, data }: Props) {
             ))}
           </select>
         </label>
-        <div class="company-panel-table -mx-4 max-h-72 *:gap-x-1 *:px-4">
-          <div class="sticky-control hidden grid-cols-12 text-center text-nowrap md:grid">
+        <div class="company-panel-table -mx-4 max-h-72 *:px-4">
+          <div class="sticky-control header">
             <div class="col-span-6">使用者帳號</div>
             <div class="col-span-3">VIP 等級</div>
             <div class="col-span-3">分數</div>
