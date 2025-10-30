@@ -7,12 +7,11 @@ import {
   arenaFighterSortableFields,
   getAttributeNumber,
 } from '@/services/dbArenaFighters'
-import { currentPage, hasMore } from '@/stores/pagination'
-import { useStore } from '@nanostores/preact'
 import { useMemo, useState } from 'preact/hooks'
 import { orderBy } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { useDisplayItems } from '@/utils/hooks'
 
 type OrderKey = (typeof arenaFighterSortableFields)[number]
 type SortOrder<T = 1 | 0> = Partial<Record<OrderKey, T>>
@@ -38,11 +37,9 @@ type Props = {
 }
 
 export default function FighterList({ round, isArenaEnded, minInvestment, data }: Props) {
-  const totalAmount = data.length
-  const $currentPage = useStore(currentPage)
   const [sortOrder, setSortOrder] = useState<SortOrder>(isArenaEnded ? { rank: 1 } : { agi: 0 })
 
-  const displayItems = useMemo(() => {
+  const sortedItems = useMemo(() => {
     let key: keyof SortOrder = 'agi'
     let order: 'asc' | 'desc' = 'desc'
 
@@ -53,15 +50,12 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
       }
     })
 
-    const sorted =
-      key === 'agi'
-        ? orderBy(data, [key, 'createdAt'], [order, order === 'desc' ? 'asc' : 'desc'])
-        : orderBy(data, [key], [order])
+    return key === 'agi'
+      ? orderBy(data, [key, 'createdAt'], [order, order === 'desc' ? 'asc' : 'desc'])
+      : orderBy(data, [key], [order])
+  }, [data, sortOrder])
 
-    const newList = sorted.slice(0, PAGE_SIZE * $currentPage[STORE_KEY])
-    hasMore.setKey(STORE_KEY, newList.length < totalAmount)
-    return newList
-  }, [data, sortOrder, $currentPage[STORE_KEY]])
+  const displayItems = useDisplayItems(sortedItems, STORE_KEY, PAGE_SIZE)
 
   function handleSortChange(key: keyof SortOrder) {
     if (typeof sortOrder[key] === 'number') {
