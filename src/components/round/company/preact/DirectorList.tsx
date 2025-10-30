@@ -20,7 +20,7 @@ export default function DirectorList({ round, totalRelease, data }: Props) {
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
 
   return (
-    <div class="max-h-72 overflow-y-auto border-t border-base-content/25 *:border-dashed *:border-inherit *:px-4 max-md:*:not-last:border-b md:*:gap-x-6">
+    <div class="company-panel-table max-h-72 border-t *:px-4 md:*:gap-x-6">
       <div class="sticky-control hidden grid-cols-12 text-center text-nowrap md:grid">
         <div class="col-span-3">使用者帳號</div>
         <div class="col-span-1">股份數</div>

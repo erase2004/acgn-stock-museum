@@ -354,6 +354,10 @@
     }
   }
 
+  .company-panel-table {
+    @apply overflow-y-auto border-base-content/25 *:border-dashed *:border-inherit max-md:*:not-last:border-b;
+  }
+
   .vip-level-5 {
     background-color: rgba(255, 175, 175, 0.5);
     color: black;

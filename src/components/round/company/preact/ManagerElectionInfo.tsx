@@ -26,7 +26,7 @@ export default function ManagerElectionInfo({ round, totalRelease, data }: Props
   return (
     <div class="pb-2 *:px-4">
       <p class="mb-2 text-xl">選舉下個商業季度的負責經理人：</p>
-      <div class="max-h-72 overflow-y-auto border-base-content/25 *:border-dashed *:border-inherit max-md:*:not-last:border-b">
+      <div class="company-panel-table max-h-72">
         <div class="sticky-control hidden grid-cols-12 text-center text-nowrap md:grid">
           <div class="col-span-4">候選人</div>
           <div class="col-span-2">支持率</div>
