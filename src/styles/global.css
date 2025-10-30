@@ -353,6 +353,20 @@
       }
     }
   }
+
+  .vip-level-5 {
+    background-color: rgba(255, 175, 175, 0.5);
+    color: black;
+    font-weight: bold;
+
+    @apply dark:bg-[rgba(192,96,96,0.5)] dark:text-white;
+
+    a {
+      color: rgb(2, 117, 215);
+
+      @apply dark:text-yellow-300;
+    }
+  }
 }
 
 @layer utilities {

@@ -1,0 +1,21 @@
+---
+import VipList from './preact/VipList'
+import { getConnection } from '@/libs/databases'
+import { getCompanyFilterByCustomSchema, schema as schemaCompany } from '@/services/dbCompanies'
+import { getCompnayVips, getVipThresholds } from '@/services/dbVips'
+
+type Props = {
+  round: string
+  companyId: string
+}
+const { round, companyId } = Astro.props
+
+const connection = getConnection(round)
+const vips = (await getCompnayVips(connection, companyId)) ?? []
+
+const customSchema = schemaCompany.pick({ capital: true })
+const company = await getCompanyFilterByCustomSchema(connection, companyId, customSchema)
+const vipThresholds = getVipThresholds(company?.capital ?? 0)
+---
+
+<VipList client:only="preact" round={round} thresholds={vipThresholds} data={vips} />

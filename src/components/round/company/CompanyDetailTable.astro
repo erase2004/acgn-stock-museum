@@ -5,6 +5,7 @@ import CompanyProfitDistributionPanel from './CompanyProfitDistributionPanel.ast
 import CompanyOrderBook from './CompanyOrderBook.astro'
 import CompanyProductCenterPanel from './CompanyProductCenterPanel.astro'
 import CompanyDirectorInfo from './CompanyDirectorInfo.astro'
+import CompanyVipInfo from './CompanyVipInfo.astro'
 import { getCurrentRound } from '@/libs/routes'
 
 type Props = {
@@ -48,12 +49,17 @@ const round = getCurrentRound(Astro)!
 
   {/* 董事會 */}
   <div>
-    <PanelFolder client:only="preact" title="董事會" state={true} classes="text-2xl px-4">
+    <PanelFolder client:only="preact" title="董事會" state={false} classes="text-2xl px-4">
       <CompanyDirectorInfo round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* VIP 名冊 */}
+  <div>
+    <PanelFolder client:only="preact" title="VIP名冊" state={false} classes="text-2xl px-4">
+      <CompanyVipInfo round={round} companyId={companyId} />
+    </PanelFolder>
+  </div>
 
   {/* 員工名冊 */}
 

@@ -214,3 +214,8 @@ export function buildSearchRegExp(keyword: string, matchType: 'exact' | 'fuzzy')
   const patternString = keyword.split('').map(escapeRegExp).join('.*')
   return new RegExp(patternString, 'i')
 }
+
+export function roundToDecimalPlaces(number: number, digit: number) {
+  const p = Math.pow(10, digit)
+  return Math.round(number * p) / p
+}
