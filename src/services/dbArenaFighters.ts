@@ -6,12 +6,10 @@ import { datetime, integer, itemId, objectId } from './schema'
 
 const MAX_MANNER_SIZE = 3
 
+export const fighterAttributes = ['hp', 'sp', 'atk', 'def', 'agi'] as const
+
 export const arenaFighterSortableFields = [
-  'hp',
-  'sp',
-  'atk',
-  'def',
-  'agi',
+  ...fighterAttributes,
   'rank',
   'totalInvestedAmount',
 ] as const
@@ -63,6 +61,8 @@ export const schema = z.object({
   normalManner: mannerSchema,
   /** 特殊攻擊招式表 */
   specialManner: mannerSchema,
+  /** 攻擊優先順序，對應 dbArena 資料集中的 shuffledFighterCompanyIdList 陣列的 index */
+  attackSequence: integer.array().default([]),
 })
 
 export function getDBArenaFighters(db: Db) {

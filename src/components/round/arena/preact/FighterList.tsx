@@ -6,6 +6,7 @@ import {
   schema as schemaFighter,
   arenaFighterSortableFields,
   getAttributeNumber,
+  fighterAttributes,
 } from '@/services/dbArenaFighters'
 import { useMemo, useState } from 'preact/hooks'
 import { orderBy } from 'lodash-es'
@@ -132,7 +133,7 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
                 <td class="truncate text-left text-nowrap" data-title="決策者">
                   <UserLink round={round} userId={item.manager} />
                 </td>
-                {(['hp', 'sp', 'atk', 'def', 'agi'] as const).map((field) => (
+                {fighterAttributes.map((field) => (
                   <td key={field} class="truncate text-center" data-title={fieldNameMap[field]}>
                     {getAttributeNumber(field, item[field])}
                   </td>

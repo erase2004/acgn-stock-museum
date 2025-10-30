@@ -1,0 +1,106 @@
+---
+import ArenaStrategyForm from './preact/ArenaStrategyForm'
+import { z } from 'astro/zod'
+import { getArenaInfoUrl } from '@/libs/routes'
+import { getConnection } from '@/libs/databases'
+import { formatDateTimeText } from '@/libs/timeFormat'
+import { getLatestArena } from '@/services/dbArena'
+import {
+  fighterAttributes,
+  getAttributeNumber,
+  getDBArenaFighters,
+  schema as schemaFighter,
+} from '@/services/dbArenaFighters'
+import { getCompanyFilterByCustomSchema, schema as schemaCompany } from '@/services/dbCompanies'
+import { currencyFormat, handlePromiseParser } from '@/utils/helpers'
+import { arenaMinInvestedAmount } from '@/configs/general'
+import { isString } from 'lodash-es'
+
+type Props = {
+  round: string
+  companyId: string
+}
+
+const { round, companyId } = Astro.props
+
+const connection = getConnection(round)
+const arenaData = await getLatestArena(connection)
+
+const companyData = await (function () {
+  const customSchema = schemaCompany.pick({ companyName: true, manager: true })
+  return getCompanyFilterByCustomSchema(connection, companyId, customSchema)
+})()
+
+const dbArenaFighters = getDBArenaFighters(connection)
+
+const joinData = await (function () {
+  const customSchema = schemaFighter
+  return handlePromiseParser(
+    z.promise(customSchema).parse(
+      dbArenaFighters.findOne({
+        arenaId: arenaData?._id ?? '',
+        companyId,
+      }),
+    ),
+  )
+})()
+
+const attackSequence = (function () {
+  const companyIdList = arenaData?.shuffledFighterCompanyIdList ?? []
+  if (!companyIdList.length) return []
+
+  return (joinData?.attackSequence ?? []).map((index) => companyIdList[index]).filter(isString)
+})()
+---
+
+<div class="px-4 py-2">
+  {
+    typeof arenaData !== 'undefined' ? (
+      <div>
+        <p>
+          <a href={getArenaInfoUrl(round, arenaData._id)}>本次最萌亂鬥大賽</a>起迄時間為：
+          {formatDateTimeText(arenaData.beginDate)}~{formatDateTimeText(arenaData.endDate)}
+        </p>
+        <p>報名截止時間為：{formatDateTimeText(arenaData.joinEndDate)}</p>
+        {typeof joinData !== 'undefined' ? (
+          <Fragment>
+            <p class="break-all">{companyData?.companyName}已經報名參加這一屆的最萌亂鬥大賽。</p>
+            <p class="mt-1">
+              總投資額：${currencyFormat(joinData.totalInvestedAmount)}
+              {joinData.totalInvestedAmount < arenaMinInvestedAmount && (
+                <span class="text-error">
+                  （總投資額未達${currencyFormat(arenaMinInvestedAmount)}
+                  ，大賽開始時將會自動失去參賽資格！）
+                </span>
+              )}
+            </p>
+            <p>目前的屬性值如下：</p>
+            <div class="grid grid-cols-5 text-nowrap">
+              {fighterAttributes.map((attr) => (
+                <Fragment>
+                  <p class="col-span-1">{attr.toUpperCase()}：</p>
+                  <p class="col-span-4 text-right md:col-span-2">
+                    {getAttributeNumber(attr, joinData[attr])}
+                    (已投資${currencyFormat(joinData[attr])})
+                  </p>
+                  <div class="hidden md:col-span-2 md:block" />
+                </Fragment>
+              ))}
+            </div>
+            <ArenaStrategyForm
+              client:only="preact"
+              round={round}
+              manager={companyData?.manager ?? ''}
+              fighter={joinData}
+              attackSequnce={attackSequence}
+            />
+          </Fragment>
+        ) : (
+          <p class="break-all">{companyData?.companyName}並沒有參加這一屆的最萌亂鬥大賽！</p>
+        )}
+      </div>
+    ) : (
+      <em>現在並沒有舉辦最萌亂鬥大賽！</em>
+    )
+  }
+</div>

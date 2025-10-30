@@ -41,6 +41,9 @@ export const displayAdvertisingNumber = 5
 /** 最萌亂鬥大賽的參賽所需最小總投資金額 */
 export const arenaMinInvestedAmount = 10000
 
+/** 最萌亂鬥大賽的最大回合數 */
+export const arenaMaximumRound = 1000
+
 /** 分頁時每個分頁有多少資料 */
 export const dataNumberPerPage = {
   account: {

@@ -2,7 +2,7 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
-import { datetime, objectId } from './schema'
+import { datetime, itemId, objectId } from './schema'
 
 export const schema = z.object({
   _id: objectId,
@@ -12,6 +12,8 @@ export const schema = z.object({
   endDate: datetime,
   /** 報名截止日期 */
   joinEndDate: datetime,
+  /** 所有參賽者 companyId 依隨機順序排列，在報名截止後生成，dbArenaFighters 的 attackSequence 將對應此陣列的index。 */
+  shuffledFighterCompanyIdList: itemId.array(),
 })
 
 export function getDBArena(db: Db) {
