@@ -9,7 +9,10 @@ import CompanyVipPanel from './CompanyVipPanel.astro'
 import CompanyEmployeePanel from './CompanyEmployeePanel.astro'
 import CompanyArenaPanel from './CompanyArenaPanel.astro'
 import CompanyMiningMachinePanel from './CompanyMiningMachinePanel.astro'
+import ViolationCaseInfo from '@/components/common/ViolationCaseInfo.astro'
 import { getCurrentRound } from '@/libs/routes'
+import { dataStoreKey } from '@/configs/general'
+import { dataNumberPerPage } from '@/configs/general'
 
 type Props = {
   companyId: string
@@ -86,6 +89,16 @@ const round = getCurrentRound(Astro)!
   </div>
 
   {/* 違規案件列表 */}
+  <div>
+    <PanelFolder client:only="preact" title="違規案件列表" state={false} classes="text-2xl">
+      <ViolationCaseInfo
+        type="companyViolated"
+        targetId={companyId}
+        storeKey={dataStoreKey.company.violation}
+        pageSize={dataNumberPerPage.company.violation}
+      />
+    </PanelFolder>
+  </div>
 
   {/* 所有紀錄 */}
 </div>
