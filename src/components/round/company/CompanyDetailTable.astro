@@ -1,5 +1,6 @@
 ---
 import PanelFolder from '@/components/common/preact/PanelFolder'
+import CompanyChartPanel from './CompanyChartPanel.astro'
 import CompanyMarketDataPanel from './CompanyMarketDataPanel.astro'
 import CompanyProfitDistributionPanel from './CompanyProfitDistributionPanel.astro'
 import CompanyOrderBookPanel from './CompanyOrderBookPanel.astro'
@@ -10,10 +11,10 @@ import CompanyEmployeePanel from './CompanyEmployeePanel.astro'
 import CompanyArenaPanel from './CompanyArenaPanel.astro'
 import CompanyMiningMachinePanel from './CompanyMiningMachinePanel.astro'
 import ViolationCaseInfo from '@/components/common/ViolationCaseInfo.astro'
+import CompanyLogInfo from './CompanyLogInfo.astro'
 import { getCurrentRound } from '@/libs/routes'
 import { dataStoreKey } from '@/configs/general'
 import { dataNumberPerPage } from '@/configs/general'
-import CompanyLogInfo from './CompanyLogInfo.astro'
 
 type Props = {
   companyId: string
@@ -25,7 +26,11 @@ const round = getCurrentRound(Astro)!
 
 <div class="company-detail">
   {/* 股價趨勢 */}
-
+  <div>
+    <PanelFolder client:only="preact" title="股價趨勢" state={false} classes="text-2xl">
+      <CompanyChartPanel round={round} companyId={companyId} />
+    </PanelFolder>
+  </div>
   {/* 數據資訊 */}
   <div>
     <PanelFolder client:only="preact" title="數據資訊" state={false} classes="text-2xl">
@@ -103,7 +108,7 @@ const round = getCurrentRound(Astro)!
 
   {/* 所有紀錄 */}
   <div>
-    <PanelFolder client:only="preact" title="所有紀錄" state={true} classes="text-2xl">
+    <PanelFolder client:only="preact" title="所有紀錄" state={false} classes="text-2xl">
       <CompanyLogInfo companyId={companyId} />
     </PanelFolder>
   </div>

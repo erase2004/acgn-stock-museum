@@ -24,6 +24,8 @@
     "astro-favicons": "3",
     "canvas-confetti": "1",
     "chart.js": "^4.5.1",
+    "chartjs-adapter-dayjs-4": "^1.0.4",
+    "chartjs-chart-financial": "^0.2.1",
     "dayjs": "^1.11.18",
     "katex": "^0.16.25",
     "lodash-es": "^4.17.21",
