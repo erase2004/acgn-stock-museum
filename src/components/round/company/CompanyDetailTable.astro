@@ -13,6 +13,7 @@ import ViolationCaseInfo from '@/components/common/ViolationCaseInfo.astro'
 import { getCurrentRound } from '@/libs/routes'
 import { dataStoreKey } from '@/configs/general'
 import { dataNumberPerPage } from '@/configs/general'
+import CompanyLogInfo from './CompanyLogInfo.astro'
 
 type Props = {
   companyId: string
@@ -101,4 +102,9 @@ const round = getCurrentRound(Astro)!
   </div>
 
   {/* 所有紀錄 */}
+  <div>
+    <PanelFolder client:only="preact" title="所有紀錄" state={true} classes="text-2xl">
+      <CompanyLogInfo companyId={companyId} />
+    </PanelFolder>
+  </div>
 </div>

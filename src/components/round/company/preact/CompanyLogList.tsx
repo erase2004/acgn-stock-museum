@@ -56,7 +56,7 @@ export default function CompanyLogList({ round, data }: Props) {
   }
 
   return (
-    <>
+    <div>
       {user && (
         <button class="btn mb-1 btn-outline btn-sm btn-info" onClick={toggleFilter}>
           {filterOn ? '只檢視自身紀錄' : '檢視所有紀錄'}
@@ -74,6 +74,6 @@ export default function CompanyLogList({ round, data }: Props) {
       ) : (
         '查無資料'
       )}
-    </>
+    </div>
   )
 }
