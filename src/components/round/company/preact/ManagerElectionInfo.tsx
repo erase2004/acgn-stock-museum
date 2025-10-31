@@ -24,9 +24,9 @@ export default function ManagerElectionInfo({ round, totalRelease, data }: Props
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
 
   return (
-    <div class="pb-2 *:px-4">
+    <div>
       <p class="mb-2 text-xl">選舉下個商業季度的負責經理人：</p>
-      <div class="company-panel-table max-h-72">
+      <div class="company-panel-table max-h-72 *:px-4">
         <div class="sticky-control header">
           <div class="col-span-4">候選人</div>
           <div class="col-span-1">支持率</div>

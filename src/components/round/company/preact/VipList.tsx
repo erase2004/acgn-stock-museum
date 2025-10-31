@@ -58,7 +58,7 @@ export default function VipList({ round, thresholds, data }: Props) {
   }
 
   return (
-    <div class="grid grid-cols-12 gap-y-4 px-4 py-2 md:gap-x-8">
+    <div class="grid grid-cols-12 gap-y-4 md:gap-x-8">
       <div class="col-span-12 md:col-span-8 lg:col-span-9">
         <label class="select mb-2 w-40 select-sm">
           <span class="label">顯示等級</span>
@@ -70,7 +70,7 @@ export default function VipList({ round, thresholds, data }: Props) {
             ))}
           </select>
         </label>
-        <div class="company-panel-table -mx-4 max-h-72 *:px-4">
+        <div class="company-panel-table -mx-2 max-h-72 *:px-4 md:-mx-4">
           <div class="sticky-control header">
             <div class="col-span-6">使用者帳號</div>
             <div class="col-span-3">VIP 等級</div>
@@ -87,19 +87,11 @@ export default function VipList({ round, thresholds, data }: Props) {
                   <UserLink round={round} userId={item.userId} />
                 </div>
                 <p class="col-span-5 md:hidden">VIP 等級</p>
-                <div
-                  class="col-span-7 text-left md:col-span-3 md:text-center"
-                  title={getLevelText(item.level)}
-                >
+                <div class="col-span-7 text-left md:col-span-3 md:text-center">
                   {getLevelText(item.level)}
                 </div>
                 <p class="col-span-5 md:hidden">分數</p>
-                <div
-                  class="col-span-7 text-left md:col-span-3 md:text-center"
-                  title={`${item.score}`}
-                >
-                  {item.score}
-                </div>
+                <div class="col-span-7 text-left md:col-span-3 md:text-center">{item.score}</div>
               </div>
             ))
           ) : (

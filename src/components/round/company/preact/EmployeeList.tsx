@@ -32,9 +32,9 @@ export default function EmployeeList({ type, round, storeKey, pageSize, data }: 
   const label = typeLabel(type)
 
   return (
-    <div class="border-t border-base-content/25 px-4 py-2">
+    <div class="-mx-2 border-t border-base-content/25 px-2 md:-mx-4 md:px-4">
       <p class="mb-1 text-xl">{label}</p>
-      <div class="company-panel-table max-h-72">
+      <div class="company-panel-table max-h-72 px-2 md:px-4">
         <div class="sticky-control header">
           <div class="col-span-2">使用者帳號</div>
           <div class="col-span-3">報名時間</div>
@@ -48,16 +48,11 @@ export default function EmployeeList({ type, round, storeKey, pageSize, data }: 
                 <UserLink round={round} userId={item.userId} />
               </div>
               <p class="col-span-5 md:hidden">報名時間</p>
-              <div
-                class="col-span-7 text-center md:col-span-3"
-                title={formatDateTimeText(item.registerAt)}
-              >
+              <div class="col-span-7 text-center md:col-span-3">
                 {formatDateTimeText(item.registerAt)}
               </div>
               <p class="col-span-5 md:hidden">{thirdColTitle(type)}</p>
-              <div class="col-span-7 md:col-span-7" title={showMessage(type, item.message)}>
-                {showMessage(type, item.message)}
-              </div>
+              <div class="col-span-7 md:col-span-7">{showMessage(type, item.message)}</div>
             </div>
           ))
         ) : (

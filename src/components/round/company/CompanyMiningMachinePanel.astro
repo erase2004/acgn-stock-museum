@@ -81,7 +81,7 @@ const totalMiningProfit = (function () {
 })()
 ---
 
-<div class="px-4 py-2">
+<div>
   <p>
     狀態：{
       isInOperationTime ? (
@@ -128,7 +128,7 @@ const totalMiningProfit = (function () {
         <UserLink round={round} userId={item.userId} />
       </div>
       <p class="col-span-5 md:hidden">石頭類型</p>
-      <div class="col-span-7 md:col-span-3" title={stoneDisplayName(item.stoneType)}>
+      <div class="col-span-7 md:col-span-3">
         <img
           class="inline-block size-4"
           src={getStoneIcon(item.stoneType)}
@@ -137,7 +137,7 @@ const totalMiningProfit = (function () {
         {stoneDisplayName(item.stoneType)}
       </div>
       <p class="col-span-5 md:hidden">放置時間</p>
-      <div class="col-span-7 md:col-span-3" title={formatDateTimeText(item.placedAt)}>
+      <div class="col-span-7 md:col-span-3">
         {ormatDateTimeText(item.placedAt)}
       </div>
     </div>

@@ -19,68 +19,68 @@ const { companyId } = Astro.props
 const round = getCurrentRound(Astro)!
 ---
 
-<div class="-mx-4 border border-base-content/25 *:border-base-content/25 *:not-last:border-b">
+<div class="company-detail">
   {/* 股價趨勢 */}
 
   {/* 數據資訊 */}
   <div>
-    <PanelFolder client:only="preact" title="數據資訊" state={false} classes="text-2xl px-4">
+    <PanelFolder client:only="preact" title="數據資訊" state={false} classes="text-2xl">
       <CompanyMarketDataPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* 營利分配資訊 */}
   <div>
-    <PanelFolder client:only="preact" title="營利分配資訊" state={false} classes="text-2xl px-4">
+    <PanelFolder client:only="preact" title="營利分配資訊" state={false} classes="text-2xl">
       <CompanyProfitDistributionPanel companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* 交易訂單 */}
   <div>
-    <PanelFolder client:only="preact" title="交易訂單" state={false} classes="text-2xl px-4">
+    <PanelFolder client:only="preact" title="交易訂單" state={false} classes="text-2xl">
       <CompanyOrderBookPanel />
     </PanelFolder>
   </div>
 
   {/* 產品中心 */}
   <div>
-    <PanelFolder client:only="preact" title="產品中心" state={false} classes="text-2xl px-4">
+    <PanelFolder client:only="preact" title="產品中心" state={false} classes="text-2xl">
       <CompanyProductCenterPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* 董事會 */}
   <div>
-    <PanelFolder client:only="preact" title="董事會" state={false} classes="text-2xl px-4">
+    <PanelFolder client:only="preact" title="董事會" state={false} classes="text-2xl">
       <CompanyDirectorPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* VIP 名冊 */}
   <div>
-    <PanelFolder client:only="preact" title="VIP名冊" state={false} classes="text-2xl px-4">
+    <PanelFolder client:only="preact" title="VIP名冊" state={false} classes="text-2xl">
       <CompanyVipPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* 員工名冊 */}
   <div>
-    <PanelFolder client:only="preact" title="員工名冊" state={false} classes="text-2xl px-4">
+    <PanelFolder client:only="preact" title="員工名冊" state={false} classes="text-2xl">
       <CompanyEmployeePanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* 最萌亂鬥大賽 */}
   <div>
-    <PanelFolder client:only="preact" title="最萌亂鬥大賽" state={false} classes="text-2xl px-4">
+    <PanelFolder client:only="preact" title="最萌亂鬥大賽" state={false} classes="text-2xl">
       <CompanyArenaPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* 挖礦機 */}
   <div>
-    <PanelFolder client:only="preact" title="挖礦機" state={false} classes="text-2xl px-4">
+    <PanelFolder client:only="preact" title="挖礦機" state={false} classes="text-2xl">
       <CompanyMiningMachinePanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>

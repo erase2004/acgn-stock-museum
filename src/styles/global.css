@@ -334,7 +334,25 @@
     }
   }
 
+  .company-detail {
+    @apply -mx-4 border border-base-content/25 *:border-base-content/25 *:not-last:border-b;
+
+    & > div {
+      @apply flex flex-col gap-y-2 p-2 md:p-4;
+    }
+  }
+
+  .company-panel-table {
+    @apply -mx-2 overflow-y-auto border-base-content/25 *:border-dashed *:border-inherit max-md:*:not-last:border-b md:-mx-4;
+
+    .header {
+      @apply hidden grid-cols-12 text-center text-nowrap md:grid;
+    }
+  }
+
   .company-market-data-panel {
+    @apply -mx-2 -mb-2 grid grid-cols-12 gap-[1px] bg-base-content/25 pt-[1px] md:-mx-4 md:-mb-4;
+
     & > div {
       @apply flex flex-col items-center justify-between bg-base-100;
 
@@ -345,6 +363,8 @@
   }
 
   .company-profit-distribution-panel {
+    @apply grid grid-cols-12;
+
     & > div {
       @apply flex flex-col items-center justify-between;
 
@@ -354,11 +374,11 @@
     }
   }
 
-  .company-panel-table {
-    @apply overflow-y-auto border-base-content/25 *:border-dashed *:border-inherit max-md:*:not-last:border-b;
+  .company-order-book-panel {
+    @apply -mx-2 -mb-2 grid grid-cols-2 gap-[1px] bg-base-content/25 pt-[1px] *:bg-base-100 md:-mx-4 md:-mb-4;
 
-    .header {
-      @apply hidden grid-cols-12 text-center text-nowrap md:grid;
+    & > div {
+      @apply col-span-full flex flex-col items-center justify-between p-2 md:col-span-1;
     }
   }
 
