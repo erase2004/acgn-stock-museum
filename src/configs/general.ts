@@ -3,6 +3,9 @@
 /** 季度結束前多久開放設定薪資，單位為毫秒 */
 export const announceSalaryTime = 259200000
 
+/** 公司預設員工每日薪資 */
+export const defaultCompanySalaryPerDay = 1000
+
 /** 公司營利的分配設定 */
 export const companyProfitDistribution = {
   /** 分配設定調整的封關時間 (ms) */

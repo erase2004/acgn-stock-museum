@@ -4,7 +4,7 @@ import type { ZodTypeAny } from 'astro/zod'
 import { z } from 'astro/zod'
 import { datetime, integer, itemId, objectId } from './schema'
 import { handlePromiseParser } from '@/utils/helpers'
-import { companyProfitDistribution } from '@/configs/general'
+import { companyProfitDistribution, defaultCompanySalaryPerDay } from '@/configs/general'
 import { last } from 'lodash-es'
 
 // 公司評等名稱
@@ -79,6 +79,10 @@ export const schema = z.object({
   candidateList: itemId.array(),
   /** 選舉經理時的各候選者的支持董事 User ID 列表 */
   voteList: itemId.array().array(),
+  /** 員工每日薪資 */
+  salary: integer.default(defaultCompanySalaryPerDay),
+  /** 下季員工每日薪資 */
+  nextSeasonSalary: integer.optional().default(defaultCompanySalaryPerDay),
 })
 
 export const simpleSchema = schema.pick({

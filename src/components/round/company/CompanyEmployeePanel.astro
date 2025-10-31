@@ -2,9 +2,10 @@
 import EmployeeList from './preact/EmployeeList'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
-import { getDBEmployees, schema } from '@/services/dbEmployees'
-import { handlePromiseParser } from '@/utils/helpers'
-import { dataStoreKey } from '@/configs/general'
+import { getDBEmployees, schema as schemaEmployee } from '@/services/dbEmployees'
+import { getCompanyFilterByCustomSchema, schema as schemaCompany } from '@/services/dbCompanies'
+import { currencyFormat, handlePromiseParser } from '@/utils/helpers'
+import { dataStoreKey, defaultCompanySalaryPerDay } from '@/configs/general'
 import { dataNumberPerPage } from '@/configs/general'
 
 type Props = {
@@ -14,11 +15,20 @@ type Props = {
 const { round, companyId } = Astro.props
 
 const connection = getConnection(round)
+
+const [salary, nextSeasonSalary] = await (async function () {
+  const schema = schemaCompany.pick({ salary: true, nextSeasonSalary: true })
+  const companyData = await getCompanyFilterByCustomSchema(connection, companyId, schema)
+  return companyData
+    ? [companyData.salary, companyData.nextSeasonSalary]
+    : [defaultCompanySalaryPerDay, defaultCompanySalaryPerDay]
+})()
+
 const dbEmployees = getDBEmployees(connection)
 const employees =
   (await handlePromiseParser(
     z
-      .promise(schema.array())
+      .promise(schemaEmployee.array())
       .parse(dbEmployees.find({ companyId }, { sort: { registerAt: 1 } }).toArray()),
   )) ?? []
 
@@ -26,6 +36,11 @@ const currentSeasonEmployees = employees.filter((i) => i.employed === true)
 const nextSeasonEmployees = employees.filter((i) => i.employed === false)
 ---
 
+<div class="flex flex-col text-success sm:flex-row">
+  <p>本季度員工薪資：${currencyFormat(salary)}</p>
+  <div class="divider mx-0 divider-horizontal"></div>
+  <p>下季度員工薪資：${currencyFormat(nextSeasonSalary)}</p>
+</div>
 <EmployeeList
   client:only="preact"
   type="current"
