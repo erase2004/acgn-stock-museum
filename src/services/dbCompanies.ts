@@ -10,6 +10,20 @@ import { last } from 'lodash-es'
 // 公司評等名稱
 const gradeNameList = ['S', 'A', 'B', 'C', 'D'] as const
 
+type Grade = (typeof gradeNameList)[number]
+
+// 公司評等係數
+export const gradeFactorTable = {
+  // 挖礦機獲利係數
+  miningMachine: {
+    S: 0.4,
+    A: 0.3,
+    B: 0.2,
+    C: 0.1,
+    D: 0,
+  },
+} satisfies Record<string, Record<Grade, number>>
+
 export const schema = z.object({
   _id: objectId,
   /** 董事長的稱謂 */

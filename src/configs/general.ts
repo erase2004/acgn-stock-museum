@@ -1,3 +1,5 @@
+// 公司相關設定
+
 /** 季度結束前多久開放設定薪資，單位為毫秒 */
 export const announceSalaryTime = 259200000
 
@@ -30,19 +32,28 @@ export const companyProfitDistribution = {
   },
 }
 
+/** 挖礦機的運作時間 (ms) */
+export const miningMachineOperationTime = 86400000
+
 /** 產品消費券的數量 */
 export const productVoucherAmount = 7000
+
+// 廣告相關設定
 
 /** 廣告持續時間，單位為毫秒 */
 export const advertisingExpireTime = 259200000
 /** 同時最多顯示的廣告筆數 */
 export const displayAdvertisingNumber = 5
 
+// 最萌亂鬥大賽相關相關設定
+
 /** 最萌亂鬥大賽的參賽所需最小總投資金額 */
 export const arenaMinInvestedAmount = 10000
 
 /** 最萌亂鬥大賽的最大回合數 */
 export const arenaMaximumRound = 1000
+
+// 其他設定
 
 /** 分頁時每個分頁有多少資料 */
 export const dataNumberPerPage = {

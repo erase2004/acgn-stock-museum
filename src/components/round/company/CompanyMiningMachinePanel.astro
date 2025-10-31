@@ -1,0 +1,150 @@
+---
+import { z } from 'astro/zod'
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound } from '@/services/dbRound'
+import { getLatestSeason } from '@/services/dbSeason'
+import { miningMachineOperationTime } from '@/configs/general'
+import {
+  getDBCompanyStones,
+  schema as schemaCompanyStone,
+  stonePowerTable,
+  stoneTypeList,
+  type StoneType,
+} from '@/services/dbCompanyStones'
+import {
+  getCompanyFilterByCustomSchema,
+  schema as schemaCompany,
+  gradeFactorTable,
+} from '@/services/dbCompanies'
+import {
+  handlePromiseParser,
+  stoneDisplayName,
+  getStoneIcon,
+  currencyFormat,
+} from '@/utils/helpers'
+
+type Props = {
+  round: string
+  companyId: string
+}
+const { round, companyId } = Astro.props
+
+const connection = getConnection(round)
+
+const isInOperationTime = await (async function () {
+  const latestSeason = await getLatestSeason(connection)
+  const lastRound = await getCurrentRound(connection)
+  const timeToSeasonEnd = latestSeason!.endDate.getTime() - lastRound!.endDate.getTime()
+
+  return timeToSeasonEnd < miningMachineOperationTime
+})()
+
+const placedStoneList =
+  (await (async function () {
+    const dbCompanyStones = getDBCompanyStones(connection)
+
+    return handlePromiseParser(
+      z
+        .promise(schemaCompanyStone.array())
+        .parse(dbCompanyStones.find({ companyId }, { sort: { placedAt: -1 } }).toArray()),
+    )
+  })()) ?? []
+
+const stoneCount = {
+  saint: 0,
+  birth: 0,
+  rainbow: 0,
+  rainbowFragment: 0,
+  quest: 0,
+} satisfies Record<StoneType, number>
+
+placedStoneList.forEach((item) => {
+  const type = item.stoneType
+  stoneCount[type] += 1
+})
+
+const companyGrade = await (async function () {
+  const schema = schemaCompany.pick({ grade: true })
+  const companyData = await getCompanyFilterByCustomSchema(connection, companyId, schema)
+  return companyData!.grade
+})()
+
+const totalMiningPower = Object.entries(stoneCount).reduce((sum, [type, count]) => {
+  return sum + (stonePowerTable[type as StoneType] || 0) * count
+}, 0)
+
+const totalMiningProfit = (function () {
+  const gradeFactor = gradeFactorTable.miningMachine[companyGrade]
+  return Math.round(
+    6300 * Math.log10(totalMiningPower + 1) * Math.pow(totalMiningPower + 1, gradeFactor),
+  )
+})()
+---
+
+<div class="px-4 py-2">
+  <p>
+    狀態：{
+      isInOperationTime ? (
+        <span class="text-error">運轉中</span>
+      ) : (
+        <span class="text-success">閒置中</span>
+      )
+    }
+  </p>
+  <div>
+    目前已經在挖礦機裡的石頭：
+    <div class="flex flex-col flex-wrap justify-around sm:flex-row">
+      {
+        stoneTypeList.map((type) => (
+          <div class="text-nowrap whitespace-nowrap">
+            <img
+              class="inline-block size-8"
+              alt={stoneDisplayName(type)}
+              src={getStoneIcon(type)}
+            />
+            {stoneDisplayName(type)} {stoneCount[type]} 個
+            <small class="align-text-top">(生產值 {stonePowerTable[type]}／個)</small>
+          </div>
+        ))
+      }
+    </div>
+    <div class="mt-1">
+      <p>總生產值：{totalMiningPower}</p><p>礦機營利：$ {currencyFormat(totalMiningProfit)}</p>
+    </div>
+  </div>
+  <div class="divider my-0"></div>
+  <p class="text-xl">石頭放置名冊</p>
+  <div class="company-panel-table max-h-72">
+    <div class="sticky-control header">
+      <div class="col-span-6">使用者帳號</div>
+      <div class="col-span-3">石頭類型</div>
+      <div class="col-span-3">放置時間</div>
+    </div>
+    {
+      /* NOTE: 因為賽季結束時會歸還石頭，所以清單不會有內容
+    <div class="grid grid-cols-12">
+      <p class="col-span-5 md:hidden">使用者帳號</p>
+      <div class="col-span-7 truncate md:col-span-6">
+        <UserLink round={round} userId={item.userId} />
+      </div>
+      <p class="col-span-5 md:hidden">石頭類型</p>
+      <div class="col-span-7 md:col-span-3" title={stoneDisplayName(item.stoneType)}>
+        <img
+          class="inline-block size-4"
+          src={getStoneIcon(item.stoneType)}
+          alt={stoneDisplayName(item.stoneType)}
+        />
+        {stoneDisplayName(item.stoneType)}
+      </div>
+      <p class="col-span-5 md:hidden">放置時間</p>
+      <div class="col-span-7 md:col-span-3" title={formatDateTimeText(item.placedAt)}>
+        {ormatDateTimeText(item.placedAt)}
+      </div>
+    </div>
+    */
+    }
+    <div class="text-center">
+      <em>賽季結束，已歸還所有石頭！</em>
+    </div>
+  </div>
+</div>
