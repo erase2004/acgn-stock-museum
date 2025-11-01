@@ -35,7 +35,7 @@ export default function ProductList({ round, data }: Props) {
                   <CompanyLink round={round} companyId={item.companyId} />
                 </td>
                 <td class="truncate text-nowrap" data-title="產品名稱">
-                  <ProductLink round={round} productId={item.productId} />
+                  <ProductLink productId={item.productId} />
                 </td>
                 <td class="truncate text-nowrap md:text-center" data-title="持有數量">
                   {item.amount}

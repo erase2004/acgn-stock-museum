@@ -16,12 +16,11 @@ const STORE_KEY = dataStoreKey.company.product
 
 type Product = z.infer<typeof schema>
 type Props = {
-  round: string
   manager: string
   data: Product[]
 }
 
-export default function ProductList({ round, manager, data }: Props) {
+export default function ProductList({ manager, data }: Props) {
   const { user } = useUser()
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
   const isCompanyManager = user ? user._id === manager : false
@@ -30,12 +29,7 @@ export default function ProductList({ round, manager, data }: Props) {
     <>
       {displayItems.length ? (
         displayItems.map((item) => (
-          <ProductCard
-            key={item._id}
-            item={item}
-            round={round}
-            isCompanyManager={isCompanyManager}
-          />
+          <ProductCard key={item._id} item={item} isCompanyManager={isCompanyManager} />
         ))
       ) : (
         <em class="col-span-full">哦不！本季沒有推出任何產品！</em>
@@ -48,7 +42,6 @@ export default function ProductList({ round, manager, data }: Props) {
 }
 
 type CardProps = {
-  round: string
   isCompanyManager: boolean
   item: Product
 }
@@ -66,7 +59,6 @@ function ProductCard({
     replenishBaseAmountType,
     replenishBatchSizeType,
   },
-  round,
   isCompanyManager,
 }: CardProps) {
   return (
@@ -95,7 +87,7 @@ function ProductCard({
         <div class="flex gap-1 text-xl text-nowrap *:last:truncate">
           <span class="badge badge-neutral">{type}</span>
           {isRestrictedRating(rating) && <span class="badge badge-error">{rating}</span>}
-          <ProductLink round={round} productId={_id} />
+          <ProductLink productId={_id} />
         </div>
         <p>{description}</p>
         <small class="ml-auto">識別碼：{_id}</small>

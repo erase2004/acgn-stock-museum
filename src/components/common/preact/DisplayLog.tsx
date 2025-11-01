@@ -301,7 +301,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
       contentJsx = (
         <>
           【推薦產品】{usersJsx[0]}向「{companyJsx}」公司的產品「
-          <ProductLink round={round} productId={data.productId} />
+          <ProductLink productId={data.productId} />
           」投了一張推薦票！
         </>
       )
@@ -323,7 +323,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
         <>
           【購買產品】{usersJsx[0]}花費{costMessageList.join('以及')}買了「{companyJsx}
           」公司的產品「
-          <ProductLink round={round} productId={data.productId} />
+          <ProductLink productId={data.productId} />
           」共{data.amount}個，使該公司獲得了${currencyFormat(data.profit)}的營利額！
         </>
       )
@@ -750,7 +750,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
       contentJsx = (
         <>
           【產品修正】{usersJsx[0]}以金管會的名義修改了「{companyJsx}」公司的產品「
-          <ProductLink round={round} productId={data.productId} />
+          <ProductLink productId={data.productId} />
           」，{isEmpty(data.diff) ? '但並未造成任何改變' : `將${diffString}`}。
           {displayViolationCaseOrNot(round, data.violationCaseId)}
         </>

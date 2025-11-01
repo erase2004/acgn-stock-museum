@@ -31,7 +31,7 @@ export default function Violator({ violatorType, violatorId, round }: Props) {
       jsx = (
         <>
           產品「
-          <ProductLink round={round} productId={violatorId} />」
+          <ProductLink productId={violatorId} />」
         </>
       )
       break

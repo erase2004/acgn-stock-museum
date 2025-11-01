@@ -1,16 +1,15 @@
-import { z } from 'astro/zod'
 import { useEffect, useState } from 'preact/hooks'
-import { basicSchema as schemaProduct } from '@/services/dbProducts'
-import { getProduct } from '@/libs/request'
+import { productDict } from '@/stores/common'
+import { useStore } from '@nanostores/preact'
 
 const defaultText = '???'
 
 type Props = {
-  round: string
   productId?: string
 }
 
-export default function ProductLink({ round, productId }: Props) {
+export default function ProductLink({ productId }: Props) {
+  const $productDict = useStore(productDict)
   const [html, setHtml] = useState(<span></span>)
 
   useEffect(() => {
@@ -21,25 +20,25 @@ export default function ProductLink({ round, productId }: Props) {
       return
     }
 
-    getProduct(round, productId)
-      .then(async (response) => {
-        const { productName, url, type } = await z.promise(schemaProduct).parse(response.json())
+    if (!$productDict) {
+      setHtml(<span>{displayText}</span>)
+      return
+    }
 
-        displayText = productName || defaultText
+    const productData = $productDict[productId]
+    if (!productData) {
+      setHtml(<span>{displayText}</span>)
+      return
+    }
 
-        setHtml(
-          <a href={url} title={productName} data-product-type={type} target="_blank">
-            {displayText}
-          </a>,
-        )
-        return
-      })
-      .catch(() => {
-        displayText = defaultText
-
-        setHtml(<span>{displayText}</span>)
-      })
-  }, [productId])
+    const { productName, url, type } = productData
+    displayText = productName || defaultText
+    setHtml(
+      <a href={url} title={productName} data-product-type={type} target="_blank">
+        {displayText}
+      </a>,
+    )
+  }, [productId, $productDict])
 
   return html
 }

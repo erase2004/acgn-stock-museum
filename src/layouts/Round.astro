@@ -5,6 +5,7 @@ import { getCurrentRound } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getDBUserArchive, schema as schemaUserArchive } from '@/services/dbUserArchive'
 import { getDBCompanyArchive, schema as schemaCompanyArchive } from '@/services/dbCompanyArchive'
+import { getDBProducts, schema as schemaProduct } from '@/services/dbProducts'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
 import { keyBy } from 'lodash-es'
@@ -43,6 +44,21 @@ const companyArchiveList =
     return handlePromiseParser(z.promise(schema.array()).parse(dbCompanyArchive.find({}).toArray()))
   })()) ?? []
 const companyArchiveData = keyBy(companyArchiveList, '_id')
+
+// product
+const productList =
+  (await (async function () {
+    const schema = schemaProduct.pick({
+      _id: true,
+      productName: true,
+      type: true,
+      url: true,
+    })
+    const dbProducts = getDBProducts(connection)
+
+    return handlePromiseParser(z.promise(schema.array()).parse(dbProducts.find({}).toArray()))
+  })()) ?? []
+const productData = keyBy(productList, '_id')
 ---
 
 <BaseLayout {...props}>
@@ -53,6 +69,7 @@ const companyArchiveData = keyBy(companyArchiveList, '_id')
     client:only="preact"
     userArchiveData={userArchiveData}
     companyArchiveData={companyArchiveData}
+    productData={productData}
   />
   <!-- TODO: add loading effect -->
   <!-- TODO: add account dialog -->

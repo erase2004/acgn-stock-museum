@@ -99,7 +99,7 @@ export default function SeasonListContainer({ round, data }: Props) {
               <tr key={item._id}>
                 <td class="text-left" data-title="產品">
                   <div class="max-h-12 overflow-y-auto break-all">
-                    <ProductLink round={round} productId={item._id} />
+                    <ProductLink productId={item._id} />
                   </div>
                   <div class="max-h-14 overflow-y-auto text-sm break-all">{item.description}</div>
                 </td>

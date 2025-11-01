@@ -135,14 +135,3 @@ export async function getProductsByCompany(db: Db, companyId: string) {
     ),
   )
 }
-
-export async function getProduct(db: Db, productId: string) {
-  const dbProducts = getDBProducts(db)
-
-  return handlePromiseParser(
-    z
-      .promise(basicSchema)
-      // @ts-expect-error: key is valid ObjectId
-      .parse(dbProducts.findOne({ _id: productId })),
-  )
-}

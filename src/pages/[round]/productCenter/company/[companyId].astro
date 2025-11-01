@@ -30,5 +30,5 @@ const data = (await getProductsByCompany(connection, companyId)) ?? []
     <CompanyLink client:only="preact" round={round} companyId={companyId} />
   </h2>
   <div class="divider"></div>
-  <CompanyListContainer client:only="preact" round={round} data={data} />
+  <CompanyListContainer client:only="preact" data={data} />
 </RoundLayout>

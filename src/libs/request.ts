@@ -1,7 +1,3 @@
-export function getProduct(round: string, productId: string) {
-  return fetch(`/api/product?${new URLSearchParams({ round, productId }).toString()}`)
-}
-
 export function getUserStock(round: string, userId: string) {
   return fetch(`/api/user-stock?${new URLSearchParams({ round, userId }).toString()}`)
 }
