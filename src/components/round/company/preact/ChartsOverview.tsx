@@ -1,5 +1,5 @@
 import LineChart from './LineChart'
-import CandlestickChart from './CandleStickChart'
+import CandlestickChart from './CandlestickChart'
 import RangeSlider from 'react-range-slider-input'
 import type { schema } from '@/services/dbPrice'
 import type { z } from 'astro/zod'
