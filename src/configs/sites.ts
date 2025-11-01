@@ -1,3 +1,5 @@
+import { range } from 'lodash-es'
+
 export const defaultWebsiteName = 'ACGN 股票歷史博物館'
 
 type RoundKey = `round${number}`
@@ -169,3 +171,7 @@ export const siteList = {
     dbname: 'museum-1',
   },
 } satisfies Record<RoundKey, Round>
+
+export const rounds = range(6, Object.keys(siteList).length + 1)
+  .map<RoundKey>((n) => `round${n}`)
+  .filter((key) => key in siteList && siteList[key as keyof typeof siteList].disabled !== true)
