@@ -264,3 +264,10 @@ export function getArenaInfoUrl(round: string, arenaId: string) {
     params: arenaId,
   })
 }
+
+export function getTutorialUrl(round: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.TUTORIAL,
+  })
+}
