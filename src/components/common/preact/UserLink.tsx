@@ -1,11 +1,10 @@
-import { z } from 'astro/zod'
 import { getAccountUrl } from '@/libs/routes'
 import { styledValidateTypeMarkHtml } from '@/utils/helpers'
 import { escape } from 'lodash-es'
 import { useEffect, useState } from 'preact/hooks'
-import { schema as schemaUserArchive } from '@/services/dbUserArchive'
-import { getUser } from '@/libs/request'
 import { SpecialUser } from '@/services/dbUsers'
+import { userArchiveDict } from '@/stores/common'
+import { useStore } from '@nanostores/preact'
 
 const specialUserDisplayNameMap: Record<string, string> = {
   [SpecialUser.NONE]: '無',
@@ -21,6 +20,7 @@ type Props = {
 }
 
 export default function UserLink({ round, userId }: Props) {
+  const $userArchiveDict = useStore(userArchiveDict)
   const [html, setHtml] = useState(<span></span>)
 
   useEffect(() => {
@@ -39,29 +39,29 @@ export default function UserLink({ round, userId }: Props) {
       return
     }
 
-    getUser(round, userId)
-      .then(async (response) => {
-        const { name, status, validateType } = await z
-          .promise(schemaUserArchive)
-          .parse(response.json())
+    if (!$userArchiveDict) {
+      setHtml(<span>{displayText}</span>)
+      return
+    }
 
-        displayText =
-          `${styledValidateTypeMarkHtml(validateType)}${escape(name)}`.trim() || defaultText
+    const userData = $userArchiveDict[userId]
 
-        if (status === 'registered') {
-          const path = getAccountUrl(round, userId)
-          setHtml(<a href={path} dangerouslySetInnerHTML={{ __html: displayText }}></a>)
-          return
-        }
+    if (!userData) {
+      setHtml(<span>{displayText}</span>)
+      return
+    }
 
-        setHtml(<span dangerouslySetInnerHTML={{ __html: displayText }} />)
-      })
-      .catch(() => {
-        displayText = defaultText
+    const { name, status, validateType } = userData
+    displayText = `${styledValidateTypeMarkHtml(validateType)}${escape(name)}`.trim() || defaultText
 
-        setHtml(<span>{displayText}</span>)
-      })
-  }, [userId])
+    if (status === 'registered') {
+      const path = getAccountUrl(round, userId)
+      setHtml(<a href={path} dangerouslySetInnerHTML={{ __html: displayText }}></a>)
+      return
+    }
+
+    setHtml(<span dangerouslySetInnerHTML={{ __html: displayText }} />)
+  }, [userId, $userArchiveDict])
 
   return html
 }

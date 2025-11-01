@@ -1,7 +1,3 @@
-export function getUser(round: string, userId: string) {
-  return fetch(`/api/user?${new URLSearchParams({ round, userId }).toString()}`)
-}
-
 export function getCompany(round: string, companyId: string) {
   return fetch(`/api/company?${new URLSearchParams({ round, companyId }).toString()}`)
 }

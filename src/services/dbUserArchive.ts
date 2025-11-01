@@ -19,17 +19,6 @@ export function getDBUserArchive(db: Db) {
   return db.collection('userArchive')
 }
 
-export async function getArchivedUser(db: Db, userId: string) {
-  const dbUserArchive = getDBUserArchive(db)
-
-  return handlePromiseParser(
-    z
-      .promise(schema)
-      // @ts-expect-error: key is valid ObjectId
-      .parse(dbUserArchive.findOne({ _id: userId })),
-  )
-}
-
 export async function getAllArchivedUsers(db: Db) {
   const dbUserArchive = getDBUserArchive(db)
 
