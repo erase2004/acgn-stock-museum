@@ -1,5 +1,6 @@
 import type { z } from 'astro/zod'
 import type { schema as schemaUserArchive } from '@/services/dbUserArchive'
+import type { schema as schemaCompanyArchive } from '@/services/dbCompanyArchive'
 import { atom } from 'nanostores'
 
 export const theme = atom('light')
@@ -10,3 +11,7 @@ export type UserArchive = Pick<
 >
 
 export const userArchiveDict = atom<Record<string, UserArchive> | null>(null)
+
+export type CompanyArchive = Pick<z.infer<typeof schemaCompanyArchive>, 'companyName' | 'status'>
+
+export const companyArchiveDict = atom<Record<string, CompanyArchive> | null>(null)

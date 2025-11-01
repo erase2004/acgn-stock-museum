@@ -1,8 +1,7 @@
-import { z } from 'astro/zod'
 import { getCompanyUrl } from '@/libs/routes'
 import { useEffect, useState } from 'preact/hooks'
-import { schema as schemaCompanyArchive } from '@/services/dbCompanyArchive'
-import { getCompany } from '@/libs/request'
+import { companyArchiveDict } from '@/stores/common'
+import { useStore } from '@nanostores/preact'
 
 const defaultText = '???'
 
@@ -12,6 +11,7 @@ type Props = {
 }
 
 export default function CompanyLink({ round, companyId }: Props) {
+  const $companyArchiveDict = useStore(companyArchiveDict)
   const [html, setHtml] = useState(<span></span>)
 
   useEffect(() => {
@@ -22,26 +22,29 @@ export default function CompanyLink({ round, companyId }: Props) {
       return
     }
 
-    getCompany(round, companyId)
-      .then(async (response) => {
-        const { status, companyName } = await z.promise(schemaCompanyArchive).parse(response.json())
+    if (!$companyArchiveDict) {
+      setHtml(<span>{displayText}</span>)
+      return
+    }
 
-        displayText = companyName || defaultText
+    const companyData = $companyArchiveDict[companyId]
 
-        if (status === 'market') {
-          const path = getCompanyUrl(round, companyId)
-          setHtml(<a href={path}>{displayText}</a>)
-          return
-        }
+    if (!companyData) {
+      setHtml(<span>{displayText}</span>)
+      return
+    }
 
-        setHtml(<span>{displayText}</span>)
-      })
-      .catch(() => {
-        displayText = defaultText
+    const { status, companyName } = companyData
+    displayText = companyName || defaultText
 
-        setHtml(<span>{displayText}</span>)
-      })
-  }, [companyId])
+    if (status === 'market') {
+      const path = getCompanyUrl(round, companyId)
+      setHtml(<a href={path}>{displayText}</a>)
+      return
+    }
+
+    setHtml(<span>{displayText}</span>)
+  }, [companyId, $companyArchiveDict])
 
   return html
 }

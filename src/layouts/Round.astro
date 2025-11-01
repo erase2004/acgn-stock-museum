@@ -4,6 +4,7 @@ import DataStoreInitilaztion from '@/components/layout/preact/DataStoreInitializ
 import { getCurrentRound } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getDBUserArchive, schema as schemaUserArchive } from '@/services/dbUserArchive'
+import { getDBCompanyArchive, schema as schemaCompanyArchive } from '@/services/dbCompanyArchive'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
 import { keyBy } from 'lodash-es'
@@ -13,6 +14,8 @@ const props = Astro.props
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)
+
+// user
 const userArchiveList =
   (await (async function () {
     const schema = schemaUserArchive.pick({
@@ -26,13 +29,31 @@ const userArchiveList =
     return handlePromiseParser(z.promise(schema.array()).parse(dbUserArchive.find({}).toArray()))
   })()) ?? []
 const userArchiveData = keyBy(userArchiveList, '_id')
+
+// company
+const companyArchiveList =
+  (await (async function () {
+    const schema = schemaCompanyArchive.pick({
+      _id: true,
+      companyName: true,
+      status: true,
+    })
+    const dbCompanyArchive = getDBCompanyArchive(connection)
+
+    return handlePromiseParser(z.promise(schema.array()).parse(dbCompanyArchive.find({}).toArray()))
+  })()) ?? []
+const companyArchiveData = keyBy(companyArchiveList, '_id')
 ---
 
 <BaseLayout {...props}>
   <div class="round-container">
     <div class="round-block"><slot /></div>
   </div>
-  <DataStoreInitilaztion client:only="preact" userArchiveData={userArchiveData} />
+  <DataStoreInitilaztion
+    client:only="preact"
+    userArchiveData={userArchiveData}
+    companyArchiveData={companyArchiveData}
+  />
   <!-- TODO: add loading effect -->
   <!-- TODO: add account dialog -->
   <!-- TODO: add alert dialog -->
