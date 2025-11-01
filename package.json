@@ -10,7 +10,8 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astrojs/mdx": "4",
@@ -45,7 +46,9 @@
     "@astrojs/check": "^0.9.4",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
+    "@playwright/test": "^1.56.1",
     "@types/lodash-es": "^4.17.12",
+    "@types/node": "^24.9.2",
     "@types/showdown": "^2.0.6",
     "daisyui": "^5.1.29",
     "eslint": "9",
