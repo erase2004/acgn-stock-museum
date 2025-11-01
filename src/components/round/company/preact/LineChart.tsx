@@ -27,11 +27,12 @@ ChartJS.register(Title, LinearScale, TimeSeriesScale, Tooltip, PointElement, Lin
 
 type Price = z.infer<typeof schema>
 type Props = {
-  roundEnd: Date
   data: Price[]
+  min: number
+  max: number
 }
 
-export default function LineChart({ roundEnd, data }: Props) {
+export default function LineChart({ data, min, max }: Props) {
   const $theme = useStore(theme)
   useThemeChanged(setChartStyle.bind(null, ChartJS))
 
@@ -40,7 +41,7 @@ export default function LineChart({ roundEnd, data }: Props) {
 
   return (
     <div class="w-full overflow-x-auto">
-      <div class="h-72 w-full min-w-xl">
+      <div class="h-80 w-full min-w-xl">
         <Chart
           key={$theme}
           type="line"
@@ -67,8 +68,8 @@ export default function LineChart({ roundEnd, data }: Props) {
                 },
               },
               x: {
-                min: dayjs(data[0].createdAt).valueOf(),
-                max: dayjs(roundEnd).valueOf(),
+                min: min,
+                max: max,
                 type: 'time',
                 bounds: 'ticks',
                 time: {

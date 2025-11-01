@@ -33,6 +33,7 @@
     "nanostores": "^1.0.1",
     "preact": "10",
     "react-chartjs-2": "^5.3.0",
+    "react-range-slider-input": "^3.2.1",
     "showdown": "^2.1.0",
     "showdown-footnotes": "^2.1.2",
     "tailwindcss": "4",
