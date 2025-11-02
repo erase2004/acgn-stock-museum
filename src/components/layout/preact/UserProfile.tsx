@@ -3,12 +3,8 @@ import { z } from 'astro/zod'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { actions } from 'astro:actions'
 import { useUser } from '@/utils/hooks'
-import {
-  currencyFormat,
-  getStoneIcon,
-  stoneDisplayName,
-  styledValidateTypeMarkHtml,
-} from '@/utils/helpers'
+import { currencyFormat, styledValidateTypeMarkHtml } from '@/utils/helpers'
+import { getStoneIcon, stoneDisplayName } from '@/utils/stone'
 import { getAccountUrl, getPageTitle, PAGE } from '@/libs/routes'
 import { stoneTypeList } from '@/services/dbCompanyStones'
 import { simpleSchema } from '@/services/dbDirectors'

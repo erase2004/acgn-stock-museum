@@ -16,12 +16,8 @@ import {
   schema as schemaCompany,
   gradeFactorTable,
 } from '@/services/dbCompanies'
-import {
-  handlePromiseParser,
-  stoneDisplayName,
-  getStoneIcon,
-  currencyFormat,
-} from '@/utils/helpers'
+import { handlePromiseParser, currencyFormat } from '@/utils/helpers'
+import { getStoneIcon, stoneDisplayName } from '@/utils/stone'
 
 type Props = {
   round: string
