@@ -45,12 +45,15 @@ export function interleave<T, S>(arr: T[], value: S): (T | S)[] {
   return arr.flatMap((v, i) => (i + 1 !== length ? [v, value] : v))
 }
 
-export async function handlePromiseParser<T, U extends Promise<T>>(parseFn: U) {
+export async function handlePromiseParser<T, U extends Promise<T>>(
+  parseFn: U,
+  slient: boolean = false,
+) {
   try {
     const result = await parseFn
     return result
   } catch (err) {
-    if (err instanceof ZodError) {
+    if (err instanceof ZodError && !slient) {
       console.error(err.errors)
     }
     return undefined

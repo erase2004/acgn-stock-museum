@@ -48,6 +48,7 @@ export async function getPreviousSeason(db: Db, currentSeason: z.infer<typeof sc
         },
       ),
     ),
+    true,
   )
 }
 
@@ -68,6 +69,7 @@ export async function getNextSeason(db: Db, currentSeason: z.infer<typeof schema
         },
       ),
     ),
+    true,
   )
 }
 
