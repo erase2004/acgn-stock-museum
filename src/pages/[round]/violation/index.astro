@@ -1,6 +1,5 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import Filter from '@/components/round/violation/preact/Filter'
 import ListContainer from '@/components/round/violation/preact/ListContainer'
@@ -9,6 +8,15 @@ import { getCurrentRound } from '@/libs/routes'
 import { getViolationCases } from '@/services/dbViolationCases'
 import { getConnection } from '@/libs/databases'
 import { STORE_KEY } from '@/stores/violation'
+import { rounds } from '@/configs/sites'
+
+export const getStaticPaths = (() => {
+  return rounds.map((round) => ({
+    params: {
+      round,
+    },
+  }))
+}) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
@@ -17,7 +25,7 @@ const result = await getViolationCases(connection)
 const data = result?.[0]?.data ?? []
 ---
 
-<RoundLayout>
+<RoundLayout useCompanyDict={true} useUserDict={true} useProductDict={true}>
   <h1 class="round-block-title">違規案件列表</h1>
   <div class="divider"></div>
   <Filter client:only="preact" data={data} storeKey={STORE_KEY} />
