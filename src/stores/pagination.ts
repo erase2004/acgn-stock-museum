@@ -8,6 +8,10 @@ export const isDataLoading = map<Record<string, boolean>>({})
 
 export const hasMore = map<Record<string, boolean>>({})
 
+export const currentAmount = map<Record<string, number>>({})
+
+export const totalAmount = map<Record<string, number>>({})
+
 export const items = map<Record<string, any>>({})
 
 export function setItems<T>(storeKey: string, data: T[]) {
