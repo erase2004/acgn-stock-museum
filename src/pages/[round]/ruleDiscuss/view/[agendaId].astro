@@ -1,17 +1,37 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import UserLink from '@/components/common/preact/UserLink'
 import Issue from '@/components/round/ruleAgenda/Issue.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getCurrentPageFullTitle, getRoundMainPageUrl } from '@/libs/routes'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
-import { getAgendaById } from '@/services/dbRuleAgendas'
+import { getAgendaById, getAllBasicRuleAgendas } from '@/services/dbRuleAgendas'
 import { getRelatedIssues } from '@/services/dbRuleIssues'
 import { getRelatedIssueOptions } from '@/services/dbRuleIssueOptions'
 import { markdownToHtml } from '@/utils/helpers'
 import { flatten, keyBy, map } from 'lodash-es'
+import { rounds } from '@/configs/sites'
+
+export const getStaticPaths = (async () => {
+  const results = await Promise.allSettled(
+    rounds.map(async (round) => {
+      const connection = getConnection(round)!
+      const agendas = (await getAllBasicRuleAgendas(connection)) ?? []
+
+      return agendas.map((agenda) => ({
+        params: {
+          round,
+          agendaId: agenda._id,
+        },
+      }))
+    }),
+  )
+
+  return flatten(
+    results.filter((result) => result.status === 'fulfilled').map((result) => result.value),
+  )
+}) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)
@@ -39,7 +59,7 @@ const data = issues.map((issue) =>
 )
 ---
 
-<RoundLayout title={title}>
+<RoundLayout title={title} useCompanyDict={true} useUserDict={true}>
   <h1 class="round-block-title">{agenda.title}</h1>
   <div class="divider"></div>
   <h2 class="text-3xl">
