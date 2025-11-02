@@ -272,6 +272,13 @@ export function getTutorialUrl(round: string) {
   })
 }
 
+export function getFSCLogUrl(round: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.FSC_LOG,
+  })
+}
+
 export function getUserJsonUrl(round: string) {
   return `/${round}/json/user.json`
 }
