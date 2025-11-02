@@ -76,3 +76,12 @@ export async function getSeasonById(db: Db, seasonId: string) {
   // @ts-expect-error: seasonId is valid ObjectId
   return handlePromiseParser(z.promise(schema).parse(dbSeason.findOne({ _id: seasonId })))
 }
+
+export async function getAllSeasons(db: Db) {
+  const _schema = schema.pick({ _id: true, beginDate: true, endDate: true })
+  const dbSeason = getDBSeason(db)
+
+  return handlePromiseParser(
+    z.promise(_schema.array()).parse(dbSeason.find({}, { sort: { ordinal: 1 } }).toArray()),
+  )
+}
