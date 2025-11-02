@@ -1,51 +1,58 @@
+import type { z } from 'astro/zod'
 import { test, expect } from '@playwright/test'
 import { rounds, siteList } from '@/configs/sites'
 import { getSeasonalReportUrl } from '@/libs/routes'
-import { getAllSeasons } from '@/services/dbSeason'
+import { getAllSeasons, schema } from '@/services/dbSeason'
 import { getConnection } from '@/tests/_utils/database'
+import { formatDateTimeText } from '@/libs/timeFormat'
 
-test('has title', async ({ context }) => {
-  test.setTimeout(1000 * 60 * 2)
+type Season = Pick<z.infer<typeof schema>, '_id' | 'beginDate' | 'endDate'>
 
-  const tasks = rounds.map(async (round) => {
-    const connection = getConnection(round)
-    const seasons = (await getAllSeasons(connection)) ?? []
+for (const round of rounds) {
+  test.describe(`[${round}] seasonal report`, () => {
+    let seasons: Season[] = []
 
-    const websiteName = siteList[round as keyof typeof siteList]?.name
-    const title = `季度報告 - ${websiteName}`
+    test.beforeAll(async () => {
+      const connection = getConnection(round)
+      seasons = (await getAllSeasons(connection)) ?? []
+    })
 
-    return Promise.all(
-      seasons.map(async (season) => {
-        const page = await context.newPage()
+    test('pages', async ({ context }) => {
+      test.setTimeout(1000 * 60 * 5)
 
+      const page = await context.newPage()
+
+      for (const season of seasons) {
         await page.goto(getSeasonalReportUrl(round, season._id))
-        await expect(page).toHaveTitle(title)
-      }),
-    )
-  })
 
-  await Promise.all(tasks)
-})
+        await test.step('has title', async () => {
+          const websiteName = siteList[round as keyof typeof siteList]?.name
+          const title = `季度報告 - ${websiteName}`
 
-test('has content', async ({ context }) => {
-  test.setTimeout(1000 * 60 * 2)
-
-  const tasks = rounds.map(async (round) => {
-    const connection = getConnection(round)
-    const seasons = (await getAllSeasons(connection)) ?? []
-
-    return Promise.all(
-      seasons.map(async (season) => {
-        const page = await context.newPage()
-
-        await page.goto(getSeasonalReportUrl(round, season._id))
-        const element = await page.locator('h1', {
-          hasText: '季度報告',
+          await expect(page).toHaveTitle(title)
         })
-        await expect(element).toBeVisible()
-      }),
-    )
-  })
 
-  await Promise.allSettled(tasks)
-})
+        await test.step('has content', async () => {
+          // h1 heading
+          {
+            const element = await page.locator('.round-block-title')
+
+            await expect(element).toHaveText('季度報告')
+            await expect(element).toBeVisible()
+          }
+          // duration info
+          {
+            const element = await page.getByText(formatDateTimeText(season.beginDate))
+
+            await expect(element).toHaveCount(1)
+            await expect(element).toBeVisible()
+
+            const sibling = element.locator('//following-sibling::*')
+
+            await expect(sibling).toHaveText(formatDateTimeText(season?.endDate))
+          }
+        })
+      }
+    })
+  })
+}
