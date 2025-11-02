@@ -14,3 +14,16 @@ test('has title', async ({ context }) => {
 
   await Promise.all(tasks)
 })
+
+test('has content', async ({ context }) => {
+  const tasks = rounds.map(async (round) => {
+    const page = await context.newPage()
+    await page.goto(getTutorialUrl(round))
+
+    const element = await page.getByText('ACGN 股票交易市場說明手冊')
+    await expect(element).toHaveRole('link')
+    await expect(element).toBeVisible()
+  })
+
+  await Promise.all(tasks)
+})
