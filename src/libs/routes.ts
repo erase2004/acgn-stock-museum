@@ -271,3 +271,15 @@ export function getTutorialUrl(round: string) {
     pageName: PAGE.TUTORIAL,
   })
 }
+
+export function getUserJsonUrl(round: string) {
+  return `/${round}/json/user.json`
+}
+
+export function getCompanyJsonUrl(round: string) {
+  return `/${round}/json/company.json`
+}
+
+export function getProductJsonUrl(round: string) {
+  return `/${round}/json/product.json`
+}

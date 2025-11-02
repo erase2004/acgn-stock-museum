@@ -1,76 +1,28 @@
 ---
 import BaseLayout from '@/layouts/Base.astro'
-import DataStoreInitilaztion from '@/components/layout/preact/DataStoreInitialization'
+import LoadUserJson from '@/components/layout/preact/LoadUserJson'
+import LoadCompanyJson from '@/components/layout/preact/LoadCompanyJson'
+import LoadProductJson from '@/components/layout/preact/LoadProductJson'
 import { getCurrentRound } from '@/libs/routes'
-import { getConnection } from '@/libs/databases'
-import { getDBUserArchive, schema as schemaUserArchive } from '@/services/dbUserArchive'
-import { getDBCompanyArchive, schema as schemaCompanyArchive } from '@/services/dbCompanyArchive'
-import { getDBProducts, schema as schemaProduct } from '@/services/dbProducts'
-import { z } from 'astro/zod'
-import { handlePromiseParser } from '@/utils/helpers'
-import { keyBy } from 'lodash-es'
 
-type Props = Parameters<typeof BaseLayout>[0]
+type Props = Parameters<typeof BaseLayout>[0] & {
+  useUserDict?: boolean
+  useCompanyDict?: boolean
+  useProductDict?: boolean
+}
 const props = Astro.props
+const { useUserDict = false, useCompanyDict = false, useProductDict = false } = props
 
-const round = getCurrentRound(Astro)!
-const connection = getConnection(round)
-
-// user
-const userArchiveList =
-  (await (async function () {
-    const schema = schemaUserArchive.pick({
-      _id: true,
-      name: true,
-      status: true,
-      validateType: true,
-    })
-    const dbUserArchive = getDBUserArchive(connection)
-
-    return handlePromiseParser(z.promise(schema.array()).parse(dbUserArchive.find({}).toArray()))
-  })()) ?? []
-const userArchiveData = keyBy(userArchiveList, '_id')
-
-// company
-const companyArchiveList =
-  (await (async function () {
-    const schema = schemaCompanyArchive.pick({
-      _id: true,
-      companyName: true,
-      status: true,
-    })
-    const dbCompanyArchive = getDBCompanyArchive(connection)
-
-    return handlePromiseParser(z.promise(schema.array()).parse(dbCompanyArchive.find({}).toArray()))
-  })()) ?? []
-const companyArchiveData = keyBy(companyArchiveList, '_id')
-
-// product
-const productList =
-  (await (async function () {
-    const schema = schemaProduct.pick({
-      _id: true,
-      productName: true,
-      type: true,
-      url: true,
-    })
-    const dbProducts = getDBProducts(connection)
-
-    return handlePromiseParser(z.promise(schema.array()).parse(dbProducts.find({}).toArray()))
-  })()) ?? []
-const productData = keyBy(productList, '_id')
+const round = getCurrentRound(Astro)
 ---
 
 <BaseLayout {...props}>
   <div class="round-container">
     <div class="round-block"><slot /></div>
   </div>
-  <DataStoreInitilaztion
-    client:only="preact"
-    userArchiveData={userArchiveData}
-    companyArchiveData={companyArchiveData}
-    productData={productData}
-  />
+  {useUserDict && <LoadUserJson client:only="preact" round={round!} />}
+  {useCompanyDict && <LoadCompanyJson client:only="preact" round={round!} />}
+  {useProductDict && <LoadProductJson client:only="preact" round={round!} />}
   <!-- TODO: add loading effect -->
   <!-- TODO: add account dialog -->
   <!-- TODO: add alert dialog -->
