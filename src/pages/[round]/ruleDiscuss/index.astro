@@ -1,12 +1,20 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import ListContainer from '@/components/round/ruleAgenda/ListContainer.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getAllRuleAgendas } from '@/services/dbRuleAgendas'
+import { rounds } from '@/configs/sites'
+
+export const getStaticPaths = (() => {
+  return rounds.map((round) => ({
+    params: {
+      round,
+    },
+  }))
+}) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)
@@ -17,7 +25,7 @@ const inProgress = ruleAgendas.filter((agenda) => agenda.isEnded === false)
 const finished = ruleAgendas.filter((agenda) => agenda.isEnded === true)
 ---
 
-<RoundLayout>
+<RoundLayout useCompanyDict={true}>
   <h1 class="round-block-title">規則討論</h1>
   <div class="divider"></div>
   <h2 class="text-3xl opacity-70">進行中的議程</h2>
