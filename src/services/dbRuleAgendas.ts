@@ -105,3 +105,10 @@ export async function getAgendaById(
   if (Array.isArray(result)) return result[0]
   return result
 }
+
+export async function getAllBasicRuleAgendas(db: Db) {
+  const _schema = schema.pick({ _id: true, title: true })
+  const dbRuleAgendas = getDBRuleAgendas(db)
+
+  return handlePromiseParser(z.promise(_schema.array()).parse(dbRuleAgendas.find({}).toArray()))
+}
