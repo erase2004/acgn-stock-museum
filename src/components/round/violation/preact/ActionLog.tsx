@@ -36,6 +36,16 @@ export default function ActionLog({ round, executedAt, executor, action, data }:
       )
       break
     }
+    case 'comment': {
+      // 為第八季以前的邏輯
+      content = (
+        <>
+          <UserLink round={round} userId={executor} /> 對案件增加了註解如下：
+          <ActionLogReasonBlock reason={data.reason} />
+        </>
+      )
+      break
+    }
     case 'fscComment': {
       content = (
         <>

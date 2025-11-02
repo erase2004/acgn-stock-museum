@@ -18,6 +18,11 @@ export const actionMap = {
       })
       .merge(reasonSchema),
   },
+  comment: {
+    // 為第八季以前的邏輯
+    displayName: '加註',
+    dataSchema: reasonSchema,
+  },
   fscComment: {
     displayName: '金管會加註',
     dataSchema: reasonSchema,
