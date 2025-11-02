@@ -1,30 +1,45 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import UserLink from '@/components/common/preact/UserLink'
+import { z } from 'astro/zod'
 import { importantFscLogTypeList } from '@/services/dbLog'
+import { UserRole } from '@/services/dbUsers'
 import { getCurrentRound } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getDBUsers, schema as schemaUsers } from '@/services/dbUsers'
-import { UserRole } from '@/services/dbUsers'
-import type { z } from 'astro/zod'
+import { rounds } from '@/configs/sites'
+import { handlePromiseParser } from '@/utils/helpers'
+
+export const getStaticPaths = (() => {
+  return rounds.map((round) => ({
+    params: {
+      round,
+    },
+  }))
+}) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
-const dbUsers = getDBUsers(connection)
-const findResult = dbUsers.find({
-  'profile.roles': { $elemMatch: { $eq: UserRole.FSC_MEMBER.name } },
-})
-const fscMembers: z.infer<typeof schemaUsers>[] = []
-for await (const result of findResult) {
-  const { data } = schemaUsers.safeParse(result)
 
-  if (data) fscMembers.push(data)
-}
+const fscMembers =
+  (await (async function () {
+    const schema = schemaUsers.pick({ _id: true })
+    const dbUsers = getDBUsers(connection)
+
+    return handlePromiseParser(
+      z.promise(schema.array()).parse(
+        dbUsers
+          .find({
+            'profile.roles': { $elemMatch: { $eq: UserRole.FSC_MEMBER.name } },
+          })
+          .toArray(),
+      ),
+    )
+  })()) ?? []
 ---
 
-<RoundLayout>
+<RoundLayout useUserDict={true}>
   <h1 class="round-block-title">遊戲規則</h1>
   <div class="divider"></div>
   <div class="bg-warning px-2 align-middle text-white">
