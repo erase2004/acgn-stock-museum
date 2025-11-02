@@ -1,7 +1,6 @@
 // 紀錄資料集
 import type { Db, Document } from 'mongodb'
 import { z } from 'astro/zod'
-import { schema as schemaRound } from './dbRound'
 import { handlePromiseParser } from '@/utils/helpers'
 import { datetime, itemId, objectId, withCountSchema } from './schema'
 
@@ -566,40 +565,6 @@ function getPipeline(filter: Document = { $match: {} }): Document[] {
 }
 
 export const logsWithCountSchema = withCountSchema(schema)
-
-export async function getFSCLogs(db: Db, currentRound: z.infer<typeof schemaRound>) {
-  const dbLog = getDBLog(db)
-
-  return handlePromiseParser(
-    z.promise(logsWithCountSchema).parse(
-      dbLog
-        .aggregate(
-          getPipeline({
-            $match: {
-              $and: [
-                {
-                  logType: {
-                    $in: fscLogTypeList,
-                  },
-                },
-                {
-                  createdAt: {
-                    $gte: currentRound.beginDate,
-                  },
-                },
-                {
-                  createdAt: {
-                    $lt: currentRound.endDate,
-                  },
-                },
-              ],
-            },
-          }),
-        )
-        .toArray(),
-    ),
-  )
-}
 
 export async function getViolationCaseRelatedLogs(db: Db, violationCaseId: string) {
   const dbLog = getDBLog(db)

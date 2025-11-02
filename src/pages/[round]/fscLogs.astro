@@ -6,9 +6,11 @@ import ListContainer from '@/components/round/fscLog/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
-import { getFSCLogs } from '@/services/dbLog'
+import { fscLogTypeList, getDBLog, schema as schemaLog } from '@/services/dbLog'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { dataStoreKey } from '@/configs/general'
+import { z } from 'astro/zod'
+import { handlePromiseParser } from '@/utils/helpers'
 
 const STORE_KEY = dataStoreKey.fscLogs
 
@@ -16,20 +18,40 @@ const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 
 const currentRound = await getCurrentRoundFromDB(connection)
-const result = await getFSCLogs(connection, currentRound!)
-const total = result?.[0]?.total[0]?.total ?? 0
-const data = result?.[0]?.data ?? []
+
+const fscLogs =
+  (await (async function () {
+    const dbLog = getDBLog(connection)
+
+    return handlePromiseParser(
+      z.promise(schemaLog.array()).parse(
+        dbLog
+          .find(
+            {
+              logType: {
+                $in: fscLogTypeList,
+              },
+              createdAt: {
+                $gte: currentRound!.beginDate,
+                $lt: currentRound!.endDate,
+              },
+            },
+            {
+              sort: {
+                createdAt: -1,
+              },
+            },
+          )
+          .toArray(),
+      ),
+    )
+  })()) ?? []
 ---
 
-<RoundLayout>
+<RoundLayout useUserDict={true} useCompanyDict={true} useProductDict={true}>
   <h1 class="round-block-title">金管會執行紀錄</h1>
   <div class="divider"></div>
-  <ListContainer
-    client:only="preact"
-    round={round}
-    total={total}
-    data={data}
-    storeKey={STORE_KEY}
-  />
+  <p class="mb-2">總共{fscLogs.length}筆紀錄</p>
+  <ListContainer client:only="preact" round={round} data={fscLogs} storeKey={STORE_KEY} />
   <LoadMore client:only="preact" storeKey={STORE_KEY} />
 </RoundLayout>
