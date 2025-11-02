@@ -2,28 +2,26 @@ import { test, expect } from '@playwright/test'
 import { rounds, siteList } from '@/configs/sites'
 import { getTutorialUrl } from '@/libs/routes'
 
-test('has title', async ({ context }) => {
-  const tasks = rounds.map(async (round) => {
-    const websiteName = siteList[round as keyof typeof siteList]?.name
-    const title = `遊戲規則 - ${websiteName}`
+for (const round of rounds) {
+  test.describe(`[${round}] tutorial`, () => {
+    test('suites', async ({ context }) => {
+      const page = await context.newPage()
 
-    const page = await context.newPage()
-    await page.goto(getTutorialUrl(round))
-    await expect(page).toHaveTitle(title)
+      await page.goto(getTutorialUrl(round))
+
+      await test.step('has title', async () => {
+        const websiteName = siteList[round as keyof typeof siteList]?.name
+        const title = `遊戲規則 - ${websiteName}`
+
+        await expect(page).toHaveTitle(title)
+      })
+
+      await test.step('has content', async () => {
+        const element = await page.getByText('ACGN 股票交易市場說明手冊')
+
+        await expect(element).toHaveRole('link')
+        await expect(element).toBeVisible()
+      })
+    })
   })
-
-  await Promise.all(tasks)
-})
-
-test('has content', async ({ context }) => {
-  const tasks = rounds.map(async (round) => {
-    const page = await context.newPage()
-    await page.goto(getTutorialUrl(round))
-
-    const element = await page.getByText('ACGN 股票交易市場說明手冊')
-    await expect(element).toHaveRole('link')
-    await expect(element).toBeVisible()
-  })
-
-  await Promise.all(tasks)
-})
+}
