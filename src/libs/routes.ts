@@ -217,6 +217,13 @@ export function getRuleAgendaUrl(round: string, agendaId: string) {
   })
 }
 
+export function getRuleAgendaListUrl(round: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.RULE_AGENDA_LIST,
+  })
+}
+
 export function getSeasonalReportUrl(round: string, seasonId: string) {
   return getPageUrl({
     round,
