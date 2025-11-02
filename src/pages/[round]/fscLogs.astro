@@ -1,6 +1,5 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import ListContainer from '@/components/round/fscLog/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
@@ -9,8 +8,17 @@ import { getCurrentRound } from '@/libs/routes'
 import { fscLogTypeList, getDBLog, schema as schemaLog } from '@/services/dbLog'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { dataStoreKey } from '@/configs/general'
+import { rounds } from '@/configs/sites'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
+
+export const getStaticPaths = (() => {
+  return rounds.map((round) => ({
+    params: {
+      round,
+    },
+  }))
+}) satisfies GetStaticPaths
 
 const STORE_KEY = dataStoreKey.fscLogs
 
