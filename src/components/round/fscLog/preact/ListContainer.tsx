@@ -1,15 +1,17 @@
 import DisplayLog from '@/components/common/preact/DisplayLog'
 import { z } from 'astro/zod'
-import { logsWithCountSchema } from '@/services/dbLog'
+import { schema } from '@/services/dbLog'
 import { useDisplayItems } from '@/utils/hooks'
 import { dataNumberPerPage } from '@/configs/general'
 
 const PAGE_SIZE = dataNumberPerPage.fscLogs
 
+type Log = z.infer<typeof schema>
+
 type Props = {
   storeKey: string
   round: string
-  data: z.infer<typeof logsWithCountSchema>[number]['data']
+  data: Log[]
 }
 
 export default function ListContainer({ storeKey, round, data }: Props) {

@@ -3,16 +3,15 @@ import CompanyLink from '@/components/common/preact/CompanyLink'
 import ProductLink from '@/components/common/preact/ProductLink'
 import { z } from 'astro/zod'
 import { escape, isEmpty } from 'lodash-es'
-import { logsWithCountSchema } from '@/services/dbLog'
+import { schema } from '@/services/dbLog'
 import { roleDisplayName, SpecialUser } from '@/services/dbUsers'
 import { currencyFormat, interleave } from '@/utils/helpers'
 import { stoneDisplayName } from '@/utils/stone'
 import { getViolationCaseUrl } from '@/libs/routes'
 import { formatDateTimeText } from '@/libs/timeFormat'
 
-type Props = z.infer<typeof logsWithCountSchema>[number]['data'][number] & {
-  round: string
-}
+type Log = z.infer<typeof schema>
+type Props = Log & { round: string }
 
 export default function DisplayLog({ round, logType, userId, companyId, data, createdAt }: Props) {
   const companyJsx = companyId ? <CompanyLink round={round} companyId={companyId} /> : null
