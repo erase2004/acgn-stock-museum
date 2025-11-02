@@ -193,6 +193,13 @@ export function getViolationCaseUrl(round: string, caseId: string) {
   })
 }
 
+export function getViolationCaseListUrl(round: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.VIOLATION_CASE_LIST,
+  })
+}
+
 export function getCompanyUrl(round: string, companyId: string) {
   return getPageUrl({
     round,
