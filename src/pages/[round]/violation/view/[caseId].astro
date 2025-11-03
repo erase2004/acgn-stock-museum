@@ -77,7 +77,7 @@ const relatedLogs = (await getViolationCaseRelatedLogs(connection, caseId)) ?? [
   <div class="flex flex-col gap-y-4">
     <div class="violation-case-detail-block">
       <p>違規名單</p>
-      <ul>
+      <ul class="break-all">
         {
           violation.violators.length > 0 ? (
             violation.violators.map((violator) => (

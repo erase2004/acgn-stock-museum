@@ -20,7 +20,7 @@ export default function RelatedLogListContainer({ storeKey, round, data }: Props
   return (
     <ul class="relative pl-0">
       {displayItems.map((item) => (
-        <li key={item._id} class="list-none">
+        <li key={item._id} class="list-none break-all">
           <DisplayLog round={round} {...item} />
         </li>
       ))}

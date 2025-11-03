@@ -47,7 +47,7 @@ export default function ListContainer({ round }: Props) {
             <div class="card-body flex-col border-b border-base-content/25 text-base lg:flex-row">
               <div class="lg:w-5/12">
                 <p class="mb-1 text-xl">違規名單</p>
-                <ul>
+                <ul class="break-all">
                   {violators.map((violator) => (
                     <li key={violator.violatorId}>
                       <Violator {...violator} round={round} />
