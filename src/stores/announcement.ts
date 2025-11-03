@@ -4,14 +4,14 @@ import { computed } from 'nanostores'
 import { items as baseItems } from './pagination'
 import { dataStoreKey } from '@/configs/general'
 
-type Data = Array<z.infer<typeof listItemSchema>>
+export type Item = z.infer<typeof listItemSchema>
 
 export const STORE_KEY = dataStoreKey.announcements
 
 export const items = computed(baseItems, (item) => {
-  return (item[STORE_KEY] ?? []) as Data
+  return (item[STORE_KEY] ?? []) as Item[]
 })
 
-export function setItems(data: Data) {
+export function setItems(data: Item[]) {
   baseItems.setKey(STORE_KEY, data)
 }

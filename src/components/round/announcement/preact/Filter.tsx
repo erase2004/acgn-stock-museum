@@ -1,7 +1,7 @@
 import type { TargetedEvent } from 'preact'
 import { z } from 'astro/zod'
-import { announcementCategoryMap, listItemSchema } from '@/services/dbAnnouncements'
-import { setItems } from '@/stores/announcement'
+import { announcementCategoryMap } from '@/services/dbAnnouncements'
+import { setItems, type Item } from '@/stores/announcement'
 import { useEffect } from 'preact/hooks'
 import { categoryDisplayName } from '@/utils/announcement'
 import { useFilter, type FilterConfig } from '@/utils/hooks'
@@ -11,11 +11,9 @@ import { dataNumberPerPage } from '@/configs/general'
 
 const PAGE_SIZE = dataNumberPerPage.announcements
 
-type Data = z.infer<typeof listItemSchema>
-
 type Props = {
   storeKey: string
-  data: Data[]
+  data: Item[]
 }
 
 export default function Filter({ storeKey, data }: Props) {
@@ -33,7 +31,7 @@ export default function Filter({ storeKey, data }: Props) {
 
           return field === target
         },
-      } satisfies FilterConfig<Data, 'category'>,
+      } satisfies FilterConfig<Item, 'category'>,
     },
     true,
   )

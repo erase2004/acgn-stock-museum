@@ -2,7 +2,7 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser, typedObjectKeys } from '@/utils/helpers'
-import { datetime, integer, itemId, objectId, withCountSchema } from './schema'
+import { datetime, integer, itemId, objectId } from './schema'
 
 export const announcementCategoryMap = {
   maintenance: {
@@ -92,8 +92,6 @@ export const listItemSchema = schema.pick({
   voided: true,
 })
 
-export const casesWithCountSchema = withCountSchema(listItemSchema)
-
 export function getDBAnnouncements(db: Db) {
   return db.collection('announcements')
 }
@@ -102,26 +100,18 @@ export function getAnnouncements(db: Db) {
   const dbAnnouncements = getDBAnnouncements(db)
 
   return handlePromiseParser(
-    z.promise(casesWithCountSchema).parse(
+    z.promise(listItemSchema.array()).parse(
       dbAnnouncements
-        .aggregate([
+        .find(
           {
-            $match: {
-              voided: false,
-            },
+            voided: false,
           },
           {
-            $sort: {
+            sort: {
               createdAt: -1,
             },
           },
-          {
-            $facet: {
-              total: [{ $count: 'total' }],
-              data: [],
-            },
-          },
-        ])
+        )
         .toArray(),
     ),
   )
