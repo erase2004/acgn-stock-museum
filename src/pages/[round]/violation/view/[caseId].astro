@@ -31,9 +31,7 @@ if (!violation) {
 }
 
 const relatedActionLogs = await getRelatedActionLog(connection, caseId)
-const result = await getViolationCaseRelatedLogs(connection, caseId)
-const totalAmount = result?.[0]?.total[0]?.total ?? 0
-const relatedLogs = result?.[0]?.data ?? []
+const relatedLogs = (await getViolationCaseRelatedLogs(connection, caseId)) ?? []
 ---
 
 <RoundLayout>
@@ -114,7 +112,6 @@ const relatedLogs = result?.[0]?.data ?? []
           client:only="preact"
           storeKey={STORE_KEY}
           round={round}
-          total={totalAmount}
           data={relatedLogs}
         />
         <LoadMore client:only="preact" storeKey={STORE_KEY} />

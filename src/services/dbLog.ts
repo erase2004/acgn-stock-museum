@@ -1,8 +1,8 @@
 // 紀錄資料集
-import type { Db, Document } from 'mongodb'
+import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
-import { datetime, itemId, objectId, withCountSchema } from './schema'
+import { datetime, itemId, objectId } from './schema'
 
 type LOG_TYPE = (typeof logTypeList)[number]
 
@@ -547,37 +547,21 @@ export function getDBLog(db: Db) {
   return db.collection('log')
 }
 
-function getPipeline(filter: Document = { $match: {} }): Document[] {
-  return [
-    filter,
-    {
-      $sort: {
-        createdAt: -1,
-      },
-    },
-    {
-      $facet: {
-        total: [{ $count: 'total' }],
-        data: [],
-      },
-    },
-  ]
-}
-
-export const logsWithCountSchema = withCountSchema(schema)
-
 export async function getViolationCaseRelatedLogs(db: Db, violationCaseId: string) {
   const dbLog = getDBLog(db)
 
   return handlePromiseParser(
-    z.promise(logsWithCountSchema).parse(
+    z.promise(schema.array()).parse(
       dbLog
-        .aggregate(
-          getPipeline({
-            $match: {
-              'data.violationCaseId': violationCaseId,
+        .find(
+          {
+            'data.violationCaseId': violationCaseId,
+          },
+          {
+            sort: {
+              createdAt: -1,
             },
-          }),
+          },
         )
         .toArray(),
     ),
