@@ -4,41 +4,33 @@ import UserFavoriteList from './preact/UserFavoriteList'
 import NavLinkGroup from './NavLinkGroup.astro'
 import NavLink from './NavLink.astro'
 import ThemeToggle from './ThemeToggle.astro'
+import RoundSwitch from './RoundSwitch.astro'
 import { getCurrentRound, PAGE } from '@/libs/routes'
-import { getLatestSeason } from '@/services/dbSeason'
-import { getConnection } from '@/libs/databases'
-import { getLatestArena } from '@/services/dbArena'
 
 const round = getCurrentRound(Astro)!
-const connection = getConnection(round)!
-const latestSeason = await getLatestSeason(connection)
-const latestArena = await getLatestArena(connection)
 ---
 
 <UserProfile client:only="preact" round={round} />
-<ul class="menu menu-horizontal hidden text-base md:inline-flex">
+<ul class="menu menu-horizontal hidden w-auto flex-nowrap text-base md:flex">
   <NavLink pageName={PAGE.MAIN} isRoundBounded={true} />
   <NavLink pageName={PAGE.ANNOUNCEMENT_LIST} isRoundBounded={true} />
   <NavLinkGroup text="交易大廳">
     <NavLink pageName={PAGE.COMPANY_LIST} isRoundBounded={true} />
     <NavLink pageName={PAGE.ADVERTISING} isRoundBounded={true} />
-    <NavLink
-      pageName={PAGE.PRODUCT_CENTER_BY_SEASON}
-      isRoundBounded={true}
-      params={latestSeason?._id}
-    />
-    <NavLink pageName={PAGE.ARENA_INFO} isRoundBounded={true} params={latestArena?._id} />
+    <NavLink pageName={PAGE.PRODUCT_CENTER_BY_SEASON} isRoundBounded={true} />
+    <NavLink pageName={PAGE.ARENA_INFO} isRoundBounded={true} />
   </NavLinkGroup>
   <UserFavoriteList client:only="preact" round={round} />
   <NavLinkGroup text="其他資訊">
     <NavLink pageName={PAGE.TUTORIAL} isRoundBounded={true} />
-    <NavLink pageName={PAGE.SEASONAL_REPORT} isRoundBounded={true} params={latestSeason?._id} />
+    <NavLink pageName={PAGE.SEASONAL_REPORT} isRoundBounded={true} />
     <NavLink pageName={PAGE.RULE_AGENDA_LIST} isRoundBounded={true} />
     <NavLink pageName={PAGE.VIOLATION_CASE_LIST} isRoundBounded={true} />
     <NavLink pageName={PAGE.FSC_LOG} isRoundBounded={true} />
     <NavLink pageName={PAGE.FSC_STOCK} isRoundBounded={true} />
     <NavLink pageName={PAGE.MAIN}>歷史博館物首頁</NavLink>
   </NavLinkGroup>
-  <div class="divider mx-1 divider-horizontal"></div>
+  <div class="divider mr-0 ml-auto divider-horizontal"></div>
   <ThemeToggle />
 </ul>
+<RoundSwitch />

@@ -7,8 +7,11 @@ const round = getCurrentRound(Astro)
 const isValidRound = checkIsValidRound(round)
 ---
 
-<nav class="navbar bg-base-300 **:not-[.ignore-inherit]:text-inherit max-md:min-h-0">
-  <div class="ml-auto flex-none md:hidden">
+<nav
+  class={`navbar bg-base-300 **:not-[.ignore-inherit]:text-inherit max-md:min-h-0 ${isValidRound ? 'grid grid-cols-[minmax(0,1fr)_40px] md:grid-cols-[minmax(0,1fr)_75%]' : ''}`}
+>
+  {isValidRound ? <RoundNav /> : <BaseNav />}
+  <div class="col-start-2 md:hidden">
     <label for="hidden-drawer-input" aria-label="open sidebar" class="btn btn-square btn-ghost">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -24,5 +27,4 @@ const isValidRound = checkIsValidRound(round)
       </svg>
     </label>
   </div>
-  {isValidRound ? <RoundNav /> : <BaseNav />}
 </nav>

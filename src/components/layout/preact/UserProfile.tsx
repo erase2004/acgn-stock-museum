@@ -129,14 +129,16 @@ export default function UserProfile({ round }: Props) {
   }, [])
 
   if (!isInitialized)
-    return <div class="loading absolute mx-4 inline-block h-8 loading-bars md:relative"></div>
+    return (
+      <div class="loading mx-4 inline-block h-8 loading-bars md:relative *:[summary]:px-2"></div>
+    )
 
   return (
-    <details class="group/user dropdown absolute z-20 mr-2 md:relative" ref={dropdownRef}>
+    <details class="group/user dropdown z-20 md:relative" ref={dropdownRef}>
       {user ? (
         <>
           <summary
-            class="ignore-inherit btn max-w-60 text-nowrap text-info"
+            class="ignore-inherit btn max-w-full text-nowrap text-info"
             title={`當前登入使用者：${user.profile.name}`}
           >
             <i class="fa fa-user-o" aria-hidden="true"></i>

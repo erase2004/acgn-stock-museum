@@ -1,0 +1,118 @@
+---
+import type { APIContext } from 'astro'
+import { rounds } from '@/configs/sites'
+import {
+  getAccountUrl,
+  getAnnouncementRejectionUrl,
+  getAnnouncementUrl,
+  getArenaInfoUrl,
+  getCompanyUrl,
+  getCurrentPage,
+  getCurrentRound,
+  getPageUrl,
+  getProductCenterByCompanyUrl,
+  getProductCenterBySeasonUrl,
+  getRuleAgendaUrl,
+  getSeasonalReportUrl,
+  getViolationCaseUrl,
+  PAGE,
+} from '@/libs/routes'
+
+const currentPage = getCurrentPage(Astro)
+const currentRound = getCurrentRound(Astro)
+// @ts-expect-error: currentRound should exists
+const order = rounds.indexOf(currentRound)
+const prevRound = rounds[order - 1]
+const nextRound = rounds[order + 1]
+
+const prevUrl = getUrl(Astro, prevRound, currentPage)
+const nextUrl = getUrl(Astro, nextRound, currentPage)
+
+function getUrl(
+  context: APIContext,
+  round: string | undefined,
+  currentPage: ReturnType<typeof getCurrentPage>,
+) {
+  if (!round) return undefined
+
+  switch (currentPage) {
+    case PAGE.ADVERTISING:
+    case PAGE.ANNOUNCEMENT_LIST:
+    case PAGE.COMPANY_LIST:
+    case PAGE.FSC_LOG:
+    case PAGE.FSC_STOCK:
+    case PAGE.MAIN:
+    case PAGE.RULE_AGENDA_LIST:
+    case PAGE.TUTORIAL:
+    case PAGE.VIOLATION_CASE_LIST: {
+      return getPageUrl({
+        round,
+        pageName: currentPage,
+      })
+    }
+
+    case PAGE.ACCOUNT_INFO: {
+      const userId = context.params['userId'] ?? ''
+      return getAccountUrl(round, userId)
+    }
+
+    case PAGE.ANNOUNCEMENT_DETAIL: {
+      const announcementId = context.params['announcementId'] ?? ''
+      return getAnnouncementUrl(round, announcementId)
+    }
+
+    case PAGE.ANNOUNCEMENT_REJECTION: {
+      const announcementId = context.params['announcementId'] ?? ''
+      return getAnnouncementRejectionUrl(round, announcementId)
+    }
+
+    case PAGE.COMPANY_DETAIL: {
+      const companyId = context.params['companyId'] ?? ''
+      return getCompanyUrl(round, companyId)
+    }
+
+    case PAGE.PRODUCT_CENTER_BY_COMPANY: {
+      const companyId = context.params['companyId'] ?? ''
+      return getProductCenterByCompanyUrl(round, companyId)
+    }
+
+    case PAGE.RULE_AGENDA_DETAIL: {
+      const agendaId = context.params['agendaId'] ?? ''
+      return getRuleAgendaUrl(round, agendaId)
+    }
+    case PAGE.VIOLATION_CASE_DETAIL: {
+      const caseId = context.params['caseId'] ?? ''
+      return getViolationCaseUrl(round, caseId)
+    }
+
+    case PAGE.ARENA_INFO: {
+      return getArenaInfoUrl(round, '')
+    }
+
+    case PAGE.PRODUCT_CENTER_BY_SEASON: {
+      return getProductCenterBySeasonUrl(round, '')
+    }
+
+    case PAGE.SEASONAL_REPORT: {
+      return getSeasonalReportUrl(round, '')
+    }
+
+    default: {
+      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+      const unreachable: never = currentPage
+      break
+    }
+  }
+}
+---
+
+<div
+  class="col-span-2 row-start-2 mt-1 flex flex-row justify-between border-t border-base-content/25 pt-1"
+>
+  <a class={`btn btn-soft btn-xs btn-info ${!prevUrl ? 'btn-disabled' : ''}`} href={prevUrl}
+    ><i class="fa fa-arrow-left"></i>上一個賽季</a
+  >
+  <a class={`btn btn-soft btn-xs btn-info ${!nextUrl ? 'btn-disabled' : ''}`} href={nextUrl}
+    >下一個賽季<i class="fa fa-arrow-right"></i></a
+  >
+</div>
