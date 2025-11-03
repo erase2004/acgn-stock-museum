@@ -103,9 +103,7 @@ export function getAnnouncements(db: Db) {
     z.promise(listItemSchema.array()).parse(
       dbAnnouncements
         .find(
-          {
-            voided: false,
-          },
+          {},
           {
             sort: {
               createdAt: -1,

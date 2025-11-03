@@ -11,11 +11,11 @@ import {
   totalAmount,
 } from '@/stores/pagination'
 import { useEffect, useState, useMemo } from 'preact/hooks'
-import { filter, isArray, isEqual, isString, pickBy, transform } from 'lodash-es'
+import { filter, isArray, isBoolean, isEqual, isString, pickBy, transform } from 'lodash-es'
 import { useLocalStorage } from 'usehooks-ts'
 
 export type FilterConfig<T, S extends keyof T = keyof T> = {
-  isEqualFn: (field: T[S], target: string | string[], item: T) => boolean
+  isEqualFn: (field: T[S], target: any, item: T) => boolean
   /** 當 shouldSyncUrl 為 true 時，schema 會作為處理 URL 資訊使用 */
   schema?: ZodTypeAny
 }
@@ -31,7 +31,7 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
   const $isDataLoading = useStore(isDataLoading)
   const [filteredItems, setFilteredItems] = useState(data.slice(0, pageSize))
   const [isInitialized, setIsInitialized] = useState(false)
-  const [filterObject, setFilterObject] = useState<Record<string, string | string[]>>({})
+  const [filterObject, setFilterObject] = useState<Record<string, any>>({})
 
   const filterSchema = z.object(
     transform(
@@ -48,9 +48,13 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
 
   function getQuery() {
     return pickBy(filterObject, (value) => {
-      return isString(value)
-        ? value.length > 0
-        : isArray(value) && value.length > 0 && value.every(isString)
+      if (isBoolean(value)) return true
+
+      if (isString(value)) return value.length > 0
+
+      if (isArray(value)) return value.length > 0 && value.every(isString)
+
+      return false
     })
   }
 
@@ -80,10 +84,7 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
 
     const filters = getQuery()
 
-    newList = Object.entries(filters).reduce(function (
-      list: T[],
-      [key, target]: [string, string | string[]],
-    ) {
+    newList = Object.entries(filters).reduce(function (list: T[], [key, target]: [string, any]) {
       const isEqualFn = filterConfig[key]?.isEqualFn ?? isEqual
 
       return filter(list, (item) => isEqualFn(item[key], target, item))
@@ -133,7 +134,7 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
     search()
   }, [$currentPage[storeKey]])
 
-  function setFilterValue(key: keyof T, value: string | string[]) {
+  function setFilterValue(key: keyof T, value: any) {
     setFilterObject({ ...filterObject, [key]: value })
   }
 

@@ -4,7 +4,7 @@ import { announcementCategoryMap } from '@/services/dbAnnouncements'
 import { setItems, type Item } from '@/stores/announcement'
 import { useEffect } from 'preact/hooks'
 import { categoryDisplayName } from '@/utils/announcement'
-import { useFilter, type FilterConfig } from '@/utils/hooks'
+import { useFilter, useUser, type FilterConfig } from '@/utils/hooks'
 import { typedObjectKeys } from '@/utils/helpers'
 import { isArray } from 'lodash-es'
 import { dataNumberPerPage } from '@/configs/general'
@@ -17,6 +17,8 @@ type Props = {
 }
 
 export default function Filter({ storeKey, data }: Props) {
+  const { user } = useUser()
+
   const categoryList = Object.keys(announcementCategoryMap)
   const { setFilterValue, filterObject, filteredItems } = useFilter(
     storeKey,
@@ -32,6 +34,17 @@ export default function Filter({ storeKey, data }: Props) {
           return field === target
         },
       } satisfies FilterConfig<Item, 'category'>,
+      // @ts-expect-error: it should be ok
+      voided: {
+        schema: z.coerce.boolean().optional(),
+        isEqualFn: (field, target) => {
+          if (target === true) {
+            return true
+          } else {
+            return field === false
+          }
+        },
+      } satisfies FilterConfig<Item, 'voided'>,
     },
     true,
   )
@@ -44,6 +57,13 @@ export default function Filter({ storeKey, data }: Props) {
   useEffect(() => {
     setItems(filteredItems)
   }, [filteredItems])
+
+  useEffect(() => {
+    if (!user) {
+      // 使用者登出時，不再顯示 voided 的資訊
+      setFilterValue('voided', false)
+    }
+  }, [user])
 
   return (
     <div class="sticky-control flex flex-wrap gap-2 py-4">
@@ -58,6 +78,20 @@ export default function Filter({ storeKey, data }: Props) {
           ))}
         </select>
       </label>
+      {user && (
+        <label class="btn px-2 btn-outline btn-sm btn-primary">
+          <input
+            type="checkbox"
+            class="checkbox checkbox-sm checkbox-primary"
+            checked={filterObject['voided']}
+            onChange={(e) => {
+              const checked = e.currentTarget.checked
+              setFilterValue('voided', checked)
+            }}
+          />
+          顯示已作廢
+        </label>
+      )}
     </div>
   )
 }
