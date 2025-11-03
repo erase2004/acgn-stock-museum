@@ -455,6 +455,12 @@
   .range-slider input[type='range']:focus {
     outline: 0;
   }
+
+  span.katex {
+    display: inline-block;
+    max-width: 100%;
+    overflow: auto;
+  }
 }
 
 @layer utilities {
