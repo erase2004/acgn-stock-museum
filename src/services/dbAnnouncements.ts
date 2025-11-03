@@ -125,3 +125,10 @@ export async function getAnnouncementById(db: Db, announcementId: string) {
     z.promise(schema).parse(dbAnnouncements.findOne({ _id: announcementId })),
   )
 }
+
+export async function getAllBasicAnnouncements(db: Db) {
+  const _schema = schema.pick({ _id: true, subject: true })
+  const dbAnnouncements = getDBAnnouncements(db)
+
+  return handlePromiseParser(z.promise(_schema.array()).parse(dbAnnouncements.find({}).toArray()))
+}
