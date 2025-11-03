@@ -28,7 +28,7 @@ const hasData = data.length > 0
         data.map((agenda) => {
           return (
             <tr>
-              <td class="truncate text-left" data-title="議程主題">
+              <td class="text-left" data-title="議程主題">
                 <a href={getRuleAgendaUrl(round, agenda._id)}>{agenda.title}</a>
               </td>
               <td class="truncate text-center" data-title="結束日期">
