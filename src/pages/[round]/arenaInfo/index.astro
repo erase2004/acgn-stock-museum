@@ -1,0 +1,13 @@
+---
+export const prerender = false
+
+import { getConnection } from '@/libs/databases'
+import { getArenaInfoUrl, getCurrentRound } from '@/libs/routes'
+import { getLatestArena } from '@/services/dbArena'
+
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)!
+const latestArena = await getLatestArena(connection)
+
+return Astro.redirect(getArenaInfoUrl(round, latestArena!._id))
+---

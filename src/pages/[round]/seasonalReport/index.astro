@@ -1,0 +1,13 @@
+---
+export const prerender = false
+
+import { getConnection } from '@/libs/databases'
+import { getCurrentRound, getSeasonalReportUrl } from '@/libs/routes'
+import { getLatestSeason } from '@/services/dbSeason'
+
+const round = getCurrentRound(Astro)!
+const connection = getConnection(round)!
+const latestSeason = await getLatestSeason(connection)
+
+return Astro.redirect(getSeasonalReportUrl(round, latestSeason!._id))
+---
