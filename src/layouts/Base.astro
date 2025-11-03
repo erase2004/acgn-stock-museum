@@ -39,7 +39,7 @@ const title = customTitle ?? getCurrentPageFullTitle(Astro)
   <body class="text-base font-normal">
     <main class="drawer drawer-end container mx-auto px-4">
       <input id="hidden-drawer-input" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content">
+      <div class="relative drawer-content">
         <Nav />
         <slot />
       </div>
