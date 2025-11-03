@@ -1,3 +1,4 @@
+import type { TargetedEvent } from 'preact'
 import type { ValidateType } from '@/services/dbUsers'
 import { z } from 'astro/zod'
 import { useEffect, useRef, useState } from 'preact/hooks'
@@ -61,7 +62,9 @@ export default function UserProfile({ round }: Props) {
     setValidateMethod(method)
   }
 
-  async function login() {
+  async function login(e: TargetedEvent<HTMLFormElement>) {
+    e.preventDefault()
+
     if (!validateMethod) return
     if (isProcessing) return
 
@@ -190,21 +193,25 @@ export default function UserProfile({ round }: Props) {
           </summary>
           <ul class="dropdown-content menu rounded-box bg-base-300 shadow-sm">
             {validateMethod !== '' ? (
-              <div class="flex w-max flex-col">
-                <div class="join">
+              <div class="flex w-auto min-w-2xs flex-col">
+                <form class="join" onSubmit={login}>
                   <input
                     class="input join-item"
                     type="text"
                     placeholder={placeHolder}
                     ref={inputRef}
                   />
-                  <button class="btn join-item" onClick={() => changeValidateMethod('')}>
+                  <button
+                    type="button"
+                    class="btn join-item"
+                    onClick={() => changeValidateMethod('')}
+                  >
                     取消
                   </button>
-                  <button class="ignore-inherit btn join-item btn-primary" onClick={login}>
+                  <button type="submit" class="ignore-inherit btn join-item btn-primary">
                     登入
                   </button>
-                </div>
+                </form>
                 {shouldShowError && <p class="ignore-inherit text-error">登入失敗，請重新嘗試</p>}
                 {isProcessing && (
                   <p>
