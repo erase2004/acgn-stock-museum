@@ -241,6 +241,13 @@ export function getSeasonalReportUrl(round: string, seasonId: string) {
   })
 }
 
+export function getAnnouncementListUrl(round: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.ANNOUNCEMENT_LIST,
+  })
+}
+
 export function getAnnouncementUrl(round: string, announcementId: string) {
   return getPageUrl({
     round,
