@@ -1,6 +1,5 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import Filter from '@/components/round/announcement/preact/Filter'
 import ListContainer from '@/components/round/announcement/preact/ListContainer'
@@ -9,13 +8,22 @@ import { getCurrentRound } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAnnouncements } from '@/services/dbAnnouncements'
 import { STORE_KEY } from '@/stores/announcement'
+import { rounds } from '@/configs/sites'
+
+export const getStaticPaths = (() => {
+  return rounds.map((round) => ({
+    params: {
+      round,
+    },
+  }))
+}) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 const announcements = (await getAnnouncements(connection)) ?? []
 ---
 
-<RoundLayout>
+<RoundLayout useUserDict={true}>
   <h1 class="round-block-title">系統公告</h1>
   <div class="divider"></div>
   <Filter client:only="preact" data={announcements} storeKey={STORE_KEY} />
