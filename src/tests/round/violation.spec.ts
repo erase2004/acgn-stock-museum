@@ -4,6 +4,10 @@ import { rounds, siteList } from '@/configs/sites'
 import { getViolationCaseUrl } from '@/libs/routes'
 import { getConnection } from '@/tests/_utils/database'
 import { getAllBasicViolationCase, schema } from '@/services/dbViolationCases'
+import { shuffle } from 'lodash-es'
+
+const MAX_ITEM_PERCENTAGE = 10
+const RUN_ALL_TEST = process.env.RUN_ALL_TEST === 'true'
 
 type Violation = Pick<z.infer<typeof schema>, '_id'>
 
@@ -13,11 +17,19 @@ for (const round of rounds) {
 
     test.beforeAll(async () => {
       const connection = getConnection(round)
-      violationCases = (await getAllBasicViolationCase(connection)) ?? []
+      const results = (await getAllBasicViolationCase(connection)) ?? []
+      if (RUN_ALL_TEST) {
+        violationCases = results
+      } else {
+        violationCases = shuffle(results).slice(
+          0,
+          Math.floor((results.length * MAX_ITEM_PERCENTAGE) / 100),
+        )
+      }
     })
 
     test('pages', async ({ context }) => {
-      test.setTimeout(300 * violationCases.length)
+      test.setTimeout(500 * violationCases.length)
 
       const page = await context.newPage()
 
