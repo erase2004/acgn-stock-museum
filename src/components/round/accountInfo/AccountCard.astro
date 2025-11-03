@@ -1,6 +1,6 @@
 ---
 import type { User } from '@/services/dbUsers'
-import Favicon from '@/assets/icons/favicon.svg'
+import IconLogo from '@/assets/icons/logo.svg'
 import UserLink from '@/components/common/preact/UserLink'
 import { hasRole, UserRole } from '@/services/dbUsers'
 
@@ -30,7 +30,7 @@ const displayClass = hasRole(user, UserRole.SUPER_ADMIN.name)
         about.picture ? (
           <img src={about.picture} alt="使用者頭像" />
         ) : (
-          <img src={Favicon.src} alt="預設使用者頭像" />
+          <img src={IconLogo.src} alt="預設使用者頭像" />
         )
       }
     </div>

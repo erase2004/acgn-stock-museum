@@ -31,7 +31,7 @@ export default defineConfig({
     favicons({
       input: {
         favicons: [
-          "src/assets/icons/favicon.svg"
+          "src/assets/icons/logo.png"
         ]
       },
       name: '',
