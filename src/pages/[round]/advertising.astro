@@ -1,6 +1,5 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import dayjs from 'dayjs'
 import RoundLayout from '@/layouts/Round.astro'
 import UserLink from '@/components/common/preact/UserLink'
@@ -10,6 +9,15 @@ import { getAdvertisements } from '@/services/dbAdvertising'
 import { currencyFormat } from '@/utils/helpers'
 import { formatDateTimeText } from '@/libs/timeFormat'
 import { advertisingExpireTime, displayAdvertisingNumber } from '@/configs/general'
+import { rounds } from '@/configs/sites'
+
+export const getStaticPaths = (() => {
+  return rounds.map((round) => ({
+    params: {
+      round,
+    },
+  }))
+}) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
@@ -21,7 +29,7 @@ function formatExpireDate(begin: Date) {
 }
 ---
 
-<RoundLayout>
+<RoundLayout useUserDict={true}>
   <h1 class="round-block-title">廣告中心</h1>
   <div class="divider"></div>
   <h2 class="text-3xl opacity-70">進行中的廣告</h2>
