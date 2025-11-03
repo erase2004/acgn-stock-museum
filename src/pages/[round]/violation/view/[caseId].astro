@@ -52,7 +52,7 @@ const relatedLogs = result?.[0]?.data ?? []
   <div>
     更新時間：<span class="text-nowrap">{formatDateTimeText(violation.updatedAt)}</span>
   </div>
-  <div>
+  <div data-case-id={violation._id}>
     案件識別碼：<span class="text-nowrap">{violation._id}</span>
   </div>
   <div class="divider"></div>

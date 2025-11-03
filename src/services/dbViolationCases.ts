@@ -183,3 +183,10 @@ export async function getViolationCasesByCompanyId(db: Db, companyId: string, ro
     ),
   )
 }
+
+export async function getAllBasicViolationCase(db: Db) {
+  const _schema = schema.pick({ _id: true })
+  const dbViolationCases = getDBViolationCase(db)
+
+  return handlePromiseParser(z.promise(_schema.array()).parse(dbViolationCases.find({}).toArray()))
+}
