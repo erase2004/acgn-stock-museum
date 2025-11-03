@@ -309,6 +309,13 @@ export function getFSCStockUrl(round: string) {
   })
 }
 
+export function getAdvertisingUrl(round: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.ADVERTISING,
+  })
+}
+
 export function getUserJsonUrl(round: string) {
   return `/${round}/json/user.json`
 }
