@@ -7,11 +7,10 @@ import { getCurrentRound } from '@/libs/routes'
 
 type Props = Parameters<typeof BaseLayout>[0] & {
   useUserDict?: boolean
-  useCompanyDict?: boolean
   useProductDict?: boolean
 }
 const props = Astro.props
-const { useUserDict = false, useCompanyDict = false, useProductDict = false } = props
+const { useUserDict = false, useProductDict = false } = props
 
 const round = getCurrentRound(Astro)
 ---
@@ -21,7 +20,7 @@ const round = getCurrentRound(Astro)
     <div class="round-block"><slot /></div>
   </div>
   {useUserDict && <LoadUserJson client:only="preact" round={round!} />}
-  {useCompanyDict && <LoadCompanyJson client:only="preact" round={round!} />}
+  <LoadCompanyJson client:only="preact" round={round!} />
   {useProductDict && <LoadProductJson client:only="preact" round={round!} />}
   <!-- TODO: add loading effect -->
   <!-- TODO: add account dialog -->

@@ -51,7 +51,7 @@ const fscStocks =
   })()) ?? []
 ---
 
-<RoundLayout useCompanyDict={true}>
+<RoundLayout>
   <h1 class="round-block-title">金管會持股</h1>
   <div class="divider"></div>
   <ListContainer client:only="preact" round={round} data={fscStocks} storeKey={STORE_KEY} />

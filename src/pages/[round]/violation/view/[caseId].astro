@@ -54,7 +54,7 @@ const relatedActionLogs = await getRelatedActionLog(connection, caseId)
 const relatedLogs = (await getViolationCaseRelatedLogs(connection, caseId)) ?? []
 ---
 
-<RoundLayout useCompanyDict={true} useUserDict={true} useProductDict={true}>
+<RoundLayout useUserDict={true} useProductDict={true}>
   <h1 class="round-block-title">
     違規案件內容 - <span class="text-nowrap">{categoryDisplayName(violation.category)}</span>
   </h1>
