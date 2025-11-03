@@ -1,14 +1,35 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import RejectionPetition from '@/components/round/announcement/RejectionPetition.astro'
 import RejectionPoll from '@/components/round/announcement/RejectionPoll.astro'
 import { getCurrentRound, getAnnouncementUrl, getRoundMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
-import { getAnnouncementById } from '@/services/dbAnnouncements'
+import { getAllBasicAnnouncements, getAnnouncementById } from '@/services/dbAnnouncements'
 import { categoryDisplayName } from '@/utils/announcement'
 import { getCurrentPageFullTitle } from '@/libs/routes'
+import { rounds } from '@/configs/sites'
+import { flatten } from 'lodash-es'
+
+export const getStaticPaths = (async () => {
+  const results = await Promise.allSettled(
+    rounds.map(async (round) => {
+      const connection = getConnection(round)!
+      const announcements = (await getAllBasicAnnouncements(connection)) ?? []
+
+      return announcements.map((announcement) => ({
+        params: {
+          round,
+          announcementId: announcement._id,
+        },
+      }))
+    }),
+  )
+
+  return flatten(
+    results.filter((result) => result.status === 'fulfilled').map((result) => result.value),
+  )
+}) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
@@ -24,7 +45,7 @@ const title = getCurrentPageFullTitle(Astro, announcement.subject)
 const canRejectAnnoumcenet = !!announcement.rejectionPetition
 ---
 
-<RoundLayout title={title}>
+<RoundLayout title={title} useUserDict={true}>
   <h1 class="round-block-title">
     公告否決 - {categoryDisplayName(announcement.category)}
   </h1>
