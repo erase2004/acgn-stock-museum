@@ -5,6 +5,7 @@ import { getAnnouncementUrl } from '@/libs/routes'
 import { getConnection } from '@/tests/_utils/database'
 import { getAllBasicAnnouncements, schema } from '@/services/dbAnnouncements'
 import { shuffle } from 'lodash-es'
+import { MINIMUM_TEST_TIMEOUT } from '@/configs/general'
 
 const MAX_ITEM_PERCENTAGE = 30
 const RUN_ALL_TEST = process.env.RUN_ALL_TEST === 'true'
@@ -21,15 +22,16 @@ for (const round of rounds) {
       if (RUN_ALL_TEST) {
         announcements = results
       } else {
-        announcements = shuffle(results).slice(
-          0,
+        const amount = Math.max(
           Math.floor((results.length * MAX_ITEM_PERCENTAGE) / 100),
+          MAX_ITEM_PERCENTAGE,
         )
+        announcements = shuffle(results).slice(0, amount)
       }
     })
 
     test('pages', async ({ context }) => {
-      test.setTimeout(500 * announcements.length)
+      test.setTimeout(Math.max(1000 * announcements.length, MINIMUM_TEST_TIMEOUT))
 
       const page = await context.newPage()
 

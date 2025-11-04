@@ -17,8 +17,6 @@ for (const round of rounds) {
     })
 
     test('pages', async ({ context }) => {
-      test.setTimeout(1000 * 60 * 5)
-
       const page = await context.newPage()
 
       for (const agenda of agendas) {
