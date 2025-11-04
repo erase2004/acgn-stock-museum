@@ -1,6 +1,5 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import BasicInfo from '@/components/round/accountInfo/BasicInfo.astro'
 import PanelFolder from '@/components/common/preact/PanelFolder'
@@ -13,7 +12,7 @@ import LogList from '@/components/round/accountInfo/preact/LogList'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentPageFullTitle, getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
-import { getDBUsers, schema as schemaUser } from '@/services/dbUsers'
+import { getAllBasicUsers, getDBUsers, schema as schemaUser } from '@/services/dbUsers'
 import { getDBTaxes, schema as schemaTax } from '@/services/dbTaxes'
 import { getAccountOwnStocks } from '@/services/dbDirectors'
 import { getDBCompanyStones, schema as schemaCompanyStone } from '@/services/dbCompanyStones'
@@ -24,6 +23,28 @@ import {
 import { getAccountLogs } from '@/services/dbLog'
 import { handlePromiseParser } from '@/utils/helpers'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { rounds } from '@/configs/sites'
+import { flatten } from 'lodash-es'
+
+export const getStaticPaths = (async () => {
+  const results = await Promise.allSettled(
+    rounds.map(async (round) => {
+      const connection = getConnection(round)!
+      const users = (await getAllBasicUsers(connection)) ?? []
+
+      return users.map((user) => ({
+        params: {
+          round,
+          userId: user._id,
+        },
+      }))
+    }),
+  )
+
+  return flatten(
+    results.filter((result) => result.status === 'fulfilled').map((result) => result.value),
+  )
+}) satisfies GetStaticPaths
 
 const userId = Astro.params['userId'] ?? ''
 const round = getCurrentRound(Astro)!
