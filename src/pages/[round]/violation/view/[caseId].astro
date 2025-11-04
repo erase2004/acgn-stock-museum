@@ -6,6 +6,7 @@ import Violator from '@/components/round/violation/preact/Violator'
 import ActionLog from '@/components/round/violation/preact/ActionLog'
 import RelatedLogListContainer from '@/components/round/violation/preact/RelatedLogListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
+import ClientDatetime from '@/components/common/preact/ClientDatetime'
 
 import { getConnection } from '@/libs/databases'
 import { getViolationCaseById } from '@/services/dbViolationCases'
@@ -15,7 +16,6 @@ import { getCurrentRound, getViolationCaseUrl, getRoundMainPageUrl } from '@/lib
 import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/violation'
 import { dataStoreKey } from '@/configs/general'
 import { markdownToHtml } from '@/utils/helpers'
-import { formatDateTimeText } from '@/libs/timeFormat'
 
 // 頁面數量過多，改用 on-demand rendering 搭配 cache-control header
 Astro.response.headers.set('Cache-Control', `public, max-age=${60 * 60 * 24 * 30}`)
@@ -47,10 +47,16 @@ const relatedLogs = (await getViolationCaseRelatedLogs(connection, caseId)) ?? [
     >
   </div>
   <div>
-    舉報時間：<span class="text-nowrap">{formatDateTimeText(violation.createdAt)}</span>
+    舉報時間：
+    <span class="text-nowrap">
+      <ClientDatetime client:only="preact" value={violation.createdAt} />
+    </span>
   </div>
   <div>
-    更新時間：<span class="text-nowrap">{formatDateTimeText(violation.updatedAt)}</span>
+    更新時間：
+    <span class="text-nowrap">
+      <ClientDatetime client:only="preact" value={violation.updatedAt} />
+    </span>
   </div>
   <div data-case-id={violation._id}>
     案件識別碼：<span class="text-nowrap">{violation._id}</span>

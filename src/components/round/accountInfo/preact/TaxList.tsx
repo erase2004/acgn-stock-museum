@@ -33,7 +33,7 @@ export default function TaxList({ data }: Props) {
           {displayItems.length > 0 ? (
             displayItems.map((item) => (
               <tr class="*:px-1" key={item._id}>
-                <td class="truncate text-center text-nowrap" data-title="繳稅期限">
+                <td class="text-center text-wrap" data-title="繳稅期限">
                   {formatDateTimeText(item.expireDate)}
                 </td>
                 <td

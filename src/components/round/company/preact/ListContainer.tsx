@@ -50,7 +50,7 @@ type CardProps = {
 
 function Card({ round, item, user, ownStocks }: CardProps) {
   return (
-    <div class="w-full max-w-80 px-4 sm:w-1/2 md:w-1/3 lg:w-1/4 2xl:w-1/6">
+    <div class="w-full max-w-80 px-4 sm:w-1/2 lg:w-1/4 2xl:w-1/6">
       <div
         class={`company-card card border border-base-content/25 shadow-lg/50 ${cardDisplayClass(item, user, ownStocks)}`}
       >
@@ -177,7 +177,7 @@ function Row({ round, item, user, ownStocks }: RowProps) {
         alt={`${item.companyName}公司的小圖`}
       />
 
-      <div class="company-row grid grow grid-cols-3 border border-base-content/25 lg:grid-cols-4">
+      <div class="company-row grid grow grid-cols-3 border border-base-content/25 *:px-1 lg:grid-cols-4">
         {item.illegalReason && (
           <p class="col-span-full truncate text-center text-error">
             <i class="fa fa-warning"></i>

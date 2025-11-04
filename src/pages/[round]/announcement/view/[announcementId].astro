@@ -2,11 +2,11 @@
 import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import UserLink from '@/components/common/preact/UserLink'
+import ClientDatetime from '@/components/common/preact/ClientDatetime'
 import { getCurrentRound, getAnnouncementRejectionUrl, getRoundMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAllBasicAnnouncements, getAnnouncementById } from '@/services/dbAnnouncements'
 import { categoryDisplayName } from '@/utils/announcement'
-import { formatDateTimeText } from '@/libs/timeFormat'
 import { markdownToHtml } from '@/utils/helpers'
 import { getCurrentPageFullTitle } from '@/libs/routes'
 import { rounds } from '@/configs/sites'
@@ -59,7 +59,7 @@ const canRejectAnnoumcenet = !!announcement.rejectionPetition
   </h1>
   <h2 class="my-2 text-3xl break-all">主旨：{announcement.subject}</h2>
   <p class="my-2 text-wrap">
-    於 {formatDateTimeText(announcement.createdAt)} 由 <UserLink
+    於 <ClientDatetime client:only="preact" value={announcement.createdAt} /> 由 <UserLink
       client:only="preact"
       round={round}
       userId={announcement.creator}
@@ -69,7 +69,7 @@ const canRejectAnnoumcenet = !!announcement.rejectionPetition
     announcement.voided && (
       <p class="my-2 text-warning">
         <i class="fa fa-warning" />
-        已於 {formatDateTimeText(announcement.voidedAt)} 由{' '}
+        已於 <ClientDatetime client:only="preact" value={announcement.voidedAt} /> 由{' '}
         <UserLink client:only="preact" round={round} userId={announcement.voidedBy} />
         以「{announcement.voidedReason}」的理由作廢！
       </p>

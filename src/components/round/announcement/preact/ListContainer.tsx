@@ -26,7 +26,7 @@ export default function ListContainer({ round }: Props) {
             <th class="text-center" title="發佈人">
               發佈人
             </th>
-            <th class="w-40 text-center" title="發佈日期">
+            <th class="w-52 text-center" title="發佈日期">
               發佈日期
             </th>
           </tr>
@@ -46,7 +46,7 @@ export default function ListContainer({ round }: Props) {
               <td class="truncate text-center" data-title="發佈人">
                 <UserLink round={round} userId={creator} />
               </td>
-              <td class="truncate text-center" data-title="發佈日期">
+              <td class="text-center max-md:text-wrap md:truncate" data-title="發佈日期">
                 {formatDateTimeText(createdAt)}
               </td>
             </tr>

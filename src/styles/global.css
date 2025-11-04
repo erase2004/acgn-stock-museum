@@ -327,10 +327,10 @@
     }
 
     .title {
-      @apply col-span-1 truncate text-right;
+      @apply col-span-1 text-right;
     }
     .content {
-      @apply col-span-2 truncate text-right lg:col-span-1;
+      @apply col-span-2 text-right lg:col-span-1;
     }
   }
 

@@ -1,7 +1,7 @@
 ---
+import ClientDatetime from '@/components/common/preact/ClientDatetime'
 import type { z } from 'astro/zod'
 import type { agendaListSchema } from '@/services/dbRuleAgendas'
-import { formatDateTimeText } from '@/libs/timeFormat'
 import { getRuleAgendaUrl } from '@/libs/routes'
 
 type Props = {
@@ -17,9 +17,9 @@ const hasData = data.length > 0
 <table class="table-base custom-responsive-table-md table-pin-rows table">
   <thead>
     <tr>
-      <th class="w-3/5 truncate text-center" title="議程主題">議程主題</th>
-      <th class="truncate text-center" title="結束日期">結束日期</th>
-      <th class="w-[10%] truncate px-0 text-center" title="相關討論">相關討論</th>
+      <th class="w-3/5 text-center" title="議程主題">議程主題</th>
+      <th class="text-center" title="結束日期">結束日期</th>
+      <th class="w-[10%] px-0 text-center" title="相關討論">相關討論</th>
     </tr>
   </thead>
   <tbody>
@@ -27,12 +27,12 @@ const hasData = data.length > 0
       hasData ? (
         data.map((agenda) => {
           return (
-            <tr>
+            <tr class="*:px-2">
               <td class="text-left" data-title="議程主題">
                 <a href={getRuleAgendaUrl(round, agenda._id)}>{agenda.title}</a>
               </td>
-              <td class="truncate text-center" data-title="結束日期">
-                {formatDateTimeText(agenda.endedAt)}
+              <td class="text-center" data-title="結束日期">
+                <ClientDatetime client:only="preact" value={agenda.endedAt} />
               </td>
               <td class="px-0 text-center" data-title="相關討論">
                 <a

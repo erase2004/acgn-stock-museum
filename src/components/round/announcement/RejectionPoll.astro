@@ -2,8 +2,8 @@
 import type { z } from 'astro/zod'
 import type { schema as schemaAnnouncement } from '@/services/dbAnnouncements'
 import UserLink from '@/components/common/preact/UserLink'
-import { formatDateTimeText } from '@/libs/timeFormat'
 import { computeThreshold, isVoided } from '@/utils/announcement'
+import ClientDatetime from '@/components/common/preact/ClientDatetime'
 
 type Props = z.infer<typeof schemaAnnouncement> & { round: string }
 
@@ -28,7 +28,7 @@ const shouldShowVoteList = yesCount > 0 || noCount > 0
     <h4 class="text-xl">投票資訊</h4>
     <div set:html={state} />
     <div>
-      截止時間：{formatDateTimeText(poll!.dueAt)}<br />
+      截止時間：<ClientDatetime client:only="preact" value={poll!.dueAt} /><br />
       投票門檻：{threshold} 人（活躍玩家 {poll!.activeUserCount} 人中的 {poll!.thresholdPercent}%）
     </div>
   </div>

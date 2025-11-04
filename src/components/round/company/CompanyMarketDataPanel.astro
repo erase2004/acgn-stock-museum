@@ -1,5 +1,6 @@
 ---
 import UserLink from '@/components/common/preact/UserLink'
+import ClientDatetime from '@/components/common/preact/ClientDatetime'
 import { z } from 'astro/zod'
 import dayjs from 'dayjs'
 import { getConnection } from '@/libs/databases'
@@ -16,7 +17,6 @@ import {
   priceDisplayClass,
 } from '@/utils/company'
 import { integer } from '@/services/schema'
-import { formatDateTimeText } from '@/libs/timeFormat'
 
 type Props = {
   round: string
@@ -152,7 +152,9 @@ const EPRatio = getCompanyEPRatio(item)
   </div>
   <div class="col-span-6">
     <p>創立時間</p>
-    <p>{formatDateTimeText(item.createdAt)}</p>
+    <p class="text-center text-wrap">
+      <ClientDatetime client:only="preact" value={item.createdAt} />
+    </p>
   </div>
   <div class="col-span-6">
     <p>創立人</p>

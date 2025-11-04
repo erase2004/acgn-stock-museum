@@ -1,9 +1,9 @@
 ---
 import ArenaStrategyForm from './preact/ArenaStrategyForm'
+import ClientDatetime from '@/components/common/preact/ClientDatetime'
 import { z } from 'astro/zod'
 import { getArenaInfoUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
-import { formatDateTimeText } from '@/libs/timeFormat'
 import { getLatestArena } from '@/services/dbArena'
 import {
   fighterAttributes,
@@ -59,9 +59,13 @@ const attackSequence = (function () {
       <div>
         <p>
           <a href={getArenaInfoUrl(round, arenaData._id)}>本次最萌亂鬥大賽</a>起迄時間為：
-          {formatDateTimeText(arenaData.beginDate)}~{formatDateTimeText(arenaData.endDate)}
+          <ClientDatetime client:only="preact" value={arenaData.beginDate} />~
+          <ClientDatetime client:only="preact" value={arenaData.endDate} />
         </p>
-        <p>報名截止時間為：{formatDateTimeText(arenaData.joinEndDate)}</p>
+        <p>
+          報名截止時間為：
+          <ClientDatetime client:only="preact" value={arenaData.joinEndDate} />
+        </p>
         {typeof joinData !== 'undefined' ? (
           <Fragment>
             <p class="break-all">{companyData?.companyName}已經報名參加這一屆的最萌亂鬥大賽。</p>

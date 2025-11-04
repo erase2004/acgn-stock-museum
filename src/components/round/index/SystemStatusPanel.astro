@@ -1,5 +1,6 @@
 ---
 import StatusItem from './StatusItem.astro'
+import ClientDatetime from '@/components/common/preact/ClientDatetime'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
 import { announceSalaryTime, companyProfitDistribution } from '@/configs/general'
@@ -7,9 +8,10 @@ import { getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getDBVariables } from '@/services/dbVariables'
-import { formatDateTimeText, FULL_DATETIME_FORMAT } from '@/libs/timeFormat'
+import { FULL_DATETIME_FORMAT } from '@/libs/timeFormat'
 import { currencyFormat } from '@/utils/helpers'
 import { getLatestSeason } from '@/services/dbSeason'
+import { datetime } from '@/services/schema'
 
 dayjs.extend(isBetween)
 
@@ -25,23 +27,17 @@ if (!currentRound) {
   return Astro.redirect(homepage)
 }
 
-const roundStartTime = formatDateTimeText(currentRound.beginDate)
-const roundEndTime = formatDateTimeText(currentRound.endDate)
-
 // season
 const latestSeason = await getLatestSeason(connection)
 if (!latestSeason) {
   return Astro.redirect(homepage)
 }
 
-const seasonStartTime = formatDateTimeText(latestSeason.beginDate)
-const seasonEndTime = formatDateTimeText(latestSeason.endDate)
-const updateSalaryDeadline = formatDateTimeText(
-  dayjs(latestSeason.endDate).subtract(announceSalaryTime, 'ms'),
-)
-const updateProfitDistributionDeadline = formatDateTimeText(
-  dayjs(latestSeason.endDate).subtract(companyProfitDistribution.lockTime, 'ms'),
-)
+const updateSalaryDeadline = dayjs(latestSeason.endDate).subtract(announceSalaryTime, 'ms').toDate()
+
+const updateProfitDistributionDeadline = dayjs(latestSeason.endDate)
+  .subtract(companyProfitDistribution.lockTime, 'ms')
+  .toDate()
 
 function createFormatter(formatter: (v: any) => any) {
   return async (key: string) => {
@@ -50,7 +46,7 @@ function createFormatter(formatter: (v: any) => any) {
   }
 }
 
-const getFormattedDateByKey = createFormatter(formatDateTimeText)
+const getFormattedDateByKey = createFormatter(datetime.parse)
 const getFormmatedNumberByKey = createFormatter(currencyFormat)
 
 // variables
@@ -68,7 +64,7 @@ function taskIsReady(begin: dayjs.ConfigType, end: dayjs.ConfigType) {
   const e = dayjs(end, FULL_DATETIME_FORMAT)
 
   if (b.isValid() && e.isValid()) {
-    const now = dayjs(roundEndTime, FULL_DATETIME_FORMAT)
+    const now = dayjs(currentRound!.endDate, FULL_DATETIME_FORMAT)
 
     return now.isBetween(b, e) ? 'text-error' : ''
   }
@@ -79,39 +75,63 @@ function taskIsReady(begin: dayjs.ConfigType, end: dayjs.ConfigType) {
 
 <div class="flex flex-wrap *:last-of-type:md:ml-auto">
   <StatusItem title="當前賽季起訖時間">
-    <span class="whitespace-nowrap">{roundStartTime}</span>
-    <span class="whitespace-nowrap">~ {roundEndTime}</span>
+    <span class="whitespace-nowrap">
+      <ClientDatetime client:only="preact" value={currentRound.beginDate} />
+    </span>
+    <span class="whitespace-nowrap">
+      ~ <ClientDatetime client:only="preact" value={currentRound.endDate} />
+    </span>
   </StatusItem>
   <StatusItem title="商業季度起訖時間">
-    <span class="whitespace-nowrap">{seasonStartTime}</span>
-    <span class="whitespace-nowrap">~ {seasonEndTime}</span>
+    <span class="whitespace-nowrap">
+      <ClientDatetime client:only="preact" value={latestSeason.beginDate} />
+    </span>
+    <span class="whitespace-nowrap">
+      ~ <ClientDatetime client:only="preact" value={latestSeason.endDate} />
+    </span>
   </StatusItem>
   <StatusItem title="員工薪資修改期限">
-    <span class="whitespace-nowrap">{updateSalaryDeadline}</span>
+    <span class="whitespace-nowrap">
+      <ClientDatetime client:only="preact" value={updateSalaryDeadline} />
+    </span>
   </StatusItem>
   <StatusItem title="營利分配修改期限">
-    <span class="whitespace-nowrap">{updateProfitDistributionDeadline}</span>
+    <span class="whitespace-nowrap">
+      <ClientDatetime client:only="preact" value={updateProfitDistributionDeadline} />
+    </span>
   </StatusItem>
   <StatusItem
     title="最近股價更新區間"
     statusClass={taskIsReady(stockPriceUpdateBegin, stockPriceUpdateEnd)}
   >
-    <span class="whitespace-nowrap">{stockPriceUpdateBegin}</span>
-    <span class="whitespace-nowrap">~ {stockPriceUpdateEnd}</span>
+    <span class="whitespace-nowrap">
+      <ClientDatetime client:only="preact" value={stockPriceUpdateBegin} />
+    </span>
+    <span class="whitespace-nowrap">
+      ~ <ClientDatetime client:only="preact" value={stockPriceUpdateEnd} />
+    </span>
   </StatusItem>
   <StatusItem
     title="最近高價釋股區間"
     statusClass={taskIsReady(highPriceReleaseBegin, highPriceReleaseEnd)}
   >
-    <span class="whitespace-nowrap">{highPriceReleaseBegin}</span>
-    <span class="whitespace-nowrap">~ {highPriceReleaseEnd}</span>
+    <span class="whitespace-nowrap">
+      <ClientDatetime client:only="preact" value={highPriceReleaseBegin} />
+    </span>
+    <span class="whitespace-nowrap">
+      ~ <ClientDatetime client:only="preact" value={highPriceReleaseEnd} />
+    </span>
   </StatusItem>
   <StatusItem
     title="最近低量釋股區間"
     statusClass={taskIsReady(noDealReleaseBegin, noDealReleaseEnd)}
   >
-    <span class="whitespace-nowrap">{noDealReleaseBegin}</span>
-    <span class="whitespace-nowrap">~ {noDealReleaseEnd}</span>
+    <span class="whitespace-nowrap">
+      <ClientDatetime client:only="preact" value={noDealReleaseBegin} />
+    </span>
+    <span class="whitespace-nowrap">
+      ~ <ClientDatetime client:only="preact" value={noDealReleaseEnd} />
+    </span>
   </StatusItem>
   <StatusItem title="高價公司價格下限">
     <span>$ {highPriceThreshold}</span>

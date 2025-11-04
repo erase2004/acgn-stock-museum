@@ -3,11 +3,11 @@ import type { GetStaticPaths } from 'astro'
 import dayjs from 'dayjs'
 import RoundLayout from '@/layouts/Round.astro'
 import UserLink from '@/components/common/preact/UserLink'
+import ClientDatetime from '@/components/common/preact/ClientDatetime'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
 import { getAdvertisements } from '@/services/dbAdvertising'
 import { currencyFormat } from '@/utils/helpers'
-import { formatDateTimeText } from '@/libs/timeFormat'
 import { advertisingExpireTime, displayAdvertisingNumber } from '@/configs/general'
 import { rounds } from '@/configs/sites'
 
@@ -23,9 +23,8 @@ const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 const advertisements = (await getAdvertisements(connection)) ?? []
 
-function formatExpireDate(begin: Date) {
-  const expire = dayjs(begin).add(advertisingExpireTime, 'ms')
-  return formatDateTimeText(expire)
+function getExpireDate(begin: Date) {
+  return dayjs(begin).add(advertisingExpireTime, 'ms').toDate()
 }
 ---
 
@@ -72,7 +71,7 @@ function formatExpireDate(begin: Date) {
                 $ {currencyFormat(item.paid)}
               </td>
               <td class="text-truncate text-center text-nowrap" data-title="終止日期">
-                {formatExpireDate(item.createdAt)}
+                <ClientDatetime client:only="preact" value={getExpireDate(item.createdAt)} />
               </td>
             </tr>
           ))
