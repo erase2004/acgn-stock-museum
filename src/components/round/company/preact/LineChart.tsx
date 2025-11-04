@@ -7,6 +7,7 @@ import {
   Chart as ChartJS,
   TimeSeriesScale,
   LinearScale,
+  LineController,
   Title,
   Tooltip,
   PointElement,
@@ -23,7 +24,15 @@ import { theme } from '@/stores/common'
 dayjs.locale('zh-tw')
 dayjs.extend(localizedFormat)
 
-ChartJS.register(Title, LinearScale, TimeSeriesScale, Tooltip, PointElement, LineElement)
+ChartJS.register(
+  Title,
+  LineController,
+  LinearScale,
+  TimeSeriesScale,
+  Tooltip,
+  PointElement,
+  LineElement,
+)
 
 type Price = z.infer<typeof schema>
 type Props = {
