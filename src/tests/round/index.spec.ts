@@ -10,6 +10,13 @@ for (const round of rounds) {
     test('suites', async ({ context }) => {
       const page = await context.newPage()
 
+      const datetimeResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('ClientDatetime') &&
+          response.request().method() === 'GET' &&
+          response.status() === 200,
+      )
+
       await page.goto(getRoundMainPageUrl(round))
 
       await test.step('has title', async () => {
@@ -27,7 +34,7 @@ for (const round of rounds) {
 
         // 捲動頁面至底部，觸發 island component 載入
         await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-        await page.waitForTimeout(1000)
+        await datetimeResponsePromise
 
         const sibling = element.locator('//following-sibling::*')
         await expect(sibling).toContainText(formatDateTimeText(roundData?.beginDate))

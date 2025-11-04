@@ -23,6 +23,13 @@ for (const round of rounds) {
       const page = await context.newPage()
 
       for (const season of seasons) {
+        const navbarResponsePromise = page.waitForResponse(
+          (response) =>
+            response.url().includes('SeasonNavbar') &&
+            response.request().method() === 'GET' &&
+            response.status() === 200,
+        )
+
         await page.goto(getProductCenterBySeasonUrl(round, season._id))
 
         await test.step('has title', async () => {
@@ -44,7 +51,7 @@ for (const round of rounds) {
           // duration info
           {
             // 等待 island component 載入
-            await page.waitForTimeout(1000)
+            await navbarResponsePromise
 
             const element = await page.getByText(formatDateTimeText(season.beginDate))
 
