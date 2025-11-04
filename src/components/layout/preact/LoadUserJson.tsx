@@ -9,14 +9,20 @@ type Props = {
 }
 
 export default function LoadUserJson({ round }: Props) {
-  const jsonUrl = getUserJsonUrl(round)
-  const schema = schemaUserArchive.pick({
-    _id: true,
-    name: true,
-    status: true,
-    validateType: true,
-  })
+  const schema = z.preprocess(
+    (value) => {
+      // @ts-expect-error: it should be ok
+      return { _id: value.i, name: value.n, status: value.s, validateType: value.t }
+    },
+    schemaUserArchive.pick({
+      _id: true,
+      name: true,
+      status: true,
+      validateType: true,
+    }),
+  )
 
+  const jsonUrl = getUserJsonUrl(round)
   fetch(jsonUrl).then(async (response) => {
     const result = await z.promise(schema.array()).parse(response.json())
     const data = keyBy(result, '_id')

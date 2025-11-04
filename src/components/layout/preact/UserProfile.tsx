@@ -19,12 +19,18 @@ type Props = {
 }
 
 async function updateUserStock(round: string, userId: string) {
-  const schema = schemaDirector.pick({
-    companyId: true,
-    stocks: true,
-  })
-  const jsonUrl = getOwnStockJsonUrl(round)
+  const schema = z.preprocess(
+    (value) => {
+      // @ts-expect-error: it should be ok
+      return { companyId: value.c, stocks: value.s }
+    },
+    schemaDirector.pick({
+      companyId: true,
+      stocks: true,
+    }),
+  )
 
+  const jsonUrl = getOwnStockJsonUrl(round)
   return await fetch(jsonUrl)
     .then(async (response) => {
       const dict = await z.promise(z.record(z.string(), schema.array())).parse(response.json())
@@ -34,7 +40,8 @@ async function updateUserStock(round: string, userId: string) {
         ownStocks.set(zipObject(map(data, 'companyId'), map(data, 'stocks')))
       }
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log(err)
       ownStocks.set({})
     })
 }

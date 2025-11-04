@@ -9,14 +9,20 @@ type Props = {
 }
 
 export default function LoadProductJson({ round }: Props) {
-  const jsonUrl = getProductJsonUrl(round)
-  const schema = schemaProduct.pick({
-    _id: true,
-    productName: true,
-    type: true,
-    url: true,
-  })
+  const schema = z.preprocess(
+    (value) => {
+      // @ts-expect-error: it should be ok
+      return { _id: value.i, productName: value.n, type: value.t, url: value.u }
+    },
+    schemaProduct.pick({
+      _id: true,
+      productName: true,
+      type: true,
+      url: true,
+    }),
+  )
 
+  const jsonUrl = getProductJsonUrl(round)
   fetch(jsonUrl).then(async (response) => {
     const result = await z.promise(schema.array()).parse(response.json())
     const data = keyBy(result, '_id')

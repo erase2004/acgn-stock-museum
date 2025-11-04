@@ -10,12 +10,15 @@ export const GET: APIRoute = async ({ params }) => {
   const round = params.round
   const connection = getConnection(round!)
 
-  const schema = schemaUserArchive.pick({
-    _id: true,
-    name: true,
-    status: true,
-    validateType: true,
-  })
+  const schema = schemaUserArchive
+    .pick({
+      _id: true,
+      name: true,
+      status: true,
+      validateType: true,
+    })
+    // 縮短 key，減少輸出的檔案尺寸
+    .transform((value) => ({ i: value._id, n: value.name, s: value.status, t: value.validateType }))
 
   const dbUserArchive = getDBUserArchive(connection)
   const userArchiveList =
