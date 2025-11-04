@@ -1,9 +1,17 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import { getConnection } from '@/libs/databases'
 import { getArenaInfoUrl, getCurrentRound } from '@/libs/routes'
 import { getLatestArena } from '@/services/dbArena'
+import { rounds } from '@/configs/sites'
+
+export const getStaticPaths = (() => {
+  return rounds.map((round) => ({
+    params: {
+      round,
+    },
+  }))
+}) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
