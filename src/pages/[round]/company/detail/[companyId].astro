@@ -1,12 +1,37 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import SealedDetailContent from '@/components/round/company/SealedDetailContent.astro'
 import NormalDetailContent from '@/components/round/company/NormalDetailContent.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentPageFullTitle, getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
-import { getCompanyFilterByCustomSchema, schema } from '@/services/dbCompanies'
+import {
+  getCompanyFilterByCustomSchema,
+  getAllBasicCompanies,
+  schema,
+} from '@/services/dbCompanies'
+import { rounds } from '@/configs/sites'
+import { flatten } from 'lodash-es'
+
+export const getStaticPaths = (async () => {
+  const results = await Promise.allSettled(
+    rounds.map(async (round) => {
+      const connection = getConnection(round)!
+      const companies = (await getAllBasicCompanies(connection)) ?? []
+
+      return companies.map((company) => ({
+        params: {
+          round,
+          companyId: company._id,
+        },
+      }))
+    }),
+  )
+
+  return flatten(
+    results.filter((result) => result.status === 'fulfilled').map((result) => result.value),
+  )
+}) satisfies GetStaticPaths
 
 const companyId = Astro.params['companyId'] ?? ''
 const round = getCurrentRound(Astro)!
@@ -24,6 +49,6 @@ if (!company) {
 const title = getCurrentPageFullTitle(Astro, company.companyName)
 ---
 
-<RoundLayout title={title}>
+<RoundLayout title={title} useUserDict={true} useProductDict={true}>
   {company.isSeal ? <SealedDetailContent /> : <NormalDetailContent />}
 </RoundLayout>
