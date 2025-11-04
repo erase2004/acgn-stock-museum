@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test'
 import { rounds, siteList } from '@/configs/sites'
 import { getRoundMainPageUrl } from '@/libs/routes'
-import { getConnection } from '@/tests/_utils/database'
 import { formatDateTimeText } from '@/libs/timeFormat'
+import { getConnection } from '@/tests/_utils/database'
 import { getCurrentRound } from '@/services/dbRound'
 
 for (const round of rounds) {
@@ -24,6 +24,10 @@ for (const round of rounds) {
 
         const element = await page.getByText('當前賽季起訖時間')
         await expect(element).toHaveCount(1)
+
+        // 捲動頁面至底部，觸發 island component 載入
+        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+        await page.waitForTimeout(1000)
 
         const sibling = element.locator('//following-sibling::*')
         await expect(sibling).toContainText(formatDateTimeText(roundData?.beginDate))

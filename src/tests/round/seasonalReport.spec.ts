@@ -40,8 +40,12 @@ for (const round of rounds) {
             await expect(element).toHaveText('季度報告')
             await expect(element).toBeVisible()
           }
+
           // duration info
           {
+            // 等待 island component 載入
+            await page.waitForTimeout(1000)
+
             const element = await page.getByText(formatDateTimeText(season.beginDate))
 
             await expect(element).toHaveCount(1)
@@ -49,7 +53,7 @@ for (const round of rounds) {
 
             const sibling = element.locator('//following-sibling::*')
 
-            await expect(sibling).toHaveText(formatDateTimeText(season?.endDate))
+            await expect(sibling).toHaveText(formatDateTimeText(season.endDate))
           }
         })
       }
