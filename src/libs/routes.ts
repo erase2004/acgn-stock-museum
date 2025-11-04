@@ -210,6 +210,13 @@ export function getCompanyUrl(round: string, companyId: string) {
   })
 }
 
+export function getCompanyListUrl(round: string) {
+  return getPageUrl({
+    round,
+    pageName: PAGE.COMPANY_LIST,
+  })
+}
+
 export function getAccountUrl(round: string, userId: string) {
   return getPageUrl({
     round,
