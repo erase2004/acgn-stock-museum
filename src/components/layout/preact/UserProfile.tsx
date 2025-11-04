@@ -6,13 +6,17 @@ import { actions } from 'astro:actions'
 import { useUser } from '@/utils/hooks'
 import { currencyFormat, styledValidateTypeMarkHtml } from '@/utils/helpers'
 import { getStoneIcon, stoneDisplayName } from '@/utils/stone'
-import { getAccountUrl, getOwnStockJsonUrl, getPageTitle, PAGE } from '@/libs/routes'
+import {
+  getAccountUrl,
+  getOwnStockJsonUrl,
+  getOwnProductValueJsonUrl,
+  getPageTitle,
+  PAGE,
+} from '@/libs/routes'
 import { stoneTypeList } from '@/services/dbCompanyStones'
 import { schema as schemaDirector } from '@/services/dbDirectors'
-import { getUserCompanyProductTotal } from '@/libs/request'
 import { ownStocks, companyProductTotal } from '@/stores/account'
 import { map, zipObject } from 'lodash-es'
-import { integer, itemId } from '@/services/schema'
 
 type Props = {
   round: string
@@ -40,19 +44,23 @@ async function updateUserStock(round: string, userId: string) {
         ownStocks.set(zipObject(map(data, 'companyId'), map(data, 'stocks')))
       }
     })
-    .catch((err) => {
-      console.log(err)
+    .catch(() => {
       ownStocks.set({})
     })
 }
 
 async function updateUserCompanyProductTotal(round: string, userId: string) {
-  const _schema = z.record(itemId, integer)
+  const schema = z.record(z.string(), z.record(z.string(), z.number()))
 
-  return await getUserCompanyProductTotal(round, userId)
+  const jsonUrl = getOwnProductValueJsonUrl(round)
+  return await fetch(jsonUrl)
     .then(async (response) => {
-      const data = await z.promise(_schema).parse(response.json())
-      companyProductTotal.set(data)
+      const dict = await z.promise(schema).parse(response.json())
+
+      if (userId in dict) {
+        const data = dict[userId]
+        companyProductTotal.set(data)
+      }
     })
     .catch(() => {
       companyProductTotal.set({})

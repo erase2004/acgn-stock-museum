@@ -338,3 +338,7 @@ export function getProductJsonUrl(round: string) {
 export function getOwnStockJsonUrl(round: string) {
   return `/${round}/json/own-stock.json`
 }
+
+export function getOwnProductValueJsonUrl(round: string) {
+  return `/${round}/json/product-value.json`
+}
