@@ -4,6 +4,7 @@ import { datetime, integer, itemId, objectId } from './schema'
 import { stoneTypeList } from './dbCompanyStones'
 import { zipObject } from 'lodash-es'
 import { productVoucherAmount } from '@/configs/general'
+import { handlePromiseParser } from '@/utils/helpers'
 
 export const BanTypeList = [
   'accuse', // 所有舉報違規行為
@@ -161,4 +162,19 @@ export type BasicUser = z.infer<typeof basicSchema>
 
 export function getDBUsers(db: Db) {
   return db.collection('users')
+}
+
+export async function getAllBasicUsers(db: Db) {
+  const _schema = schema
+    .pick({
+      _id: true,
+    })
+    .merge(
+      z.object({
+        profile: profileSchema.pick({ name: true }),
+      }),
+    )
+  const dbUsers = getDBUsers(db)
+
+  return handlePromiseParser(z.promise(_schema.array()).parse(dbUsers.find({}, {}).toArray()))
 }
