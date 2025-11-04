@@ -95,5 +95,3 @@ export async function getAccountOwnStocks(db: Db, userId: string, includeSeal: b
     ),
   )
 }
-
-export const simpleSchema = schema.pick({ companyId: true, stocks: true })

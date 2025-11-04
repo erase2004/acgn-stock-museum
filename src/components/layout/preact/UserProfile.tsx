@@ -6,10 +6,10 @@ import { actions } from 'astro:actions'
 import { useUser } from '@/utils/hooks'
 import { currencyFormat, styledValidateTypeMarkHtml } from '@/utils/helpers'
 import { getStoneIcon, stoneDisplayName } from '@/utils/stone'
-import { getAccountUrl, getPageTitle, PAGE } from '@/libs/routes'
+import { getAccountUrl, getOwnStockJsonUrl, getPageTitle, PAGE } from '@/libs/routes'
 import { stoneTypeList } from '@/services/dbCompanyStones'
-import { simpleSchema } from '@/services/dbDirectors'
-import { getUserCompanyProductTotal, getUserStock } from '@/libs/request'
+import { schema as schemaDirector } from '@/services/dbDirectors'
+import { getUserCompanyProductTotal } from '@/libs/request'
 import { ownStocks, companyProductTotal } from '@/stores/account'
 import { map, zipObject } from 'lodash-es'
 import { integer, itemId } from '@/services/schema'
@@ -19,10 +19,20 @@ type Props = {
 }
 
 async function updateUserStock(round: string, userId: string) {
-  return await getUserStock(round, userId)
+  const schema = schemaDirector.pick({
+    companyId: true,
+    stocks: true,
+  })
+  const jsonUrl = getOwnStockJsonUrl(round)
+
+  return await fetch(jsonUrl)
     .then(async (response) => {
-      const data = await z.promise(simpleSchema.array()).parse(response.json())
-      ownStocks.set(zipObject(map(data, 'companyId'), map(data, 'stocks')))
+      const dict = await z.promise(z.record(z.string(), schema.array())).parse(response.json())
+
+      if (userId in dict) {
+        const data = dict[userId]
+        ownStocks.set(zipObject(map(data, 'companyId'), map(data, 'stocks')))
+      }
     })
     .catch(() => {
       ownStocks.set({})
