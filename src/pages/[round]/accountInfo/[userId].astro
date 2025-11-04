@@ -28,12 +28,16 @@ import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 const userId = Astro.params['userId'] ?? ''
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)
-const dbUsers = getDBUsers(connection)
 
-const user = await handlePromiseParser(
-  // @ts-expect-error: userId is valid ObjectId
-  z.promise(schemaUser).parse(dbUsers.findOne({ _id: userId })),
-)
+const user = await (async function () {
+  const dbUsers = getDBUsers(connection)
+
+  return handlePromiseParser(
+    // @ts-expect-error: userId is valid ObjectId
+    z.promise(schemaUser).parse(dbUsers.findOne({ _id: userId })),
+  )
+})()
+
 if (!user) {
   return Astro.redirect(getRoundMainPageUrl(round))
 }
@@ -41,62 +45,48 @@ if (!user) {
 const title = getCurrentPageFullTitle(Astro, user.profile.name)
 
 // tax info
-const dbTaxes = getDBTaxes(connection)
 const taxInfo =
-  (await handlePromiseParser(
-    z.promise(schemaTax.array()).parse(
-      dbTaxes
-        .find({
-          userId,
-        })
-        .toArray(),
-    ),
-  )) ?? []
+  (await (async function () {
+    const dbTaxes = getDBTaxes(connection)
+
+    return handlePromiseParser(
+      z.promise(schemaTax.array()).parse(dbTaxes.find({ userId }).toArray()),
+    )
+  })()) ?? []
 
 // stock info
 const stockInfo = await getAccountOwnStocks(connection, userId, true)
 
 // stone info
-const dbCompanyStones = getDBCompanyStones(connection)
 const stoneInfo =
-  (await handlePromiseParser(
-    z.promise(schemaCompanyStone.array()).parse(
-      dbCompanyStones
-        .find(
-          {
-            userId,
-          },
-          {
-            sort: { placedAt: -1 },
-          },
-        )
-        .toArray(),
-    ),
-  )) ?? []
+  (await (async function () {
+    const dbCompanyStones = getDBCompanyStones(connection)
+
+    return handlePromiseParser(
+      z
+        .promise(schemaCompanyStone.array())
+        .parse(dbCompanyStones.find({ userId }, { sort: { placedAt: -1 } }).toArray()),
+    )
+  })()) ?? []
 
 // product info
-const dbUserOwnedProduct = getDBUserOwnedProduct(connection)
+
 const productInfo =
-  (await handlePromiseParser(
-    z.promise(schemaUserOwnedProduct.array()).parse(
-      dbUserOwnedProduct
-        .find(
-          {
-            userId,
-          },
-          {
-            sort: { createdAt: 1 },
-          },
-        )
-        .toArray(),
-    ),
-  )) ?? []
+  (await (async function () {
+    const dbUserOwnedProduct = getDBUserOwnedProduct(connection)
+
+    return handlePromiseParser(
+      z
+        .promise(schemaUserOwnedProduct.array())
+        .parse(dbUserOwnedProduct.find({ userId }, { sort: { createdAt: 1 } }).toArray()),
+    )
+  })()) ?? []
 
 // log info
 const logs = (await getAccountLogs(connection, userId)) ?? []
 ---
 
-<RoundLayout title={title}>
+<RoundLayout title={title} useUserDict={true} useProductDict={true}>
   <BasicInfo round={round} user={user} />
   <div class="account-detail">
     <div>

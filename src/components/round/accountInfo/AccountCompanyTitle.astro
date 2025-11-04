@@ -8,7 +8,7 @@ import { z } from 'astro/zod'
 import { map, zipObject } from 'lodash-es'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
-import { getDBCompanies, simpleSchema } from '@/services/dbCompanies'
+import { getDBCompanies, schema as schemaCompany } from '@/services/dbCompanies'
 import { getDBEmployees, schema as schemaEmployee } from '@/services/dbEmployees'
 import { getDBVips, schema as schemaVip } from '@/services/dbVips'
 import { handlePromiseParser } from '@/utils/helpers'
@@ -26,11 +26,13 @@ const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 const dbCompanies = getDBCompanies(connection)
 
+const titleSchema = schemaCompany.pick({ _id: true, chairmanTitle: true, isSeal: true })
+
 // chairman
 const chairmanTitles =
   (await handlePromiseParser(
     z
-      .promise(simpleSchema.array())
+      .promise(titleSchema.array())
       .parse(
         dbCompanies
           .find({ chairman: userId, isSeal: false }, { sort: { createdAt: -1 } })
@@ -42,7 +44,7 @@ const chairmanTitles =
 const managerTitles =
   (await handlePromiseParser(
     z
-      .promise(simpleSchema.array())
+      .promise(titleSchema.array())
       .parse(
         dbCompanies.find({ manager: userId, isSeal: false }, { sort: { createdAt: -1 } }).toArray(),
       ),
@@ -52,7 +54,7 @@ const managerTitles =
 const founderTitles =
   (await handlePromiseParser(
     z
-      .promise(simpleSchema.array())
+      .promise(titleSchema.array())
       .parse(
         dbCompanies.find({ founder: userId, isSeal: false }, { sort: { createdAt: -1 } }).toArray(),
       ),
@@ -69,7 +71,7 @@ const employments =
 const companies =
   (await handlePromiseParser(
     z
-      .promise(simpleSchema.array())
+      .promise(titleSchema.array())
       // @ts-expect-error: valid ObjectId
       .parse(dbCompanies.find({ _id: { $in: map(employments, 'companyId') } }).toArray()),
   )) ?? []

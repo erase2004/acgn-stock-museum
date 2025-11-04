@@ -36,39 +36,19 @@ export default function TaxList({ data }: Props) {
                 <td class="text-center text-wrap" data-title="繳稅期限">
                   {formatDateTimeText(item.expireDate)}
                 </td>
-                <td
-                  class="truncate text-right text-nowrap"
-                  data-title="股票資產稅"
-                  title={`${item.stockTax}`}
-                >
+                <td class="text-right text-wrap" data-title="股票資產稅" title={`${item.stockTax}`}>
                   $ {currencyFormat(item.stockTax)}
                 </td>
-                <td
-                  class="truncate text-right text-nowrap"
-                  data-title="現金資產稅"
-                  title={`${item.moneyTax}`}
-                >
+                <td class="text-right text-wrap" data-title="現金資產稅" title={`${item.moneyTax}`}>
                   $ {currencyFormat(item.moneyTax)}
                 </td>
-                <td
-                  class="truncate text-right text-nowrap"
-                  data-title="殭屍稅"
-                  title={`${item.zombieTax}`}
-                >
+                <td class="text-right text-wrap" data-title="殭屍稅" title={`${item.zombieTax}`}>
                   $ {currencyFormat(item.zombieTax)}
                 </td>
-                <td
-                  class="truncate text-right text-nowrap"
-                  data-title="逾期罰金"
-                  title={`${item.fine}`}
-                >
+                <td class="text-right text-wrap" data-title="逾期罰金" title={`${item.fine}`}>
                   $ {currencyFormat(item.fine)}
                 </td>
-                <td
-                  class="truncate text-right text-nowrap"
-                  data-title="已繳納"
-                  title={`${item.paid}`}
-                >
+                <td class="text-right text-wrap" data-title="已繳納" title={`${item.paid}`}>
                   $ {currencyFormat(item.paid)}
                 </td>
               </tr>

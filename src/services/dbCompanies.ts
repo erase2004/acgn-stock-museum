@@ -85,12 +85,6 @@ export const schema = z.object({
   nextSeasonSalary: integer.optional().default(defaultCompanySalaryPerDay),
 })
 
-export const simpleSchema = schema.pick({
-  _id: true,
-  chairmanTitle: true,
-  isSeal: true,
-})
-
 export const listItemSchema = schema.pick({
   _id: true,
   companyName: true,
