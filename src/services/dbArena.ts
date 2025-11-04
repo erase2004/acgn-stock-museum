@@ -51,6 +51,7 @@ export async function getPreviousArena(db: Db, currentArena: z.infer<typeof sche
         },
       ),
     ),
+    true,
   )
 }
 
@@ -71,6 +72,7 @@ export async function getNextArena(db: Db, currentArena: z.infer<typeof schema>)
         },
       ),
     ),
+    true,
   )
 }
 

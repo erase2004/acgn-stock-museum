@@ -1,6 +1,5 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import SeasonNavbar from '@/components/common/preact/SeasonNavbar'
 import RoundLayout from '@/layouts/Round.astro'
 import PanelFolder from '@/components/common/preact/PanelFolder'
@@ -9,11 +8,33 @@ import LogList from '@/components/round/arena/preact/LogList'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getArenaInfoUrl, getRoundMainPageUrl } from '@/libs/routes'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
-import { getArenaById, getPreviousArena, getNextArena } from '@/services/dbArena'
+import { getArenaById, getPreviousArena, getNextArena, getAllArenas } from '@/services/dbArena'
 import { getFighters } from '@/services/dbArenaFighters'
 import { getArenaLogs } from '@/services/dbArenaLog'
 import { isArenaEnded, isArenaJoinEnded } from '@/utils/arena'
 import { arenaMinInvestedAmount } from '@/configs/general'
+import { rounds } from '@/configs/sites'
+import { flatten } from 'lodash-es'
+
+export const getStaticPaths = (async () => {
+  const results = await Promise.allSettled(
+    rounds.map(async (round) => {
+      const connection = getConnection(round)!
+      const arenas = (await getAllArenas(connection)) ?? []
+
+      return arenas.map((arena) => ({
+        params: {
+          round,
+          arenaId: arena._id,
+        },
+      }))
+    }),
+  )
+
+  return flatten(
+    results.filter((result) => result.status === 'fulfilled').map((result) => result.value),
+  )
+}) satisfies GetStaticPaths
 
 const arenaId = Astro.params['arenaId']!
 const round = getCurrentRound(Astro)!
@@ -37,7 +58,7 @@ const fighters = (await getFighters(connection, arenaId)) ?? []
 const logs = (await getArenaLogs(connection, arenaId)) ?? []
 ---
 
-<RoundLayout>
+<RoundLayout useUserDict={true}>
   <h1 class="round-block-title">最萌亂鬥大賽</h1>
   <div class="divider"></div>
   <SeasonNavbar
