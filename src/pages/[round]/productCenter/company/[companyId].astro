@@ -1,15 +1,36 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import CompanyListContainer from '@/components/round/productCenter/preact/CompanyListContainer'
 
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
-import { getArchivedCompany } from '@/services/dbCompanyArchive'
+import { getArchivedCompany, getAllArchivedCompanies } from '@/services/dbCompanyArchive'
 import { getProductsByCompany } from '@/services/dbProducts'
 import { getCurrentPageFullTitle } from '@/libs/routes'
+import { rounds } from '@/configs/sites'
+import { flatten } from 'lodash-es'
+
+export const getStaticPaths = (async () => {
+  const results = await Promise.allSettled(
+    rounds.map(async (round) => {
+      const connection = getConnection(round)!
+      const companies = (await getAllArchivedCompanies(connection)) ?? []
+
+      return companies.map((company) => ({
+        params: {
+          round,
+          companyId: company._id,
+        },
+      }))
+    }),
+  )
+
+  return flatten(
+    results.filter((result) => result.status === 'fulfilled').map((result) => result.value),
+  )
+}) satisfies GetStaticPaths
 
 const companyId = Astro.params['companyId']!
 const round = getCurrentRound(Astro)!
@@ -21,14 +42,14 @@ if (!company || company.status !== 'market') {
 }
 
 const title = getCurrentPageFullTitle(Astro, company.companyName)
-const data = (await getProductsByCompany(connection, companyId)) ?? []
+const products = (await getProductsByCompany(connection, companyId)) ?? []
 ---
 
-<RoundLayout title={title}>
+<RoundLayout title={title} useProductDict={true}>
   <h1 class="round-block-title">產品中心</h1>
   <h2 class="my-2 text-3xl">
     <CompanyLink client:only="preact" round={round} companyId={companyId} />
   </h2>
   <div class="divider"></div>
-  <CompanyListContainer client:only="preact" data={data} />
+  <CompanyListContainer client:only="preact" data={products} />
 </RoundLayout>

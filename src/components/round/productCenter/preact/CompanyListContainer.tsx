@@ -53,11 +53,11 @@ export default function SeasonListContainer({ data }: Props) {
       <table class="table-base custom-responsive-table-md table-pin-rows table">
         <thead>
           <tr>
-            <th class="truncate text-center" title="產品">
+            <th class="text-center" title="產品">
               產品
             </th>
             <th
-              class="w-24 cursor-pointer truncate px-0 text-center"
+              class="w-24 cursor-pointer px-0 text-center"
               title="類別"
               onClick={() => {
                 handleSortChange('type')
@@ -67,7 +67,7 @@ export default function SeasonListContainer({ data }: Props) {
               {getSortIcon('type')}
             </th>
             <th
-              class="w-24 cursor-pointer truncate px-0 text-center"
+              class="w-24 cursor-pointer px-0 text-center"
               title="分級"
               onClick={() => {
                 handleSortChange('rating')
@@ -77,7 +77,7 @@ export default function SeasonListContainer({ data }: Props) {
               {getSortIcon('rating')}
             </th>
             <th
-              class="w-24 cursor-pointer truncate px-0 text-center"
+              class="w-24 cursor-pointer px-0 text-center"
               title="得票數"
               onClick={() => {
                 handleSortChange('voteCount')
@@ -98,23 +98,23 @@ export default function SeasonListContainer({ data }: Props) {
                   </div>
                   <div class="max-h-14 overflow-y-auto text-sm break-all">{item.description}</div>
                 </td>
-                <td class="truncate text-center text-nowrap" data-title="類別">
+                <td class="text-center text-nowrap" data-title="類別">
                   {item.type}
                 </td>
                 {isRestrictedRating(item.rating) ? (
                   <td
-                    class="truncate text-center text-nowrap text-error before:text-base-content"
+                    class="text-center text-nowrap text-error before:text-base-content"
                     data-title="分級"
                   >
                     {item.rating}
                   </td>
                 ) : (
-                  <td class="truncate text-center text-nowrap" data-title="分級">
+                  <td class="text-center text-nowrap" data-title="分級">
                     &nbsp;
                   </td>
                 )}
 
-                <td class="truncate text-center text-nowrap" data-title="得票數">
+                <td class="text-center text-nowrap" data-title="得票數">
                   <button class="btn btn-sm btn-primary" type="button" disabled={true}>
                     {item.voteCount}
                     <i class="fa fa-ticket" aria-hidden="true"></i>
