@@ -27,21 +27,21 @@ const connection = getConnection(round)
 const arenaData = await getLatestArena(connection)
 
 const companyData = await (function () {
-  const customSchema = schemaCompany.pick({ companyName: true, manager: true })
-  return getCompanyFilterByCustomSchema(connection, companyId, customSchema)
+  const schema = schemaCompany.pick({ companyName: true, manager: true })
+  return getCompanyFilterByCustomSchema(connection, companyId, schema)
 })()
 
-const dbArenaFighters = getDBArenaFighters(connection)
+const joinData = await (async function () {
+  const dbArenaFighters = getDBArenaFighters(connection)
 
-const joinData = await (function () {
-  const customSchema = schemaFighter
   return handlePromiseParser(
-    z.promise(customSchema).parse(
+    z.promise(schemaFighter).parse(
       dbArenaFighters.findOne({
         arenaId: arenaData?._id ?? '',
         companyId,
-      }),
+      })
     ),
+    true
   )
 })()
 

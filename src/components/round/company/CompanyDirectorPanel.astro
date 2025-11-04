@@ -33,26 +33,28 @@ const directors =
     ),
   )) ?? []
 
-const directorStockDict = zipObject(map(directors, 'userId'), map(directors, 'stocks'))
-
 const company = await getCompanyFilterByCustomSchema(
   connection,
   companyId,
   schemaCompany.pick({ totalRelease: true, candidateList: true, voteList: true }),
 )
 
-const voteList = company?.voteList ?? []
-const candidateList = company?.candidateList ?? []
-const candidates = candidateList.map((candidateId, index) => {
-  const list = voteList[index]
-  const votes = list.reduce((sum, directorId) => sum + (directorStockDict[directorId] ?? 0), 0)
+const candidates = (function () {
+  const directorStockDict = zipObject(map(directors, 'userId'), map(directors, 'stocks'))
+  const voteList = company?.voteList ?? []
+  const candidateList = company?.candidateList ?? []
 
-  return {
-    id: candidateId,
-    votes,
-    list,
-  }
-})
+  return candidateList.map((candidateId, index) => {
+    const list = voteList[index]
+    const votes = list.reduce((sum, directorId) => sum + (directorStockDict[directorId] ?? 0), 0)
+
+    return {
+      id: candidateId,
+      votes,
+      list,
+    }
+  })
+})()
 ---
 
 <DirectorList

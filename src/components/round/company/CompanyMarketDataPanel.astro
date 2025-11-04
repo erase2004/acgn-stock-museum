@@ -8,7 +8,7 @@ import { getCurrentRound } from '@/libs/routes'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getDBLog } from '@/services/dbLog'
 import { getDBEmployees } from '@/services/dbEmployees'
-import { getCompanyFilterByCustomSchema, schema } from '@/services/dbCompanies'
+import { getCompanyFilterByCustomSchema, schema as schemaCompany } from '@/services/dbCompanies'
 import { currencyFormat, handlePromiseParser } from '@/utils/helpers'
 import {
   getCompanyEPRatio,
@@ -28,74 +28,81 @@ const { companyId } = Astro.props
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)
 
-const dbEmployees = getDBEmployees(connection)
 const employeeCount =
-  (await handlePromiseParser(
-    z.promise(z.number()).parse(
-      dbEmployees.countDocuments({
-        employed: true,
-      }),
-    ),
-  )) ?? 0
+  (await (async function () {
+    const dbEmployees = getDBEmployees(connection)
 
-const currentRound = await getCurrentRoundFromDB(connection)
-const dbLog = getDBLog(connection)
-const result = await handlePromiseParser(
-  z
-    .promise(
-      z
-        .object({
-          tradeVolume24h: integer,
-        })
-        .array(),
+    return handlePromiseParser(
+      z.promise(z.number()).parse(
+        dbEmployees.countDocuments({
+          employed: true,
+        }),
+      ),
     )
-    .parse(
-      dbLog
-        .aggregate([
-          {
-            $match: {
-              logType: '交易紀錄',
-              companyId,
-              createdAt: {
-                $gte: dayjs(currentRound!.endDate).subtract(1, 'days').toDate(),
+  })()) ?? 0
+
+const { tradeVolume24h } = await (async function () {
+  const currentRound = await getCurrentRoundFromDB(connection)
+  const dbLog = getDBLog(connection)
+  const result = await handlePromiseParser(
+    z
+      .promise(
+        z
+          .object({
+            tradeVolume24h: integer,
+          })
+          .array(),
+      )
+      .parse(
+        dbLog
+          .aggregate([
+            {
+              $match: {
+                logType: '交易紀錄',
+                companyId,
+                createdAt: {
+                  $gte: dayjs(currentRound!.endDate).subtract(1, 'days').toDate(),
+                },
               },
             },
-          },
-          {
-            $group: {
-              _id: null,
-              tradeVolume24h: { $sum: '$data.amount' },
+            {
+              $group: {
+                _id: null,
+                tradeVolume24h: { $sum: '$data.amount' },
+              },
             },
-          },
-        ])
-        .toArray(),
-    ),
-)
+          ])
+          .toArray(),
+      ),
+  )
 
-const { tradeVolume24h } = result?.[0] ?? {}
+  return result?.[0] ?? { tradeVolume24h: 0 }
+})()
 
-const customSchema = schema.pick({
-  _id: true,
-  listPrice: true,
-  lastPrice: true,
-  totalRelease: true,
-  capital: true,
-  totalValue: true,
-  profit: true,
-  grade: true,
-  createdAt: true,
-  founder: true,
-  manager: true,
-  managerBonusRatePercent: true,
-  employeeBonusRatePercent: true,
-  capitalIncreaseRatePercent: true,
-})
+const item = await (async function () {
+  const schema = schemaCompany.pick({
+    _id: true,
+    listPrice: true,
+    lastPrice: true,
+    totalRelease: true,
+    capital: true,
+    totalValue: true,
+    profit: true,
+    grade: true,
+    createdAt: true,
+    founder: true,
+    manager: true,
+    managerBonusRatePercent: true,
+    employeeBonusRatePercent: true,
+    capitalIncreaseRatePercent: true,
+  })
 
-const company = await getCompanyFilterByCustomSchema(connection, companyId, customSchema)
+  const company = await getCompanyFilterByCustomSchema(connection, companyId, schema)
 
-const item = Object.assign(company!, {
-  employeeCount,
-})
+  return Object.assign(company!, {
+    employeeCount,
+  })
+})()
 
 const PERatio = getCompanyPERatio(item)
 const EPRatio = getCompanyEPRatio(item)

@@ -1,7 +1,7 @@
 ---
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
-import { getCompanyFilterByCustomSchema, schema } from '@/services/dbCompanies'
+import { getCompanyFilterByCustomSchema, schema as schemaCompany } from '@/services/dbCompanies'
 import { companyProfitDistribution } from '@/configs/general'
 
 type Props = {
@@ -13,13 +13,14 @@ const { companyId } = Astro.props
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)
 
-const customSchema = schema.pick({
-  capitalIncreaseRatePercent: true,
-  managerBonusRatePercent: true,
-  employeeBonusRatePercent: true,
-})
-
-const company = await getCompanyFilterByCustomSchema(connection, companyId, customSchema)
+const company = await (async function () {
+  const schema = schemaCompany.pick({
+    capitalIncreaseRatePercent: true,
+    managerBonusRatePercent: true,
+    employeeBonusRatePercent: true,
+  })
+  return getCompanyFilterByCustomSchema(connection, companyId, schema)
+})()
 
 const { incomeTaxRatePercent, employeeProductVotingRewardRatePercent } = companyProfitDistribution
 const {

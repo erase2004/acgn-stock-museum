@@ -5,14 +5,14 @@ import CompanyDetailTable from './CompanyDetailTable.astro'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
-import { getCompanyFilterByCustomSchema, schema } from '@/services/dbCompanies'
+import { getCompanyFilterByCustomSchema, schema as schemaCompany } from '@/services/dbCompanies'
 import { markdownToHtml } from '@/utils/helpers'
 import { fallbackImageUrl } from '@/configs/general'
 
 const companyId = Astro.params['companyId'] ?? ''
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)
-const customSchema = schema.pick({
+const schema = schemaCompany.pick({
   companyName: true,
   illegalReason: true,
   tags: true,
@@ -22,11 +22,9 @@ const customSchema = schema.pick({
   pictureBig: true,
   description: true,
 })
-const company = (await getCompanyFilterByCustomSchema(
-  connection,
-  companyId,
-  customSchema,
-)) as z.infer<typeof customSchema>
+const company = (await getCompanyFilterByCustomSchema(connection, companyId, schema)) as z.infer<
+  typeof schema
+>
 ---
 
 <h1 class="round-block-title mb-2 truncate">{company.companyName}</h1>

@@ -13,8 +13,11 @@ const { round, companyId } = Astro.props
 const connection = getConnection(round)
 const vips = (await getCompnayVips(connection, companyId)) ?? []
 
-const customSchema = schemaCompany.pick({ capital: true })
-const company = await getCompanyFilterByCustomSchema(connection, companyId, customSchema)
+const company = await getCompanyFilterByCustomSchema(
+  connection,
+  companyId,
+  schemaCompany.pick({ capital: true }),
+)
 const vipThresholds = getVipThresholds(company?.capital ?? 0)
 ---
 
