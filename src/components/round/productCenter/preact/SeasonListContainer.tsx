@@ -55,14 +55,14 @@ export default function SeasonListContainer({ round, data }: Props) {
       <table class="table-base custom-responsive-table-md table-pin-rows table">
         <thead>
           <tr class="*:px-0">
-            <th class="w-2/5 truncate text-center" title="產品">
+            <th class="w-2/5 text-center" title="產品">
               產品
             </th>
-            <th class="w-1/5 truncate text-center" title="公司名稱">
+            <th class="w-1/5 text-center" title="公司名稱">
               公司名稱
             </th>
             <th
-              class="w-24 cursor-pointer truncate text-center"
+              class="w-24 cursor-pointer text-center"
               title="類別"
               onClick={() => {
                 handleSortChange('type')
@@ -72,7 +72,7 @@ export default function SeasonListContainer({ round, data }: Props) {
               {getSortIcon('type')}
             </th>
             <th
-              class="w-24 cursor-pointer truncate text-center"
+              class="w-24 cursor-pointer text-center"
               title="分級"
               onClick={() => {
                 handleSortChange('rating')
@@ -82,7 +82,7 @@ export default function SeasonListContainer({ round, data }: Props) {
               {getSortIcon('rating')}
             </th>
             <th
-              class="w-24 cursor-pointer truncate text-center"
+              class="w-24 cursor-pointer text-center"
               title="得票數"
               onClick={() => {
                 handleSortChange('voteCount')
@@ -103,26 +103,26 @@ export default function SeasonListContainer({ round, data }: Props) {
                   </div>
                   <div class="max-h-14 overflow-y-auto text-sm break-all">{item.description}</div>
                 </td>
-                <td class="truncate text-left text-nowrap" data-title="公司名稱">
+                <td class="text-left text-wrap" data-title="公司名稱">
                   <CompanyLink round={round} companyId={item.companyId} />
                 </td>
-                <td class="truncate text-center text-nowrap" data-title="類別">
+                <td class="text-center text-nowrap" data-title="類別">
                   {item.type}
                 </td>
                 {isRestrictedRating(item.rating) ? (
                   <td
-                    class="truncate text-center text-nowrap text-error before:text-base-content"
+                    class="text-center text-nowrap text-error before:text-base-content"
                     data-title="分級"
                   >
                     {item.rating}
                   </td>
                 ) : (
-                  <td class="truncate text-center text-nowrap" data-title="分級">
+                  <td class="text-center text-nowrap" data-title="分級">
                     &nbsp;
                   </td>
                 )}
 
-                <td class="truncate text-center text-nowrap" data-title="得票數">
+                <td class="text-center text-nowrap" data-title="得票數">
                   <button class="btn btn-sm btn-primary" type="button" disabled={true}>
                     {item.voteCount}
                     <i class="fa fa-ticket" aria-hidden="true"></i>

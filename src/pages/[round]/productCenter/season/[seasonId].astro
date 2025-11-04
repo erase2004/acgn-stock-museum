@@ -1,13 +1,36 @@
 ---
 export const prerender = false
 
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import SeasonNavbar from '@/components/common/preact/SeasonNavbar'
 import SeasonListContainer from '@/components/round/productCenter/preact/SeasonListContainer'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getProductCenterBySeasonUrl, getRoundMainPageUrl } from '@/libs/routes'
-import { getNextSeason, getPreviousSeason, getSeasonById } from '@/services/dbSeason'
+import { getNextSeason, getPreviousSeason, getSeasonById, getAllSeasons } from '@/services/dbSeason'
 import { getProductsBySeason } from '@/services/dbProducts'
+import { flatten } from 'lodash-es'
+import { rounds } from '@/configs/sites'
+
+export const getStaticPaths = (async () => {
+  const results = await Promise.allSettled(
+    rounds.map(async (round) => {
+      const connection = getConnection(round)!
+      const seasons = (await getAllSeasons(connection)) ?? []
+
+      return seasons.map((season) => ({
+        params: {
+          round,
+          seasonId: season._id,
+        },
+      }))
+    })
+  )
+
+  return flatten(
+    results.filter((result) => result.status === 'fulfilled').map((result) => result.value)
+  )
+}) satisfies GetStaticPaths
 
 const seasonId = Astro.params['seasonId']!
 const round = getCurrentRound(Astro)!
@@ -26,10 +49,10 @@ const previousSeasonUrl = previousSeason
 const nextSeason = await getNextSeason(connection, currentSeason)
 const nextSeasonUrl = nextSeason ? getProductCenterBySeasonUrl(round, nextSeason._id) : undefined
 
-const data = (await getProductsBySeason(connection, seasonId)) ?? []
+const products = (await getProductsBySeason(connection, seasonId)) ?? []
 ---
 
-<RoundLayout>
+<RoundLayout useProductDict={true}>
   <h1 class="round-block-title">產品中心</h1>
   <div class="divider"></div>
   <SeasonNavbar
@@ -39,5 +62,5 @@ const data = (await getProductsBySeason(connection, seasonId)) ?? []
     nextSeasonUrl={nextSeasonUrl}
   />
   <div class="divider"></div>
-  <SeasonListContainer client:only="preact" round={round} data={data} />
+  <SeasonListContainer client:only="preact" round={round} data={products} />
 </RoundLayout>
