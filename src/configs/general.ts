@@ -146,3 +146,6 @@ export const dataStoreKey = {
 
 export const fallbackImageUrl =
   'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png'
+
+/** e2e test 的最低 timeout 值 */
+export const MINIMUM_TEST_TIMEOUT = 1000 * 30

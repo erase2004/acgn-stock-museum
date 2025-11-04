@@ -117,7 +117,7 @@ export function getDBCompanies(db: Db) {
   return db.collection('companies')
 }
 
-export function getCompanies(db: Db) {
+export async function getCompanies(db: Db) {
   const dbCompanies = getDBCompanies(db)
 
   return handlePromiseParser(
@@ -127,7 +127,7 @@ export function getCompanies(db: Db) {
   )
 }
 
-export function getCompanyFilterByCustomSchema<T extends ZodTypeAny>(
+export async function getCompanyFilterByCustomSchema<T extends ZodTypeAny>(
   db: Db,
   companyId: string,
   schema: T,
@@ -142,4 +142,11 @@ export function getCompanyFilterByCustomSchema<T extends ZodTypeAny>(
       }),
     ),
   )
+}
+
+export async function getAllBasicCompanies(db: Db) {
+  const _schema = schema.pick({ _id: true, companyName: true, isSeal: true })
+  const dbCompanies = getDBCompanies(db)
+
+  return handlePromiseParser(z.promise(_schema.array()).parse(dbCompanies.find({}).toArray()))
 }
