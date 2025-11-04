@@ -1,6 +1,5 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import type { ListItem } from '@/stores/company'
 import RoundLayout from '@/layouts/Round.astro'
 import Filter from '@/components/round/company/preact/Filter'
@@ -15,27 +14,40 @@ import { handlePromiseParser } from '@/utils/helpers'
 import { getCompanyEPS } from '@/utils/company'
 import { countBy } from 'lodash-es'
 import { LIST_STORE_KEY } from '@/stores/company'
+import { rounds } from '@/configs/sites'
+
+export const getStaticPaths = (() => {
+  return rounds.map((round) => ({
+    params: {
+      round,
+    },
+  }))
+}) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
-const dbEmployees = getDBEmployees(connection)
 
-const simpleSchema = schemaEmployee.pick({ companyId: true })
-const employees =
-  (await handlePromiseParser(
-    z.promise(simpleSchema.array()).parse(
-      dbEmployees
-        .find(
-          {
-            employed: true,
-          },
-          // @ts-expect-error: companyId field exists
-          { companyId: 1 },
-        )
-        .toArray(),
-    ),
-  )) ?? []
-const employeeMap = countBy(employees, (item) => item.companyId)
+const employeeMap = await (async function () {
+  const dbEmployees = getDBEmployees(connection)
+
+  const schema = schemaEmployee.pick({ companyId: true })
+  const employees =
+    (await handlePromiseParser(
+      z.promise(schema.array()).parse(
+        dbEmployees
+          .find(
+            {
+              employed: true,
+            },
+            // @ts-expect-error: companyId field exists
+            { companyId: 1 },
+          )
+          .toArray(),
+      ),
+    )) ?? []
+
+  return countBy(employees, (item) => item.companyId)
+})()
 
 const companies = (await getCompanies(connection)) ?? []
 const data: ListItem[] = companies.map((company) => {
@@ -50,7 +62,7 @@ const data: ListItem[] = companies.map((company) => {
 })
 ---
 
-<RoundLayout>
+<RoundLayout useUserDict={true}>
   <h1 class="round-block-title">股市總覽</h1>
   <div class="divider"></div>
   <Filter client:only="preact" data={data} />
