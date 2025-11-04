@@ -6,7 +6,8 @@ import CompanyListContainer from '@/components/round/productCenter/preact/Compan
 
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
-import { getArchivedCompany, getAllArchivedCompanies } from '@/services/dbCompanyArchive'
+import { getArchivedCompany } from '@/services/dbCompanyArchive'
+import { getAllBasicCompanies } from '@/services/dbCompanies'
 import { getProductsByCompany } from '@/services/dbProducts'
 import { getCurrentPageFullTitle } from '@/libs/routes'
 import { rounds } from '@/configs/sites'
@@ -16,7 +17,7 @@ export const getStaticPaths = (async () => {
   const results = await Promise.allSettled(
     rounds.map(async (round) => {
       const connection = getConnection(round)!
-      const companies = (await getAllArchivedCompanies(connection)) ?? []
+      const companies = (await getAllBasicCompanies(connection)) ?? []
 
       return companies.map((company) => ({
         params: {

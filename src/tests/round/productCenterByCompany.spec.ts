@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 import { rounds, siteList } from '@/configs/sites'
 import { getProductCenterByCompanyUrl } from '@/libs/routes'
 import { getConnection } from '@/tests/_utils/database'
-import { getAllArchivedCompanies, schema } from '@/services/dbCompanyArchive'
+import { getAllBasicCompanies, schema } from '@/services/dbCompanies'
 import { shuffle } from 'lodash-es'
 import { MINIMUM_TEST_TIMEOUT } from '@/configs/general'
 
@@ -18,7 +18,7 @@ for (const round of rounds) {
 
     test.beforeAll(async () => {
       const connection = getConnection(round)
-      const results = (await getAllArchivedCompanies(connection)) ?? []
+      const results = (await getAllBasicCompanies(connection)) ?? []
       if (RUN_ALL_TEST) {
         companies = results
       } else {
