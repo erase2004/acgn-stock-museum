@@ -34,7 +34,9 @@ export async function getAllArchivedCompanies(db: Db) {
     z.promise(schema.pick({ _id: true, companyName: true }).array()).parse(
       dbCompanyArchive
         .find(
-          {},
+          {
+            status: 'market',
+          },
           {
             // @ts-expect-error: _id is valid field
             _id: true,
