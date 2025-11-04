@@ -73,3 +73,10 @@ export async function getNextArena(db: Db, currentArena: z.infer<typeof schema>)
     ),
   )
 }
+
+export async function getAllArenas(db: Db) {
+  const _schema = schema.pick({ _id: true, beginDate: true, endDate: true })
+  const dbArena = getDBArena(db)
+
+  return handlePromiseParser(z.promise(_schema.array()).parse(dbArena.find({}).toArray()))
+}
