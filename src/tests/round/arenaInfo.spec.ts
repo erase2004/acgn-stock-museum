@@ -21,6 +21,9 @@ for (const round of rounds) {
       const page = await context.newPage()
 
       for (const arena of arenas) {
+        // FIXME: this is a workaround to clear browser cache
+        await page.route('*', async (route) => route.continue())
+
         const navbarResponsePromise = page.waitForResponse(
           (response) =>
             response.url().includes('SeasonNavbar') &&

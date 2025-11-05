@@ -36,6 +36,9 @@ for (const round of rounds) {
       const page = await context.newPage()
 
       for (const company of companies) {
+        // FIXME: this is a workaround to clear browser cache
+        await page.route('*', async (route) => route.continue())
+
         const h2ResponsePromise = page.waitForResponse(
           (response) =>
             response.url().includes('CompanyLink') &&
