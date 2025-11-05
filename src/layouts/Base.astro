@@ -4,6 +4,7 @@ import '@/styles/global.css'
 import Nav from '@/components/layout/Nav.astro'
 import DrawerSide from '@/components/layout/DrawerSide.astro'
 import BackToTopButton from '@/components/layout/BackToTopButton.astro'
+import AlertDialog from '@/components/layout/preact/AlertDialog'
 import { getCurrentPageFullTitle } from '@/libs/routes'
 
 type Props = {
@@ -53,5 +54,6 @@ const title = customTitle ?? getCurrentPageFullTitle(Astro)
       <DrawerSide />
     </main>
     <BackToTopButton />
+    <AlertDialog client:only="preact" />
   </body>
 </html>
