@@ -28,7 +28,6 @@ export default function CompanyLogList({ round, data }: Props) {
       userId: {
         isEqualFn: (field, target) => {
           if (!isArray(field)) return false
-
           if (!isArray(target)) return field.includes(target)
 
           const inter = intersection(field, target)
@@ -47,7 +46,7 @@ export default function CompanyLogList({ round, data }: Props) {
 
   function toggleFilter() {
     if (filterOn) {
-      setFilterValue('userId', [])
+      setFilterValue('userId', undefined)
       setFilterOn(false)
     } else {
       setFilterValue('userId', [user!._id, '!all'])

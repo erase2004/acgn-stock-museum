@@ -11,7 +11,7 @@ import {
   totalAmount,
 } from '@/stores/pagination'
 import { useEffect, useState, useMemo } from 'preact/hooks'
-import { filter, isArray, isBoolean, isEqual, isString, pickBy, transform } from 'lodash-es'
+import { filter, isArray, isEqual, isString, pickBy, transform } from 'lodash-es'
 import { useLocalStorage } from 'usehooks-ts'
 
 export type FilterConfig<T, S extends keyof T = keyof T> = {
@@ -48,13 +48,11 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
 
   function getQuery() {
     return pickBy(filterObject, (value) => {
-      if (isBoolean(value)) return true
+      if (value === undefined) return false
 
-      if (isString(value)) return value.length > 0
+      if (isString(value) && value.length === 0) return false
 
-      if (isArray(value)) return value.length > 0 && value.every(isString)
-
-      return false
+      return true
     })
   }
 
@@ -135,7 +133,11 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
   }, [$currentPage[storeKey]])
 
   function setFilterValue(key: keyof T, value: any) {
-    setFilterObject({ ...filterObject, [key]: value })
+    // 使用 callback 的形式，來處理內部與外部初始化操作的資料更新
+    setFilterObject((v) => ({
+      ...v,
+      [key]: value,
+    }))
   }
 
   return {

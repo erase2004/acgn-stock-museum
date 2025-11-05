@@ -100,6 +100,15 @@ export default function Filter({ storeKey, data }: Props) {
     setFilterValue('violators', '')
   }
 
+  useEffect(() => {
+    const value = filterObject['violators']
+
+    if (value) {
+      if (inputRef.current) inputRef.current.value = value
+      updateShowClear(value)
+    }
+  }, [filterObject['violators']])
+
   return (
     <div class="sticky-control flex flex-wrap gap-2 py-4">
       <label class="select w-44 select-sm">
