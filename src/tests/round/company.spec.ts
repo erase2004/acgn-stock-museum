@@ -48,12 +48,12 @@ for (const round of rounds) {
         await test.step('has content', async () => {
           if (company.isSeal) {
             // 被查封的公司
-            const element = await page.getByText('該公司已被金融管理委員會查封！')
+            const element = page.getByText('該公司已被金融管理委員會查封！')
 
             await expect(element).toBeVisible()
           } else {
             // h1 heading
-            const element = await page.locator('.round-block-title')
+            const element = page.locator('.round-block-title')
             await expect(element).toContainText(company.companyName)
             await expect(element).toBeVisible()
           }

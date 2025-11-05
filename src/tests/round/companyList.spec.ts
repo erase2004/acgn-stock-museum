@@ -17,7 +17,7 @@ for (const round of rounds) {
       })
 
       await test.step('has content', async () => {
-        const element = await page.locator('.round-block-title')
+        const element = page.locator('.round-block-title')
 
         await expect(element).toHaveText('股市總覽')
         await expect(element).toBeVisible()

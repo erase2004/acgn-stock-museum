@@ -29,7 +29,7 @@ for (const round of rounds) {
         const connection = getConnection(round)
         const roundData = await getCurrentRound(connection)
 
-        const element = await page.getByText('當前賽季起訖時間')
+        const element = page.getByText('當前賽季起訖時間')
         await expect(element).toHaveCount(1)
 
         // 捲動頁面至底部，觸發 island component 載入

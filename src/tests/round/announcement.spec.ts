@@ -48,7 +48,7 @@ for (const round of rounds) {
         await test.step('has content', async () => {
           // h2 heading
           {
-            const element = await page.locator('.round-block-title')
+            const element = page.locator('.round-block-title')
             const siblings = element.locator('//following-sibling::h2')
 
             await expect(siblings.first()).toContainText(announcement.subject)

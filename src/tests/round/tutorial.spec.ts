@@ -17,7 +17,7 @@ for (const round of rounds) {
       })
 
       await test.step('has content', async () => {
-        const element = await page.getByText('ACGN 股票交易市場說明手冊')
+        const element = page.getByText('ACGN 股票交易市場說明手冊')
 
         await expect(element).toHaveRole('link')
         await expect(element).toBeVisible()

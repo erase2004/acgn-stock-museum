@@ -48,14 +48,14 @@ for (const round of rounds) {
         await test.step('has content', async () => {
           // h1 heading
           {
-            const element = await page.locator('.round-block-title')
+            const element = page.locator('.round-block-title')
 
             await expect(element).toContainText('違規案件內容')
             await expect(element).toBeVisible()
           }
           // case ID info
           {
-            const element = await page.locator('div[data-case-id]')
+            const element = page.locator('div[data-case-id]')
 
             await expect(element).toContainText(new RegExp(`案件識別碼：.*${violationCase._id}`))
             await expect(element).toBeVisible()

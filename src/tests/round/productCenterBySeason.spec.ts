@@ -43,7 +43,7 @@ for (const round of rounds) {
         await test.step('has content', async () => {
           // h1 heading
           {
-            const element = await page.locator('.round-block-title')
+            const element = page.locator('.round-block-title')
 
             await expect(element).toHaveText('產品中心')
             await expect(element).toBeVisible()
@@ -54,7 +54,7 @@ for (const round of rounds) {
             // 等待 island component 載入
             await navbarResponsePromise
 
-            const element = await page.getByText(formatDateTimeText(season.beginDate))
+            const element = page.getByText(formatDateTimeText(season.beginDate))
 
             await expect(element).toHaveCount(1)
             await expect(element).toBeVisible()

@@ -6,7 +6,7 @@ import { getAllBasicUsers } from '@/services/dbUsers'
 import { shuffle } from 'lodash-es'
 import { MINIMUM_TEST_TIMEOUT } from '@/configs/general'
 
-const MAX_ITEM_PERCENTAGE = 10
+const MAX_ITEM_PERCENTAGE = 5
 const RUN_ALL_TEST = process.env.RUN_ALL_TEST === 'true'
 
 type User = NonNullable<Awaited<ReturnType<typeof getAllBasicUsers>>>[number]
@@ -47,14 +47,14 @@ for (const round of rounds) {
         await test.step('has content', async () => {
           // h1 heading
           {
-            const element = await page.locator('.round-block-title')
+            const element = page.locator('.round-block-title')
 
             await expect(element).toContainText(user.profile.name)
             await expect(element).toBeVisible()
           }
           // user ID info
           {
-            const element = await page.getByText(`使用者識別碼：${user._id}`)
+            const element = page.getByText(`使用者識別碼：${user._id}`)
             await expect(element).toBeVisible()
           }
         })
