@@ -1,8 +1,7 @@
 import type { TargetedEvent } from 'preact'
-import type { ValidateType } from '@/services/dbUsers'
+import { basicSchema, type ValidateType } from '@/services/dbUsers'
 import { z } from 'astro/zod'
 import { useEffect, useRef, useState } from 'preact/hooks'
-import { actions } from 'astro:actions'
 import { useUser } from '@/utils/hooks'
 import { currencyFormat, styledValidateTypeMarkHtml } from '@/utils/helpers'
 import { getStoneIcon, stoneDisplayName } from '@/utils/stone'
@@ -17,6 +16,8 @@ import { stoneTypeList } from '@/services/dbCompanyStones'
 import { schema as schemaDirector } from '@/services/dbDirectors'
 import { ownStocks, companyProductTotal } from '@/stores/account'
 import { map, zipObject } from 'lodash-es'
+import { firestore } from '@/libs/firebase'
+import { collection, getDocs, query, where } from 'firebase/firestore'
 
 type Props = {
   round: string
@@ -76,6 +77,8 @@ export default function UserProfile({ round }: Props) {
   const dropdownRef = useRef<HTMLDetailsElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const collectionRef = collection(firestore, round)
+
   function resetForm() {
     setValidateMethod('')
     setShouldShowError(false)
@@ -87,6 +90,37 @@ export default function UserProfile({ round }: Props) {
     setValidateMethod(method)
   }
 
+  async function tryLogin(
+    name: string,
+    validateType: string,
+  ): Promise<[true, z.infer<typeof basicSchema>] | [false, undefined]> {
+    const q = query(
+      collectionRef,
+      where('profile.name', '==', name),
+      where('profile.validateType', '==', validateType),
+    )
+
+    try {
+      const snapshot = await getDocs(q)
+
+      if (snapshot.size !== 1) return [false, undefined]
+
+      let raw
+      snapshot.forEach((doc) => {
+        raw = doc.data()
+      })
+
+      const { success, data } = basicSchema.safeParse(raw)
+
+      if (success) return [success, data]
+      else return [success, data]
+    } catch (err) {
+      console.error(err)
+
+      return [false, undefined]
+    }
+  }
+
   async function login(e: TargetedEvent<HTMLFormElement>) {
     e.preventDefault()
 
@@ -95,15 +129,11 @@ export default function UserProfile({ round }: Props) {
 
     setIsProcessing(true)
 
-    const { data, error } = await actions.user.login({
-      round,
-      name: inputRef.current?.value ?? '',
-      type: validateMethod,
-    })
+    const [success, data] = await tryLogin(inputRef.current?.value ?? '', validateMethod)
 
     setIsProcessing(false)
 
-    if (error) {
+    if (!success) {
       setShouldShowError(true)
       resetUser()
       return
@@ -115,7 +145,6 @@ export default function UserProfile({ round }: Props) {
   }
 
   async function logout() {
-    await actions.user.logout()
     resetForm()
     resetUser()
     dropdownRef.current?.removeAttribute('open')
@@ -135,13 +164,9 @@ export default function UserProfile({ round }: Props) {
   useEffect(() => {
     if (user) {
       // 處理使用者在賽季間切換的情況
-      actions.user
-        .login({
-          round,
-          name: user.profile.name,
-          type: user.profile.validateType,
-        })
-        .then(({ data }) => {
+
+      tryLogin(user.profile.name, user.profile.validateType)
+        .then(([_, data]) => {
           if (data) {
             setUser(data)
             return Promise.allSettled([

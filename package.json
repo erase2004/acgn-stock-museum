@@ -28,6 +28,7 @@
     "chartjs-adapter-dayjs-4": "^1.0.4",
     "chartjs-chart-financial": "^0.2.1",
     "dayjs": "^1.11.18",
+    "firebase": "^12.5.0",
     "katex": "^0.16.25",
     "lodash-es": "^4.17.21",
     "mongodb": "^6.20.0",
