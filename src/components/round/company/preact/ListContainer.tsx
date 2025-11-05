@@ -22,7 +22,7 @@ export default function ListContainer({ round }: Props) {
 
   if ($listViewMode === 'card') {
     return (
-      <div class="flex flex-wrap justify-around gap-y-6">
+      <div class="grid grid-cols-1 justify-items-center gap-y-6 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6">
         {$items.map((item) => (
           <Card key={item._id} round={round} item={item} user={user} ownStocks={$ownStocks} />
         ))}
@@ -50,7 +50,7 @@ type CardProps = {
 
 function Card({ round, item, user, ownStocks }: CardProps) {
   return (
-    <div class="w-full max-w-80 px-4 sm:w-1/2 lg:w-1/4 2xl:w-1/6">
+    <div class="w-full max-w-80 px-4">
       <div
         class={`company-card card border border-base-content/25 shadow-lg/50 ${cardDisplayClass(item, user, ownStocks)}`}
       >
