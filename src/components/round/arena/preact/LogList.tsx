@@ -152,7 +152,12 @@ export default function LogList({ round, fighters, logs }: Props) {
       <form class="sticky-control join py-4" onSubmit={onSubmit}>
         <label class="input input-sm join-item">
           <span class="label">篩選參賽者</span>
-          <input type="text" placeholder="全部參賽者" ref={inputRef} onChange={handleInputChange} />
+          <input
+            type="text"
+            placeholder="參賽者識別碼"
+            ref={inputRef}
+            onChange={handleInputChange}
+          />
         </label>
         {showClear && (
           <button type="reset" class="btn join-item btn-sm" aria-label="清除" onClick={clear}>
