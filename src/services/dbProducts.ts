@@ -20,8 +20,7 @@ export function productReplenishBaseAmountTypeDisplayName(
     case 'totalAmount':
       return '總數'
     default: {
-      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-      const unreachable: never = value
+      const _unreachable: never = value
       return value
     }
   }
@@ -51,8 +50,7 @@ export function productReplenishBatchSizeTypeDisplayName(
     case 'veryLarge':
       return '極大量'
     default: {
-      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-      const unreachable: never = value
+      const _unreachable: never = value
       return value
     }
   }

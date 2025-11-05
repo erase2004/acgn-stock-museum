@@ -37,8 +37,7 @@ export default function Violator({ violatorType, violatorId, round }: Props) {
       break
     }
     default: {
-      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-      const unreachable: never = violatorType
+      const _unreachable: never = violatorType
       jsx = <></>
       break
     }

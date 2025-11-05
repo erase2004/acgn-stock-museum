@@ -66,8 +66,7 @@ export default function ChartsOverview({ roundEnd, data }: Props) {
       break
     }
     default: {
-      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-      const unreachable: never = mode
+      const _unreachable: never = mode
       break
     }
   }

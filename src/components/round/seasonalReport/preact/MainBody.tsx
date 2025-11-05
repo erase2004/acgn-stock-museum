@@ -71,8 +71,7 @@ export default function MainBody({
       break
     }
     default: {
-      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-      const unreachable: never = reportType
+      const _unreachable: never = reportType
       break
     }
   }
@@ -100,8 +99,7 @@ export default function MainBody({
       break
     }
     default: {
-      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-      const unreachable: never = reportType
+      const _unreachable: never = reportType
       break
     }
   }

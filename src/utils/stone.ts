@@ -19,8 +19,7 @@ export function getStoneIcon(stoneType: StoneType) {
     case 'saint':
       return IconSaint.src
     default: {
-      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-      const unreachable: never = stoneType
+      const _unreachable: never = stoneType
       return undefined
     }
   }

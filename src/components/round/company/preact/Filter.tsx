@@ -50,8 +50,7 @@ export default function Filter({ data }: Props) {
       case 'createdAt':
         return orderBy(data, [sortOption], ['desc'])
       default: {
-        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-        const unreachable: never = sortOption
+        const _unreachable: never = sortOption
         return data
       }
     }
@@ -112,8 +111,7 @@ export default function Filter({ data }: Props) {
         break
       }
       default: {
-        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-        const unreachable: never = option
+        const _unreachable: never = option
       }
     }
   }

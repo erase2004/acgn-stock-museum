@@ -899,8 +899,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
     default: {
       // It should be unreachable
-      /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-      const unhandledLogType: never = logType
+      const _unhandledLogType: never = logType
       contentJsx = <></>
       break
     }
