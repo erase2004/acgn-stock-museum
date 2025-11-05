@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@astrojs/mdx": "4",
-    "@astrojs/node": "^9.4.4",
     "@astrojs/preact": "4",
     "@fontsource/source-sans-pro": "^5.2.5",
     "@nanostores/preact": "^1.0.0",

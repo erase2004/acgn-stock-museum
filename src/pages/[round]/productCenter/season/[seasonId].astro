@@ -1,6 +1,4 @@
 ---
-export const prerender = false
-
 import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import SeasonNavbar from '@/components/common/preact/SeasonNavbar'
@@ -24,11 +22,11 @@ export const getStaticPaths = (async () => {
           seasonId: season._id,
         },
       }))
-    })
+    }),
   )
 
   return flatten(
-    results.filter((result) => result.status === 'fulfilled').map((result) => result.value)
+    results.filter((result) => result.status === 'fulfilled').map((result) => result.value),
   )
 }) satisfies GetStaticPaths
 

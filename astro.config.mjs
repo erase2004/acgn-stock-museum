@@ -5,7 +5,6 @@ import { defineConfig, envField } from 'astro/config';
 
 import favicons from 'astro-favicons';
 import preact from '@astrojs/preact';
-import node from '@astrojs/node';
 
 // https://astro.build/config
 export default defineConfig({
@@ -54,8 +53,4 @@ export default defineConfig({
       compat: true
     })
   ],
-
-  adapter: node({
-    mode: 'standalone'
-  })
 });
