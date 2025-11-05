@@ -11,7 +11,7 @@ import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { ownStocks } from '@/stores/account'
 import { useFilter, useUser, type FilterConfig } from '@/utils/hooks'
 import { buildSearchRegExp } from '@/utils/helpers'
-import { isArray, orderBy } from 'lodash-es'
+import { isArray, isString, orderBy } from 'lodash-es'
 import { dataNumberPerPage } from '@/configs/general'
 
 type Props = {
@@ -34,8 +34,10 @@ export default function Filter({ data }: Props) {
   const $ownStocks = useStore(ownStocks)
   const { user } = useUser()
   const listOptionRef = useRef<HTMLSelectElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
   const [sortOption, setSortOption] = useState<SortOption>('lastPrice')
   const [searchMode, setSearchMode] = useState<SeachMode>('exact')
+  const [showClear, setShowClear] = useState(false)
 
   const ownStockCompanyIds = Object.keys($ownStocks)
 
@@ -71,10 +73,10 @@ export default function Filter({ data }: Props) {
       // @ts-expect-error: it should be ok
       companyName: {
         isEqualFn: function (field, target, item) {
-          if (isArray(target)) return true
+          if (!isString(target)) return true
 
           const regex = buildSearchRegExp(target, searchMode)
-          return regex.test(field) || item['tags'].some(regex.test)
+          return regex.test(field) || item['tags'].some((tag) => regex.test(tag))
         },
       } satisfies FilterConfig<ListItem, 'companyName'>,
     },
@@ -89,7 +91,7 @@ export default function Filter({ data }: Props) {
     if (!user) {
       if (listOptionRef.current) listOptionRef.current.value = ''
 
-      setFilterValue('_id', [])
+      setFilterValue('_id', undefined)
     }
   }, [user])
 
@@ -106,7 +108,7 @@ export default function Filter({ data }: Props) {
         break
       }
       case '': {
-        setFilterValue('_id', [])
+        setFilterValue('_id', undefined)
         break
       }
       default: {
@@ -124,6 +126,31 @@ export default function Filter({ data }: Props) {
   function changeSearchMode(e: TargetedEvent<HTMLSelectElement>) {
     const mode = e.currentTarget.value as SeachMode
     setSearchMode(mode)
+  }
+
+  function updateShowClear(value: string) {
+    if (value !== '') setShowClear(true)
+    else setShowClear(false)
+  }
+
+  function handleInputChange(e: TargetedEvent<HTMLInputElement>) {
+    const value = e.currentTarget.value
+    updateShowClear(value)
+  }
+
+  function search(e: TargetedEvent<HTMLFormElement>) {
+    e.preventDefault()
+
+    if (!searchRef.current) return
+    const target = searchRef.current.value
+
+    setFilterValue('companyName', target)
+  }
+
+  function clear() {
+    updateShowClear('')
+    if (searchRef.current) searchRef.current.value = ''
+    setFilterValue('companyName', undefined)
   }
 
   return (
@@ -150,8 +177,14 @@ export default function Filter({ data }: Props) {
         <option value="capital">依資本額排序</option>
         <option value="createdAt">依上市日期排序</option>
       </select>
-      <div class="join-vertical join w-full grow sm:join-horizontal md:w-auto">
-        <input class="input join-item w-full sm:w-60" type="text" placeholder="請輸入關鍵字" />
+      <form class="join-vertical join w-full grow sm:join-horizontal md:w-auto" onSubmit={search}>
+        <input
+          class="input join-item w-full sm:w-60"
+          type="text"
+          placeholder="請輸入關鍵字"
+          ref={searchRef}
+          onChange={handleInputChange}
+        />
         <select
           class="select join-item w-full sm:w-30"
           value={searchMode}
@@ -162,10 +195,15 @@ export default function Filter({ data }: Props) {
           </option>
           <option value="fuzzy">模糊比對</option>
         </select>
-        <button class="btn join-item btn-primary">
+        {showClear && (
+          <button type="reset" class="btn join-item" aria-label="清除" onClick={clear}>
+            <i class="fa fa-times"></i>
+          </button>
+        )}
+        <button class="btn join-item btn-primary" type="submit">
           <i class="fa fa-search" aria-hidden="true"></i> 搜索
         </button>
-      </div>
+      </form>
     </div>
   )
 }
