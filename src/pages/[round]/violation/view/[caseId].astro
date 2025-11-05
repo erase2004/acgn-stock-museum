@@ -1,6 +1,5 @@
 ---
-export const prerender = false
-
+import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import Violator from '@/components/round/violation/preact/Violator'
 import ActionLog from '@/components/round/violation/preact/ActionLog'
@@ -9,16 +8,35 @@ import LoadMore from '@/components/common/preact/LoadMore'
 import ClientDatetime from '@/components/common/preact/ClientDatetime'
 
 import { getConnection } from '@/libs/databases'
-import { getViolationCaseById } from '@/services/dbViolationCases'
+import { getAllBasicViolationCase, getViolationCaseById } from '@/services/dbViolationCases'
 import { getRelatedActionLog } from '@/services/dbViolationCaseActionLogs'
 import { getViolationCaseRelatedLogs } from '@/services/dbLog'
 import { getCurrentRound, getViolationCaseUrl, getRoundMainPageUrl } from '@/libs/routes'
 import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/violation'
 import { dataStoreKey } from '@/configs/general'
 import { markdownToHtml } from '@/utils/helpers'
+import { rounds } from '@/configs/sites'
+import { flatten } from 'lodash-es'
 
-// 頁面數量過多，改用 on-demand rendering 搭配 cache-control header
-Astro.response.headers.set('Cache-Control', `public, max-age=${60 * 60 * 24 * 30}`)
+export const getStaticPaths = (async () => {
+  const results = await Promise.allSettled(
+    rounds.map(async (round) => {
+      const connection = getConnection(round)!
+      const violationCases = (await getAllBasicViolationCase(connection)) ?? []
+
+      return violationCases.map((violationCase) => ({
+        params: {
+          round,
+          caseId: violationCase._id,
+        },
+      }))
+    }),
+  )
+
+  return flatten(
+    results.filter((result) => result.status === 'fulfilled').map((result) => result.value),
+  )
+}) satisfies GetStaticPaths
 
 const STORE_KEY = dataStoreKey.violationRelatedLog
 
