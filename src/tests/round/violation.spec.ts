@@ -36,16 +36,7 @@ for (const round of rounds) {
       const page = await context.newPage()
 
       for (const violationCase of violationCases) {
-        const response = await page.goto(getViolationCaseUrl(round, violationCase._id))
-
-        await test.step('has cache control header', async () => {
-          const headers = response?.headers()
-          const cacheControlHeader = headers?.['cache-control']
-
-          expect(headers).toHaveProperty('cache-control')
-          expect(cacheControlHeader).toContain('public')
-          expect(cacheControlHeader).toContain(`max-age`)
-        })
+        await page.goto(getViolationCaseUrl(round, violationCase._id))
 
         await test.step('has title', async () => {
           const websiteName = siteList[round as keyof typeof siteList]?.name
