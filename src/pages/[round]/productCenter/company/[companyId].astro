@@ -3,14 +3,14 @@ import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import CompanyListContainer from '@/components/round/productCenter/preact/CompanyListContainer'
-
+import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
 import { getArchivedCompany } from '@/services/dbCompanyArchive'
 import { getAllBasicCompanies } from '@/services/dbCompanies'
 import { getProductsByCompany } from '@/services/dbProducts'
 import { getCurrentPageFullTitle } from '@/libs/routes'
-import { rounds } from '@/configs/sites'
+import { roundDefaultDescription, rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
 
 export const getStaticPaths = (async () => {
@@ -42,11 +42,13 @@ if (!company || company.status !== 'market') {
   return Astro.redirect(getRoundMainPageUrl(round))
 }
 
-const title = getCurrentPageFullTitle(Astro, company.companyName)
 const products = (await getProductsByCompany(connection, companyId)) ?? []
+
+const title = getCurrentPageFullTitle(Astro, company.companyName)
 ---
 
-<RoundLayout title={title} useProductDict={true}>
+<RoundLayout useProductDict={true}>
+  <OpenGraph slot="head-seo" title={title} description={roundDefaultDescription} />
   <h1 class="round-block-title">產品中心</h1>
   <h2 class="my-2 text-3xl">
     <CompanyLink client:only="preact" round={round} companyId={companyId} />

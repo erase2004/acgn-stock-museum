@@ -2,6 +2,8 @@ import { range } from 'lodash-es'
 
 export const defaultWebsiteName = 'ACGN 股票歷史博物館'
 
+export const siteUrl = 'https://museum.acgn-stock.com'
+
 type RoundKey = `round${number}`
 
 type Round = {
@@ -175,3 +177,5 @@ export const siteList = {
 export const rounds = range(6, Object.keys(siteList).length + 1)
   .map<RoundKey>((n) => `round${n}`)
   .filter((key) => key in siteList && siteList[key as keyof typeof siteList].disabled !== true)
+
+export const roundDefaultDescription = '｜ 尋找你的老婆！ \n｜ 喜歡嗎？那麼就入股吧！'

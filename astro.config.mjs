@@ -5,12 +5,15 @@ import { defineConfig, envField } from 'astro/config';
 
 import favicons from 'astro-favicons';
 import preact from '@astrojs/preact';
+import { defaultWebsiteName, siteUrl } from './src/configs/sites';
 
 // https://astro.build/config
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+
+  site: siteUrl,
 
   // when the value is changed, corresponding entry in .gitignore should be changed, too.
   cacheDir: './assets-cache',
@@ -33,8 +36,8 @@ export default defineConfig({
           "src/assets/icons/logo.png"
         ]
       },
-      name: '',
-      short_name: '',
+      name: defaultWebsiteName,
+      short_name: 'Museum Landmark',
       icons: {
         favicons: true,
         android: true,

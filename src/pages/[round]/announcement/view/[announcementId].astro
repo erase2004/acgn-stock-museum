@@ -3,11 +3,12 @@ import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import UserLink from '@/components/common/preact/UserLink'
 import ClientDatetime from '@/components/common/preact/ClientDatetime'
+import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { getCurrentRound, getAnnouncementRejectionUrl, getRoundMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAllBasicAnnouncements, getAnnouncementById } from '@/services/dbAnnouncements'
 import { categoryDisplayName } from '@/utils/announcement'
-import { markdownToHtml } from '@/utils/helpers'
+import { markdownToHtml, removeMarkdown } from '@/utils/helpers'
 import { getCurrentPageFullTitle } from '@/libs/routes'
 import { rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
@@ -42,11 +43,14 @@ if (!announcement) {
   return Astro.redirect(getRoundMainPageUrl(round))
 }
 
-const title = getCurrentPageFullTitle(Astro, announcement.subject)
 const canRejectAnnoumcenet = !!announcement.rejectionPetition
+
+const title = getCurrentPageFullTitle(Astro, announcement.subject)
+const description = removeMarkdown(announcement.content)
 ---
 
-<RoundLayout title={title} useUserDict={true}>
+<RoundLayout useUserDict={true}>
+  <OpenGraph slot="head-seo" title={title} description={description} />
   <h1 class="round-block-title flex items-center justify-between">
     <div>公告 - {categoryDisplayName(announcement.category)}</div>
     {

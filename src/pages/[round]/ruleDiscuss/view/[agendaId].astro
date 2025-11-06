@@ -3,13 +3,14 @@ import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import UserLink from '@/components/common/preact/UserLink'
 import Issue from '@/components/round/ruleAgenda/Issue.astro'
+import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getCurrentPageFullTitle, getRoundMainPageUrl } from '@/libs/routes'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getAgendaById, getAllBasicRuleAgendas } from '@/services/dbRuleAgendas'
 import { getRelatedIssues } from '@/services/dbRuleIssues'
 import { getRelatedIssueOptions } from '@/services/dbRuleIssueOptions'
-import { markdownToHtml } from '@/utils/helpers'
+import { markdownToHtml, removeMarkdown } from '@/utils/helpers'
 import { flatten, keyBy, map } from 'lodash-es'
 import { rounds } from '@/configs/sites'
 
@@ -44,8 +45,6 @@ if (!agenda) {
   return Astro.redirect(getRoundMainPageUrl(round))
 }
 
-const title = getCurrentPageFullTitle(Astro, agenda.title)
-
 const descriptionHtml = markdownToHtml(agenda.description, true)
 
 const issues = (await getRelatedIssues(connection, agenda.issues)) ?? []
@@ -57,9 +56,13 @@ const data = issues.map((issue) =>
     options: issue.options.map((optionId) => optionMap[optionId]),
   }),
 )
+
+const title = getCurrentPageFullTitle(Astro, agenda.title)
+const description = `${removeMarkdown(agenda.description)}`
 ---
 
-<RoundLayout title={title} useUserDict={true}>
+<RoundLayout useUserDict={true}>
+  <OpenGraph slot="head-seo" title={title} description={description} />
   <h1 class="round-block-title">{agenda.title}</h1>
   <div class="divider"></div>
   <h2 class="text-3xl">

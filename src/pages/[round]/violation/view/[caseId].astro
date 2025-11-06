@@ -6,15 +6,20 @@ import ActionLog from '@/components/round/violation/preact/ActionLog'
 import RelatedLogListContainer from '@/components/round/violation/preact/RelatedLogListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
 import ClientDatetime from '@/components/common/preact/ClientDatetime'
-
+import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { getConnection } from '@/libs/databases'
 import { getAllBasicViolationCase, getViolationCaseById } from '@/services/dbViolationCases'
 import { getRelatedActionLog } from '@/services/dbViolationCaseActionLogs'
 import { getViolationCaseRelatedLogs } from '@/services/dbLog'
-import { getCurrentRound, getViolationCaseUrl, getRoundMainPageUrl } from '@/libs/routes'
+import {
+  getCurrentRound,
+  getViolationCaseUrl,
+  getRoundMainPageUrl,
+  getCurrentPageFullTitle,
+} from '@/libs/routes'
 import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/violation'
 import { dataStoreKey } from '@/configs/general'
-import { markdownToHtml } from '@/utils/helpers'
+import { markdownToHtml, removeMarkdown } from '@/utils/helpers'
 import { rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
 
@@ -52,9 +57,13 @@ if (!violation) {
 
 const relatedActionLogs = await getRelatedActionLog(connection, caseId)
 const relatedLogs = (await getViolationCaseRelatedLogs(connection, caseId)) ?? []
+
+const title = getCurrentPageFullTitle(Astro)
+const description = `案件識別碼：${violation._id}｜內容：${removeMarkdown(violation.description)}`
 ---
 
 <RoundLayout useUserDict={true} useProductDict={true}>
+  <OpenGraph slot="head-seo" title={title} description={description} />
   <h1 class="round-block-title">
     違規案件內容 - <span class="text-nowrap">{categoryDisplayName(violation.category)}</span>
   </h1>

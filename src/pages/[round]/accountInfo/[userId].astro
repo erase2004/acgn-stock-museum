@@ -9,6 +9,7 @@ import StoneList from '@/components/round/accountInfo/preact/StoneList'
 import ProductList from '@/components/round/accountInfo/preact/ProductList'
 import ViolationCaseInfo from '@/components/common/ViolationCaseInfo.astro'
 import LogList from '@/components/round/accountInfo/preact/LogList'
+import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentPageFullTitle, getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
@@ -63,8 +64,6 @@ if (!user) {
   return Astro.redirect(getRoundMainPageUrl(round))
 }
 
-const title = getCurrentPageFullTitle(Astro, user.profile.name)
-
 // tax info
 const taxInfo =
   (await (async function () {
@@ -105,9 +104,18 @@ const productInfo =
 
 // log info
 const logs = (await getAccountLogs(connection, userId)) ?? []
+
+const title = getCurrentPageFullTitle(Astro, user.profile.name)
+const description = user.about.description ?? ''
 ---
 
-<RoundLayout title={title} useUserDict={true} useProductDict={true}>
+<RoundLayout useUserDict={true} useProductDict={true}>
+  <OpenGraph
+    slot="head-seo"
+    title={title}
+    description={description}
+    image={user.about.picture || undefined}
+  />
   <BasicInfo round={round} user={user} />
   <div class="account-detail">
     <div>

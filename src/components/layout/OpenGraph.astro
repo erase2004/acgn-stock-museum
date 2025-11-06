@@ -1,0 +1,40 @@
+---
+import { getCurrentPageFullTitle } from '@/libs/routes'
+import { formatDescription } from '@/utils/helpers'
+
+type Props = {
+  title?: string
+  description?: string
+  keywords?: string[]
+  image?: string
+}
+
+const {
+  title = getCurrentPageFullTitle(Astro),
+  description = 'ACGN 股票歷史博物館大廳',
+  keywords = ['ACGN', '股市', '博物館'],
+  image = new URL('mstile-310x310.png', Astro.site),
+} = Astro.props
+---
+
+{
+  title && (
+    <Fragment>
+      <title>{title}</title>
+      <meta property="og:title" content={title} />
+    </Fragment>
+  )
+}
+{description && <meta property="og:description" content={formatDescription(description)} />}
+{
+  image && (
+    <Fragment>
+      <>
+        <meta property="og:image" content={image} />
+        <meta property="og:image:url" content={image} />
+      </>
+    </Fragment>
+  )
+}
+{keywords && <meta name="keywords" content={keywords.join(',')} />}
+<meta property="og:type" content="website" />

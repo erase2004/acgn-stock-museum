@@ -6,6 +6,7 @@ import showdown from 'showdown'
 import footnotes from 'showdown-footnotes'
 import katex from 'katex'
 import { ZodError } from 'astro/zod'
+import removeMd from 'remove-markdown'
 
 export function currencyFormat(money: any, formatOption: Intl.NumberFormatOptions = {}) {
   switch (typeof money) {
@@ -155,6 +156,10 @@ export function markdownToHtml(content: string, advanced = false) {
   return converter.makeHtml(processedContent)
 }
 
+export function removeMarkdown(text: string) {
+  return removeMd(text).replace(/"/g, `''`)
+}
+
 export function typedObjectKeys<T extends object>(obj: T) {
   return Object.keys(obj) as [keyof typeof obj]
 }
@@ -178,4 +183,14 @@ export function buildSearchRegExp(keyword: string, matchType: 'exact' | 'fuzzy')
 export function roundToDecimalPlaces(number: number, digit: number) {
   const p = Math.pow(10, digit)
   return Math.round(number * p) / p
+}
+
+export function formatDescription(text: string) {
+  const maxLength = 200
+
+  if (text.length > maxLength) {
+    return `${text.slice(0, maxLength - 5)}...`
+  }
+
+  return text
 }

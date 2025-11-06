@@ -5,14 +5,7 @@ import Nav from '@/components/layout/Nav.astro'
 import DrawerSide from '@/components/layout/DrawerSide.astro'
 import BackToTopButton from '@/components/layout/BackToTopButton.astro'
 import AlertDialog from '@/components/layout/preact/AlertDialog'
-import { getCurrentPageFullTitle } from '@/libs/routes'
-
-type Props = {
-  title?: string
-}
-
-const { title: customTitle } = Astro.props
-const title = customTitle ?? getCurrentPageFullTitle(Astro)
+import OpenGraph from '@/components/layout/OpenGraph.astro'
 ---
 
 <html lang="zh-TW">
@@ -42,7 +35,9 @@ const title = customTitle ?? getCurrentPageFullTitle(Astro)
       crossorigin="anonymous"
     />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <slot name="head-seo">
+      <OpenGraph />
+    </slot>
   </head>
   <body class="text-base font-normal">
     <main class="drawer drawer-end container mx-auto px-4">

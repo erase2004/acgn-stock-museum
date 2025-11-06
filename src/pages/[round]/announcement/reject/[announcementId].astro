@@ -3,12 +3,14 @@ import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import RejectionPetition from '@/components/round/announcement/RejectionPetition.astro'
 import RejectionPoll from '@/components/round/announcement/RejectionPoll.astro'
+import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { getCurrentRound, getAnnouncementUrl, getRoundMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAllBasicAnnouncements, getAnnouncementById } from '@/services/dbAnnouncements'
 import { categoryDisplayName } from '@/utils/announcement'
 import { getCurrentPageFullTitle } from '@/libs/routes'
 import { rounds } from '@/configs/sites'
+import { removeMarkdown } from '@/utils/helpers'
 import { flatten } from 'lodash-es'
 
 export const getStaticPaths = (async () => {
@@ -41,11 +43,14 @@ if (!announcement) {
   return Astro.redirect(getRoundMainPageUrl(round))
 }
 
-const title = getCurrentPageFullTitle(Astro, announcement.subject)
 const canRejectAnnoumcenet = !!announcement.rejectionPetition
+
+const title = getCurrentPageFullTitle(Astro, announcement.subject)
+const description = removeMarkdown(announcement.content)
 ---
 
-<RoundLayout title={title} useUserDict={true}>
+<RoundLayout useUserDict={true}>
+  <OpenGraph slot="head-seo" title={title} description={description} />
   <h1 class="round-block-title">
     公告否決 - {categoryDisplayName(announcement.category)}
   </h1>
