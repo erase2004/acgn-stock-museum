@@ -1,6 +1,5 @@
 import type { ZodTypeAny } from 'astro/zod'
 import type { BasicUser } from '@/services/dbUsers'
-import { z } from 'astro/zod'
 import { useStore } from '@nanostores/preact'
 import {
   currentAmount,
@@ -11,16 +10,18 @@ import {
   totalAmount,
 } from '@/stores/pagination'
 import { useEffect, useState, useMemo } from 'preact/hooks'
-import { filter, isArray, isEqual, isString, pickBy, transform } from 'lodash-es'
+import { filter, isArray, isString, pickBy, transform } from 'lodash-es'
 import { useLocalStorage } from 'usehooks-ts'
 
-export type FilterConfig<T, S extends keyof T = keyof T> = {
-  isEqualFn: (field: T[S], target: any, item: T) => boolean
+type Filterobject<T extends string | number | symbol> = Partial<Record<T, any>>
+
+type FilterConfig<T extends Record<string, any>> = {
+  filterFn: (item: T, filterObject: Filterobject<keyof T>) => boolean
   /** 當 shouldSyncUrl 為 true 時，schema 會作為處理 URL 資訊使用 */
   schema?: ZodTypeAny
 }
 
-export function useFilter<T extends Record<string, any>, U extends Record<string, FilterConfig<T>>>(
+export function useFilter<T extends Record<string, any>, U extends FilterConfig<T>>(
   storeKey: string,
   pageSize: number,
   data: T[],
@@ -31,20 +32,9 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
   const $isDataLoading = useStore(isDataLoading)
   const [filteredItems, setFilteredItems] = useState(data.slice(0, pageSize))
   const [isInitialized, setIsInitialized] = useState(false)
-  const [filterObject, setFilterObject] = useState<Record<string, any>>({})
+  const [filterObject, setFilterObject] = useState<Filterobject<keyof T>>({})
 
-  const filterSchema = z.object(
-    transform(
-      filterConfig,
-      function (result: { [W in keyof U]: ZodTypeAny }, value: FilterConfig<T>, key: keyof U) {
-        const schema = value?.schema
-        if (typeof schema !== 'undefined') {
-          result[key] = schema
-        }
-      },
-    ),
-    {},
-  )
+  const { schema: filterSchema, filterFn } = filterConfig
 
   function getQuery() {
     return pickBy(filterObject, (value) => {
@@ -80,13 +70,9 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
 
     let newList = data
 
-    const filters = getQuery()
+    const filters = getQuery() as Record<keyof T, any>
 
-    newList = Object.entries(filters).reduce(function (list: T[], [key, target]: [string, any]) {
-      const isEqualFn = filterConfig[key]?.isEqualFn ?? isEqual
-
-      return filter(list, (item) => isEqualFn(item[key], target, item))
-    }, newList)
+    newList = filter(newList, (item) => filterFn(item, filters))
 
     const totalAmount = newList.length
 
@@ -105,7 +91,7 @@ export function useFilter<T extends Record<string, any>, U extends Record<string
   useEffect(() => {
     if (isInitialized) return
 
-    if (shouldSyncUrl) {
+    if (shouldSyncUrl && filterSchema) {
       const searchParams = new URLSearchParams(location.search)
       const { data } = filterSchema.safeParse(Object.fromEntries(searchParams.entries()))
 

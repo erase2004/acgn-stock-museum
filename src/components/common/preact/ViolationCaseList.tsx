@@ -1,13 +1,12 @@
 import type { TargetedEvent } from 'preact'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { categoryMap, stateMap, type simpleSchema } from '@/services/dbViolationCases'
+import { categoryMap, stateMap, simpleSchema } from '@/services/dbViolationCases'
 import { z } from 'astro/zod'
-import { useFilter, type FilterConfig } from '@/utils/hooks'
+import { useFilter } from '@/utils/hooks'
 import { formatDateTimeText } from '@/libs/timeFormat'
 import { categoryDisplayName, stateBadgeClass, stateDisplayName } from '@/utils/violation'
 import { getViolationCaseUrl } from '@/libs/routes'
-import { typedObjectKeys } from '@/utils/helpers'
-import { isArray } from 'lodash-es'
+import { isArray, isString } from 'lodash-es'
 
 type Case = z.infer<typeof simpleSchema>
 
@@ -24,24 +23,29 @@ export default function ViolationCaseList({ round, storeKey, pageSize, data }: P
     pageSize,
     data,
     {
-      // @ts-expect-error: it should be ok
-      category: {
-        schema: z.enum(typedObjectKeys(categoryMap)).optional(),
-        isEqualFn: (field, target) => {
-          if (isArray(target)) return false
+      filterFn(item, filters) {
+        {
+          // category
+          const key = 'category'
+          const target = filters[key]
+          const value = item[key]
 
-          return field === target
-        },
-      } satisfies FilterConfig<Case, 'category'>,
-      // @ts-expect-error: it should be ok
-      state: {
-        schema: z.enum(typedObjectKeys(stateMap)).optional(),
-        isEqualFn: (field, target) => {
           if (isArray(target)) return false
+          if (isString(target) && value !== target) return false
+        }
 
-          return field === target
-        },
-      } satisfies FilterConfig<Case, 'state'>,
+        {
+          // state
+          const key = 'state'
+          const target = filters[key]
+          const value = item[key]
+
+          if (isArray(target)) return false
+          if (isString(target) && value !== target) return false
+        }
+
+        return true
+      },
     },
     false,
   )

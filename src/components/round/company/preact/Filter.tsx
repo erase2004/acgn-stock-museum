@@ -9,7 +9,7 @@ import {
 import { useStore } from '@nanostores/preact'
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
 import { ownStocks } from '@/stores/account'
-import { useFilter, useUser, type FilterConfig } from '@/utils/hooks'
+import { useFilter, useUser } from '@/utils/hooks'
 import { buildSearchRegExp } from '@/utils/helpers'
 import { isArray, isString, orderBy } from 'lodash-es'
 import { dataNumberPerPage } from '@/configs/general'
@@ -61,23 +61,31 @@ export default function Filter({ data }: Props) {
     PAGE_SIZE,
     sortedItems,
     {
-      // @ts-expect-error: it should be ok
-      _id: {
-        isEqualFn: function (field, target) {
-          if (isArray(target)) return target.includes(field)
+      filterFn(item, filters) {
+        {
+          // _id
+          const key = '_id'
+          const target = filters[key]
+          const value = item[key]
 
-          return field === target
-        },
-      } satisfies FilterConfig<ListItem, '_id'>,
-      // @ts-expect-error: it should be ok
-      companyName: {
-        isEqualFn: function (field, target, item) {
-          if (!isString(target)) return true
+          if (isArray(target) && !target.includes(value)) return false
+          if (isString(target) && value !== target) return false
+        }
 
-          const regex = buildSearchRegExp(target, searchMode)
-          return regex.test(field) || item['tags'].some((tag) => regex.test(tag))
-        },
-      } satisfies FilterConfig<ListItem, 'companyName'>,
+        {
+          // companyName
+          const key = 'companyName'
+          const target = filters[key]
+          const value = item[key]
+
+          if (isString(target)) {
+            const regex = buildSearchRegExp(target, searchMode)
+            return regex.test(value) || item['tags'].some((tag) => regex.test(tag))
+          }
+        }
+
+        return true
+      },
     },
     false,
   )

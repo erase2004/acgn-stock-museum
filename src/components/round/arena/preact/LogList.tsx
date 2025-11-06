@@ -6,9 +6,9 @@ import type { TargetedEvent } from 'preact'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { useMemo, useRef, useState } from 'preact/hooks'
-import { isArray, map, zipObject } from 'lodash-es'
+import { isArray, isString, map, zipObject } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
-import { useFilter, type FilterConfig } from '@/utils/hooks'
+import { useFilter } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 
 const STORE_KEY = dataStoreKey.arena.log
@@ -85,14 +85,19 @@ export default function LogList({ round, fighters, logs }: Props) {
     PAGE_SIZE,
     logs,
     {
-      // @ts-expect-error: it should be ok
-      companyId: {
-        isEqualFn: (field, target) => {
-          if (isArray(target)) return false
+      filterFn(item, filters) {
+        {
+          // companyId
+          const key = 'companyId'
+          const target = filters[key]
+          const value = item[key]
 
-          return field.includes(target)
-        },
-      } satisfies FilterConfig<Log, 'companyId'>,
+          if (isArray(target)) return false
+          if (isString(target)) return value.includes(target)
+        }
+
+        return true
+      },
     },
     false,
   )

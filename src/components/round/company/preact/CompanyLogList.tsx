@@ -3,9 +3,9 @@ import type { z } from 'astro/zod'
 import DisplayLog from '@/components/common/preact/DisplayLog'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { useState, useEffect } from 'preact/hooks'
-import { useFilter, useUser, type FilterConfig } from '@/utils/hooks'
+import { useFilter, useUser } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
-import { intersection, isArray } from 'lodash-es'
+import { intersection, isArray, isString } from 'lodash-es'
 
 const STORE_KEY = dataStoreKey.company.log
 const PAGE_SIZE = dataNumberPerPage.company.log
@@ -25,15 +25,25 @@ export default function CompanyLogList({ round, data }: Props) {
     PAGE_SIZE,
     data,
     {
-      userId: {
-        isEqualFn: (field, target) => {
-          if (!isArray(field)) return false
-          if (!isArray(target)) return field.includes(target)
+      filterFn(item, filters) {
+        {
+          // userId
+          const key = 'userId'
+          const target = filters[key]
+          const value = item[key]
 
-          const inter = intersection(field, target)
-          return inter.length > 0
-        },
-      } satisfies FilterConfig<Log, 'userId'>,
+          if (!isArray(value)) return false
+
+          if (isArray(target)) {
+            const inter = intersection(value, target)
+            return inter.length > 0
+          }
+
+          if (isString(target)) return value.includes(target)
+
+          return true
+        }
+      },
     },
     false,
   )

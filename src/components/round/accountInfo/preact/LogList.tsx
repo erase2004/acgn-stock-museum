@@ -1,7 +1,7 @@
 import DisplayLog from '@/components/common/preact/DisplayLog'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { z } from 'astro/zod'
-import { useFilter, type FilterConfig } from '@/utils/hooks'
+import { useFilter } from '@/utils/hooks'
 import { logTypeGroupMap, type schema } from '@/services/dbLog'
 import { flatten, isArray, without } from 'lodash-es'
 import { useEffect, useRef } from 'preact/hooks'
@@ -29,26 +29,30 @@ export default function LogList({ round, data }: Props) {
     PAGE_SIZE,
     data,
     {
-      logType: {
-        isEqualFn(field, target) {
-          if (isArray(target)) {
-            if (target.length === 0) return false
+      filterFn(item, filters) {
+        {
+          // logType
+          const key = 'logType'
+          const target = filters[key]
+          const value = item[key]
 
-            const logTypes = flatten(
-              target.map((key) => {
-                if (key in logTypeGroupMap) {
-                  return logTypeGroupMap[key as keyof typeof logTypeGroupMap].logTypes
-                }
-                return []
-              }),
-            )
+          if (!isArray(target)) return false
 
-            // @ts-expect-error: it should be ok
-            return logTypes.includes(field)
-          }
-          return field === target
-        },
-      } satisfies FilterConfig<Data, 'logType'>,
+          if (target.length === 0) return false
+
+          const logTypes = flatten(
+            target.map((key) => {
+              if (key in logTypeGroupMap) {
+                return logTypeGroupMap[key as keyof typeof logTypeGroupMap].logTypes
+              }
+              return []
+            }),
+          )
+
+          // @ts-expect-error: 「聊天發言」不在其中
+          return logTypes.includes(value)
+        }
+      },
     },
     false,
   )

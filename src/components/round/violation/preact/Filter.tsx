@@ -1,11 +1,10 @@
 import type { TargetedEvent } from 'preact'
 import { z } from 'astro/zod'
 import { categoryMap, stateMap, listItemSchema } from '@/services/dbViolationCases'
-import { isArray, some } from 'lodash-es'
+import { isArray, isString, some } from 'lodash-es'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { stateDisplayName, categoryDisplayName } from '@/utils/violation'
-import { useFilter, type FilterConfig } from '@/utils/hooks'
-import { typedObjectKeys } from '@/utils/helpers'
+import { useFilter } from '@/utils/hooks'
 import { itemId } from '@/services/schema'
 import { setItems } from '@/stores/violation'
 import { dataNumberPerPage } from '@/configs/general'
@@ -28,36 +27,49 @@ export default function Filter({ storeKey, data }: Props) {
     PAGE_SIZE,
     data,
     {
-      // @ts-expect-error: it should be ok
-      category: {
-        schema: z.enum(typedObjectKeys(categoryMap)).optional(),
-        isEqualFn: (field, target) => {
+      schema: listItemSchema
+        .pick({ category: true, state: true })
+        .extend({ violators: itemId })
+        .optional(),
+      filterFn(item, filters) {
+        {
+          // category
+          const key = 'category'
+          const target = filters[key]
+          const value = item[key]
+
+          if (isArray(target)) return false
+          if (isString(target) && value !== target) return false
+        }
+
+        {
+          // state
+          const key = 'state'
+          const target = filters[key]
+          const value = item[key]
+
+          if (isArray(target)) return false
+          if (isString(target) && value === target) return false
+        }
+
+        {
+          // violator
+          const key = 'violators'
+          const target = filters[key]
+          const value = item[key]
+
           if (isArray(target)) return false
 
-          return field === target
-        },
-      } satisfies FilterConfig<Data, 'category'>,
-      // @ts-expect-error: it should be ok
-      state: {
-        schema: z.enum(typedObjectKeys(stateMap)).optional(),
-        isEqualFn: (field, target) => {
-          if (isArray(target)) return false
+          if (isString(target)) {
+            return some(
+              value,
+              (violator) => violator.violatorType === 'user' && violator.violatorId === target,
+            )
+          }
+        }
 
-          return field === target
-        },
-      } satisfies FilterConfig<Data, 'state'>,
-      // @ts-expect-error: it should be ok
-      violators: {
-        schema: itemId.optional(),
-        isEqualFn: (field, target) => {
-          if (isArray(target)) return false
-
-          return some(
-            field,
-            (violator) => violator.violatorType === 'user' && violator.violatorId === target,
-          )
-        },
-      } satisfies FilterConfig<Data, 'violators'>,
+        return true
+      },
     },
     true,
   )

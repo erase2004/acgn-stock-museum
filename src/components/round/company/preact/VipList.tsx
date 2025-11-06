@@ -1,9 +1,9 @@
 import UserLink from '@/components/common/preact/UserLink'
 import { levelConfig, type schema } from '@/services/dbVips'
 import type { z } from 'astro/zod'
-import { type FilterConfig, useFilter, useUser } from '@/utils/hooks'
+import { useFilter, useUser } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
-import { isArray } from 'lodash-es'
+import { isArray, isString } from 'lodash-es'
 import LoadMore from '@/components/common/preact/LoadMore'
 import type { TargetedEvent } from 'preact'
 
@@ -39,15 +39,19 @@ export default function VipList({ round, thresholds, data }: Props) {
     PAGE_SIZE,
     data,
     {
-      // @ts-expect-error: it should be ok
-      level: {
-        isEqualFn: (field, target) => {
-          const value = field.toString()
+      filterFn(item, filters) {
+        {
+          // level
+          const key = 'level'
+          const target = filters[key]
+          const value = item[key].toString()
 
           if (isArray(target)) return target.includes(value)
-          return target === value
-        },
-      } satisfies FilterConfig<VIP, 'level'>,
+          if (isString(target)) return target === value
+
+          return true
+        }
+      },
     },
     false,
   )

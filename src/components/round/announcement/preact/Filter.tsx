@@ -1,12 +1,11 @@
 import type { TargetedEvent } from 'preact'
 import { z } from 'astro/zod'
-import { announcementCategoryMap } from '@/services/dbAnnouncements'
+import { announcementCategoryMap, listItemSchema } from '@/services/dbAnnouncements'
 import { setItems, type Item } from '@/stores/announcement'
 import { useEffect } from 'preact/hooks'
 import { categoryDisplayName } from '@/utils/announcement'
-import { useFilter, useUser, type FilterConfig } from '@/utils/hooks'
-import { typedObjectKeys } from '@/utils/helpers'
-import { isArray } from 'lodash-es'
+import { useFilter, useUser } from '@/utils/hooks'
+import { isArray, isString } from 'lodash-es'
 import { dataNumberPerPage } from '@/configs/general'
 
 const PAGE_SIZE = dataNumberPerPage.announcements
@@ -25,26 +24,33 @@ export default function Filter({ storeKey, data }: Props) {
     PAGE_SIZE,
     data,
     {
-      // @ts-expect-error: it should be ok
-      category: {
-        schema: z.enum(typedObjectKeys(announcementCategoryMap)).optional(),
-        isEqualFn: (field, target) => {
-          if (isArray(target)) return false
+      schema: listItemSchema
+        .pick({ category: true })
+        .extend({ voided: z.coerce.boolean() })
+        .optional(),
+      filterFn(item, filters) {
+        {
+          // category
+          const key = 'category'
+          const target = filters[key]
+          const value = item[key]
 
-          return field === target
-        },
-      } satisfies FilterConfig<Item, 'category'>,
-      // @ts-expect-error: it should be ok
-      voided: {
-        schema: z.coerce.boolean().optional(),
-        isEqualFn: (field, target) => {
-          if (target === true) {
-            return true
-          } else {
-            return field === false
-          }
-        },
-      } satisfies FilterConfig<Item, 'voided'>,
+          if (isArray(target)) return false
+          if (isString(target) && value !== target) return false
+        }
+
+        {
+          // voided
+          const key = 'voided'
+          const target = filters[key]
+          const value = item[key]
+
+          if (isArray(target)) return false
+          if (target !== true && value === true) return false
+        }
+
+        return true
+      },
     },
     true,
   )
