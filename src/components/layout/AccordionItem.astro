@@ -18,16 +18,11 @@ const url = site.disabled
 <li class="*:block *:px-4 *:py-1">
   {
     site.disabled ? (
-      <button class="accordion-item link-disabled btn-disabled btn h-auto font-medium opacity-50">
+      <button class="link-disabled btn-disabled btn h-auto font-medium opacity-50">
         {site.title}
       </button>
     ) : (
-      <a
-        href={url}
-        class="accordion-item GTM-site-link"
-        target={isExternal ? '_blank' : '_self'}
-        rel="noopener"
-      >
+      <a href={url} class="GTM-site-link" target={isExternal ? '_blank' : '_self'} rel="noopener">
         {site.title}
       </a>
     )

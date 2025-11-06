@@ -18,16 +18,11 @@ const url = site.disabled
 <li class="*:text-nowrap">
   {
     site.disabled ? (
-      <button class="dropdown-item btn-disabled btn h-auto border-none px-3 py-1.5 font-medium opacity-50">
+      <button class="btn-disabled btn h-auto border-none px-3 py-1.5 font-medium opacity-50">
         {site.title}
       </button>
     ) : (
-      <a
-        href={url}
-        class="dropdown-item GTM-site-link"
-        target={isExternal ? '_blank' : '_self'}
-        rel="noopener"
-      >
+      <a href={url} class="GTM-site-link" target={isExternal ? '_blank' : '_self'} rel="noopener">
         {site.title}
       </a>
     )
