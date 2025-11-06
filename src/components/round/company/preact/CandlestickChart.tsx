@@ -157,7 +157,7 @@ export default function CandlestickChart({ roundEnd, unitTime, data }: Props) {
                 usePointStyle: true,
                 callbacks: {
                   label(context: TooltipItem<'candlestick'>) {
-                    // @ts-expect-error: it should be ok
+                    // @ts-expect-error: treat context.raw as any
                     const { o = 0, h = 0, l = 0, c = 0 } = context.raw
 
                     return [

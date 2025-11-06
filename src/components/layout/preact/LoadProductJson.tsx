@@ -11,7 +11,7 @@ type Props = {
 export default function LoadProductJson({ round }: Props) {
   const schema = z.preprocess(
     (value) => {
-      // @ts-expect-error: it should be ok
+      // @ts-expect-error: treat value as any
       return { _id: value.i, productName: value.n, type: value.t, url: value.u }
     },
     schemaProduct.pick({

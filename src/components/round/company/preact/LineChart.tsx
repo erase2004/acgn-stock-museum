@@ -114,7 +114,7 @@ export default function LineChart({ data, min, max }: Props) {
                 usePointStyle: true,
                 callbacks: {
                   label(context: TooltipItem<'line'>) {
-                    // @ts-expect-error: it should be ok
+                    // @ts-expect-error: treat context.raw as any
                     const { price } = context.raw
 
                     return `價格: $${currencyFormat(price)}`

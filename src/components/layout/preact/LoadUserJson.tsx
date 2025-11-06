@@ -11,7 +11,7 @@ type Props = {
 export default function LoadUserJson({ round }: Props) {
   const schema = z.preprocess(
     (value) => {
-      // @ts-expect-error: it should be ok
+      // @ts-expect-error: treat value as any
       return { _id: value.i, name: value.n, status: value.s, validateType: value.t }
     },
     schemaUserArchive.pick({

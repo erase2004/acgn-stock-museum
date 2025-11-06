@@ -846,7 +846,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '營運送禮': {
-      let targetJsx: preact.JSX.Element | string = <></>
+      let targetJsx: preact.JSX.Element | string | (preact.JSX.Element | string)[] = <></>
       let itemJsx: string = ''
 
       switch (data.userType) {
@@ -860,7 +860,6 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
           targetJsx = `最近 ${data.days} 日內有登入的玩家`
           break
         case 'specified':
-          // @ts-expect-error: interleave result type is compatible
           targetJsx = interleave(usersJsx.slice(1), '、')
           break
       }

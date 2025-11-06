@@ -26,7 +26,7 @@ type Props = {
 async function updateUserStock(round: string, userId: string) {
   const schema = z.preprocess(
     (value) => {
-      // @ts-expect-error: it should be ok
+      // @ts-expect-error: treat value as any
       return { companyId: value.c, stocks: value.s }
     },
     schemaDirector.pick({
