@@ -4,6 +4,8 @@ import LoadUserJson from '@/components/layout/preact/LoadUserJson'
 import LoadCompanyJson from '@/components/layout/preact/LoadCompanyJson'
 import LoadProductJson from '@/components/layout/preact/LoadProductJson'
 import OpenGraph from '@/components/layout/OpenGraph.astro'
+import RoundNav from '@/components/layout/RoundNav.astro'
+import DrawerSide from '@/components/layout/DrawerSide.astro'
 import { getCurrentPageFullTitle, getCurrentRound } from '@/libs/routes'
 import { roundDefaultDescription } from '@/configs/sites'
 
@@ -20,16 +22,20 @@ const title = getCurrentPageFullTitle(Astro)
 ---
 
 <BaseLayout {...props}>
-  <slot name="head-seo" slot="head-seo">
-    <OpenGraph title={title} description={roundDefaultDescription} />
-  </slot>
-  <div class="round-container">
-    <div class="round-block"><slot /></div>
-  </div>
-  {useUserDict && <LoadUserJson client:only="preact" round={round!} />}
-  <LoadCompanyJson client:only="preact" round={round!} />
-  {useProductDict && <LoadProductJson client:only="preact" round={round!} />}
-  <!-- TODO: add loading effect -->
-  <!-- TODO: add account dialog -->
-  <!-- TODO: add alert dialog -->
+  <main class="drawer drawer-end container mx-auto px-4">
+    <input id="hidden-drawer-input" type="checkbox" class="drawer-toggle" />
+    <div class="relative drawer-content">
+      <RoundNav />
+      <slot name="head-seo" slot="head-seo">
+        <OpenGraph title={title} description={roundDefaultDescription} />
+      </slot>
+      <div class="round-container">
+        <div class="round-block"><slot /></div>
+      </div>
+      {useUserDict && <LoadUserJson client:only="preact" round={round!} />}
+      <LoadCompanyJson client:only="preact" round={round!} />
+      {useProductDict && <LoadProductJson client:only="preact" round={round!} />}
+    </div>
+    <DrawerSide />
+  </main>
 </BaseLayout>

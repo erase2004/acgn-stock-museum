@@ -10,27 +10,47 @@ import { getCurrentRound, PAGE } from '@/libs/routes'
 const round = getCurrentRound(Astro)!
 ---
 
-<UserProfile client:only="preact" round={round} />
-<ul class="menu menu-horizontal hidden w-auto flex-nowrap text-base md:flex">
-  <NavLink pageName={PAGE.MAIN} isRoundBounded={true} />
-  <NavLink pageName={PAGE.ANNOUNCEMENT_LIST} isRoundBounded={true} />
-  <NavLinkGroup text="交易大廳">
-    <NavLink pageName={PAGE.COMPANY_LIST} isRoundBounded={true} />
-    <NavLink pageName={PAGE.ADVERTISING} isRoundBounded={true} />
-    <NavLink pageName={PAGE.PRODUCT_CENTER_BY_SEASON} isRoundBounded={true} />
-    <NavLink pageName={PAGE.ARENA_INFO} isRoundBounded={true} />
-  </NavLinkGroup>
-  <UserFavoriteList client:only="preact" round={round} />
-  <NavLinkGroup text="其他資訊">
-    <NavLink pageName={PAGE.TUTORIAL} isRoundBounded={true} />
-    <NavLink pageName={PAGE.SEASONAL_REPORT} isRoundBounded={true} />
-    <NavLink pageName={PAGE.RULE_AGENDA_LIST} isRoundBounded={true} />
-    <NavLink pageName={PAGE.VIOLATION_CASE_LIST} isRoundBounded={true} />
-    <NavLink pageName={PAGE.FSC_LOG} isRoundBounded={true} />
-    <NavLink pageName={PAGE.FSC_STOCK} isRoundBounded={true} />
-    <NavLink pageName={PAGE.MAIN}>歷史博館物首頁</NavLink>
-  </NavLinkGroup>
-  <div class="divider mr-0 ml-auto divider-horizontal"></div>
-  <ThemeToggle />
-</ul>
-<RoundSwitch />
+<nav
+  class="navbar z-20 grid grid-cols-[minmax(0,1fr)_40px] bg-base-300 **:not-[.ignore-inherit]:text-inherit max-md:min-h-0 md:grid-cols-[minmax(0,1fr)_75%]"
+>
+  <UserProfile client:only="preact" round={round} />
+  <ul class="menu menu-horizontal hidden w-auto flex-nowrap text-base md:flex">
+    <NavLink pageName={PAGE.MAIN} isRoundBounded={true} />
+    <NavLink pageName={PAGE.ANNOUNCEMENT_LIST} isRoundBounded={true} />
+    <NavLinkGroup text="交易大廳">
+      <NavLink pageName={PAGE.COMPANY_LIST} isRoundBounded={true} />
+      <NavLink pageName={PAGE.ADVERTISING} isRoundBounded={true} />
+      <NavLink pageName={PAGE.PRODUCT_CENTER_BY_SEASON} isRoundBounded={true} />
+      <NavLink pageName={PAGE.ARENA_INFO} isRoundBounded={true} />
+    </NavLinkGroup>
+    <UserFavoriteList client:only="preact" round={round} />
+    <NavLinkGroup text="其他資訊">
+      <NavLink pageName={PAGE.TUTORIAL} isRoundBounded={true} />
+      <NavLink pageName={PAGE.SEASONAL_REPORT} isRoundBounded={true} />
+      <NavLink pageName={PAGE.RULE_AGENDA_LIST} isRoundBounded={true} />
+      <NavLink pageName={PAGE.VIOLATION_CASE_LIST} isRoundBounded={true} />
+      <NavLink pageName={PAGE.FSC_LOG} isRoundBounded={true} />
+      <NavLink pageName={PAGE.FSC_STOCK} isRoundBounded={true} />
+      <NavLink pageName={PAGE.MAIN}>歷史博館物首頁</NavLink>
+    </NavLinkGroup>
+    <div class="divider mr-0 ml-auto divider-horizontal"></div>
+    <ThemeToggle />
+  </ul>
+  <RoundSwitch />
+  <div class="col-start-2 md:hidden">
+    <label for="hidden-drawer-input" aria-label="open sidebar" class="btn btn-square btn-ghost">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        class="inline-block h-6 w-6 stroke-current"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </label>
+  </div>
+</nav>

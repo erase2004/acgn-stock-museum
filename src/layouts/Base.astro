@@ -1,7 +1,7 @@
 ---
 import '@fontsource/source-sans-pro'
 import '@/styles/global.css'
-import Nav from '@/components/layout/Nav.astro'
+import BaseNav from '@/components/layout/BaseNav.astro'
 import DrawerSide from '@/components/layout/DrawerSide.astro'
 import BackToTopButton from '@/components/layout/BackToTopButton.astro'
 import AlertDialog from '@/components/layout/preact/AlertDialog'
@@ -40,15 +40,17 @@ import OpenGraph from '@/components/layout/OpenGraph.astro'
     </slot>
   </head>
   <body class="text-base font-normal">
-    <main class="drawer drawer-end container mx-auto px-4">
-      <input id="hidden-drawer-input" type="checkbox" class="drawer-toggle" />
-      <div class="relative drawer-content">
-        <Nav />
-        <slot />
-      </div>
-      <DrawerSide />
-    </main>
-    <BackToTopButton />
-    <AlertDialog client:only="preact" />
+    <slot>
+      <main class="drawer drawer-end">
+        <input id="hidden-drawer-input" type="checkbox" class="drawer-toggle" />
+        <div class="relative drawer-content">
+          <BaseNav />
+          <slot name="main" />
+        </div>
+        <DrawerSide />
+      </main>
+      <BackToTopButton />
+      <AlertDialog client:only="preact" />
+    </slot>
   </body>
 </html>

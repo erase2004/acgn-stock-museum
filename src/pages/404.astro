@@ -5,19 +5,21 @@ import { getMuseumMainPageUrl } from '@/libs/routes'
 ---
 
 <BaseLayout>
-  <img
-    class="absolute inset-0 h-screen w-full object-cover opacity-50"
-    src={BackgroundImage.src}
-    alt="404 頁背景圖片"
-  />
-  <div
-    class="fixed top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-y-8"
-  >
-    <h1
-      class="flex flex-col flex-nowrap items-center gap-4 text-4xl font-bold text-nowrap md:flex-row md:text-6xl"
+  <Fragment slot="main">
+    <img
+      class="absolute inset-0 h-screen w-full object-cover opacity-50"
+      src={BackgroundImage.src}
+      alt="404 頁背景圖片"
+    />
+    <div
+      class="fixed top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-y-8"
     >
-      <em>404</em><p>頁面不存在</p>
-    </h1>
-    <a class="btn btn-soft btn-primary" href={getMuseumMainPageUrl()}>回到博物館首頁</a>
-  </div>
+      <h1
+        class="flex flex-col flex-nowrap items-center gap-4 text-4xl font-bold text-nowrap md:flex-row md:text-6xl"
+      >
+        <em>404</em><p>頁面不存在</p>
+      </h1>
+      <a class="btn btn-soft btn-primary" href={getMuseumMainPageUrl()}>回到博物館首頁</a>
+    </div>
+  </Fragment>
 </BaseLayout>
