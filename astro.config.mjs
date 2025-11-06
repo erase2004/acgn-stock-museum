@@ -18,6 +18,14 @@ export default defineConfig({
   // when the value is changed, corresponding entry in .gitignore should be changed, too.
   cacheDir: './assets-cache',
 
+  image: {
+    service: {
+      entrypoint: './src/libs/custom-sharp-service',
+      config: {}
+    },
+    responsiveStyles: true,
+  },
+
   env: {
     schema: {
       /** database connection URI */

@@ -256,3 +256,5 @@ export const rounds = range(6, Object.keys(siteList).length + 1)
   .filter((key) => key in siteList && siteList[key as keyof typeof siteList].disabled !== true)
 
 export const roundDefaultDescription = '｜ 尋找你的老婆！ \n｜ 喜歡嗎？那麼就入股吧！'
+
+export const mediaBasePath = '/src/assets/media'

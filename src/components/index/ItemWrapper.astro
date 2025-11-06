@@ -1,0 +1,35 @@
+---
+import type { ExtendedData } from './types'
+import Image from './Image.astro'
+import Video from './Video.astro'
+import { getWrappingStyles, isVideo } from '@/utils/homepage'
+
+type Props = {
+  isLatestPeriod: boolean
+  index: number
+  data: ExtendedData
+}
+
+const { isLatestPeriod, index, data } = Astro.props
+
+const wrappingStyles = getWrappingStyles(index)
+---
+
+<a
+  class={`media-item ${wrappingStyles}`}
+  href={data.url}
+  target="_blank"
+  rel="noopener"
+  title={data.companyName}
+>
+  <span class="item-title">
+    {data.companyName}
+  </span>
+  {
+    isVideo(data) ? (
+      <Video data={data} />
+    ) : (
+      <Image isLatestPeriod={isLatestPeriod} data={data} index={index} />
+    )
+  }
+</a>

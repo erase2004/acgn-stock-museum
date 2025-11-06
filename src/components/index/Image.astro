@@ -1,0 +1,53 @@
+---
+import type { ExtendedImageBaseData } from './types'
+import Loading from './Loading.astro'
+
+type Props = {
+  index: number
+  isLatestPeriod: boolean
+  data: ExtendedImageBaseData
+}
+
+const { isLatestPeriod, data, index } = Astro.props
+const { webp, jpeg } = data.image
+const isPrioritized =
+  isLatestPeriod &&
+  // second one is the LCP element
+  [1].includes(index)
+---
+
+<picture>
+  <source srcset={webp.srcSet.attribute} type="image/webp" sizes="98vw" />
+  <img
+    class="astro-image h-auto w-full"
+    src={jpeg.src}
+    srcset={jpeg.srcSet.attribute}
+    sizes="98vw"
+    alt={data.companyName}
+    style={`aspect-ratio: ${data.width} / ${data.height}; background-color: ${data.color};`}
+    loading={isPrioritized ? 'eager' : 'lazy'}
+    decoding={isPrioritized ? 'sync' : 'async'}
+    fetchpriority={isPrioritized ? 'high' : 'auto'}
+  />
+</picture>
+<Loading />
+
+<script>
+  import { mediaLoadedHandle } from '@/utils/homepage'
+
+  function getLazyLoadImages() {
+    return document.querySelectorAll<HTMLImageElement>('a.media-item img.astro-image')
+  }
+
+  function checkImageLoadStatus() {
+    for (const imgElement of getLazyLoadImages()) {
+      if (imgElement.complete && imgElement.naturalHeight !== 0) {
+        mediaLoadedHandle.call(imgElement)
+      } else {
+        imgElement.addEventListener('load', mediaLoadedHandle)
+      }
+    }
+  }
+
+  checkImageLoadStatus()
+</script>

@@ -1,0 +1,39 @@
+import type { GetImageResult } from 'astro'
+
+export type ImageData = [string, GetImageResult]
+
+export type VideoData = [string, string]
+
+type BaseData = {
+  name: string
+  ext: 'jpg' | 'jpeg' | 'png' | 'mp4'
+  companyName: string
+  width: number
+  height: number
+  color: `#${string}`
+  url: string
+}
+
+export type ImageBaseData = BaseData
+
+export type VideoBaseData = BaseData & {
+  isVideo: true
+}
+
+export type Data = ImageBaseData | VideoBaseData
+
+export type ExtendedImageBaseData = ImageBaseData & {
+  image: {
+    webp: ImageData[1]
+    jpeg: ImageData[1]
+  }
+}
+
+export type ExtendedVideoBaseData = VideoBaseData & {
+  video: {
+    mp4: VideoData[1]
+    webm: VideoData[1]
+  }
+}
+
+export type ExtendedData = ExtendedImageBaseData | ExtendedVideoBaseData

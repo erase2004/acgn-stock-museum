@@ -1,0 +1,18 @@
+---
+import type { ExtendedData } from './types'
+import ItemWrapper from './ItemWrapper.astro'
+
+type Props = {
+  period: string
+  list: ExtendedData[]
+  isLatest: boolean
+}
+
+const { period, list, isLatest } = Astro.props
+const pd = Number(period)
+---
+
+<div class="period-title">
+  {Math.floor(pd / 100)} 年 {pd % 100} 期
+</div>
+{list.map((data, index) => <ItemWrapper isLatestPeriod={isLatest} data={data} index={index} />)}

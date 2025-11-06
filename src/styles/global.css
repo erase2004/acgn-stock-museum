@@ -461,6 +461,86 @@
     max-width: 100%;
     overflow: auto;
   }
+
+  .homepage {
+    .period-title {
+      @apply py-2 text-center text-xl text-base-content;
+    }
+
+    .media-item {
+      @apply relative block rounded-md border-8 border-solid;
+    }
+
+    .media-item > .item-title {
+      @apply absolute top-0 right-0 rounded-bl-xl bg-base-300/75 p-1 pl-3 text-lg font-bold text-base-content lg:text-2xl;
+    }
+
+    .media-item > video {
+      @apply w-full;
+    }
+
+    .media-item .loading-effect {
+      width: 200px;
+      height: 60px;
+
+      @apply absolute top-1/2 left-1/2 block -translate-x-1/2 -translate-y-1/2;
+    }
+
+    .loading-effect > .circle {
+      left: 15%;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      transform-origin: 50%;
+
+      @apply absolute animate-circle-bumping bg-white;
+    }
+
+    .loading-effect > .circle:nth-child(2) {
+      left: 45%;
+      animation-delay: 0.2s;
+    }
+
+    .loading-effect > .circle:nth-child(3) {
+      right: 15%;
+      animation-delay: 0.3s;
+
+      @apply left-auto;
+    }
+
+    .loading-effect > .shadow {
+      width: 20px;
+      height: 4px;
+      border-radius: 50%;
+      top: 62px;
+      left: 15%;
+      transform-origin: 50%;
+      z-index: -1;
+      transform: blur(1px);
+
+      @apply absolute animate-shadow-transform bg-black opacity-50;
+    }
+
+    .loading-effect > .shadow:nth-child(4) {
+      left: 45%;
+      animation-delay: 0.2s;
+    }
+
+    .loading-effect > .shadow:nth-child(5) {
+      right: 15%;
+      animation-delay: 0.3s;
+
+      @apply left-auto;
+    }
+
+    .loading-effect > .text {
+      top: 75px;
+      left: 15%;
+      letter-spacing: 12px;
+
+      @apply absolute text-xl text-white text-shadow-gray-800 text-shadow-md;
+    }
+  }
 }
 
 @layer utilities {
@@ -508,3 +588,39 @@
 }
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  --animate-circle-bumping: circle-bumping 0.5s alternate infinite ease;
+  --animate-shadow-transform: shadow-transform 0.5s alternate infinite ease;
+
+  @keyframes circle-bumping {
+    0% {
+      top: 60px;
+      height: 5px;
+      border-radius: 50px 50px 25px 25px;
+      transform: scale(1.7);
+    }
+    40% {
+      height: 20px;
+      border-radius: 50%;
+      transform: scale(1);
+    }
+    100% {
+      top: 0%;
+    }
+  }
+
+  @keyframes shadow-transform {
+    0% {
+      transform: scale(1.5);
+    }
+    40% {
+      transform: scale(1.5);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(0.2);
+      opacity: 0.4;
+    }
+  }
+}

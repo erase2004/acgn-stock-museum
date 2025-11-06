@@ -1,0 +1,50 @@
+---
+import type { ExtendedVideoBaseData } from './types'
+import Loading from './Loading.astro'
+import videoPoster from '@/assets/media/video-poster.jpg'
+
+type Props = {
+  data: ExtendedVideoBaseData
+}
+
+const { data } = Astro.props
+const webm = data.video.webm
+const mp4 = data.video.mp4
+---
+
+<video
+  class="astro-video"
+  style={`background-color: ${data.color}`}
+  autoplay
+  muted
+  loop
+  width={data.width}
+  height={data.height}
+  poster={videoPoster.src}
+  preload="none"
+>
+  <source type="video/webm" src={webm} />
+  <source type="video/mp4" src={mp4} />
+</video>
+<Loading />
+
+<script>
+  import { mediaLoadedHandle } from '@/utils/homepage'
+
+  function getLazyLoadVideos() {
+    return document.querySelectorAll<HTMLVideoElement>('a.media-item > video.astro-video')
+  }
+
+  function checkVideoLoadStatus() {
+    for (const videoElement of getLazyLoadVideos()) {
+      /** HAVE_ENOUGH_DATA, ref: https://developer.mozilla.org/zh-TW/docs/Web/API/HTMLMediaElement/readyState */
+      if (videoElement.readyState === 4) {
+        mediaLoadedHandle.call(videoElement)
+      } else {
+        videoElement.addEventListener('canplaythrough', mediaLoadedHandle)
+      }
+    }
+  }
+
+  checkVideoLoadStatus()
+</script>

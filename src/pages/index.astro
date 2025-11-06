@@ -1,11 +1,93 @@
 ---
+import type { UnresolvedImageTransform } from 'astro'
+import type {
+  Data,
+  VideoBaseData,
+  ExtendedData,
+  ExtendedVideoBaseData,
+  VideoData,
+} from '@/components/index/types'
 import BaseLayout from '@/layouts/Base.astro'
+import Period from '@/components/index/Period.astro'
+import PreactRestPart from '@/components/index/preact/RestPart'
+import * as dataList from '@/configs/imageList'
+import { mediaBasePath } from '@/configs/sites'
+import { getImages, getVideos } from '@/libs/media'
+
+function isVideo(data: Data): data is VideoBaseData {
+  return 'isVideo' in data && data.isVideo === true
+}
+function getVideoByExt(videoData: VideoData[], ext: string) {
+  return videoData.find(([k, _]) => k.endsWith(`.${ext}`))?.[1] ?? ''
+}
+
+const widths = [640, 750, 828, 960, 1080, 1280, 1668, 1920]
+
+const webpImages = await getImages({
+  quality: 50,
+  format: 'webp',
+  width: 1920,
+  widths,
+} satisfies Omit<UnresolvedImageTransform, 'src'>)
+const jpegImages = await getImages({
+  quality: 50,
+  format: 'jpeg',
+  width: 1920,
+  widths,
+} satisfies Omit<UnresolvedImageTransform, 'src'>)
+
+const videos = getVideos()
+
+function getDataByKey<T extends [string, any]>(data: T[], key: string): T[] {
+  return data.filter(([k, _]) => k.includes(key))
+}
+
+const reversedList = Object.entries(dataList)
+  .reverse()
+  .map(
+    ([key, list]) =>
+      [
+        key,
+        list.map((data): ExtendedData => {
+          const _key = `${mediaBasePath}/${data.name}`
+
+          if (isVideo(data)) {
+            const _data: ExtendedVideoBaseData['video'] = {
+              webm: '',
+              mp4: '',
+            }
+            const videosData = getDataByKey(videos, _key)
+
+            _data.webm = getVideoByExt(videosData, 'webm')
+            _data.mp4 = getVideoByExt(videosData, 'mp4')
+
+            return {
+              ...data,
+              video: _data,
+            }
+          } else {
+            return {
+              ...data,
+              image: {
+                webp: getDataByKey(webpImages, _key)[0]![1],
+                jpeg: getDataByKey(jpegImages, _key)[0]![1],
+              },
+            }
+          }
+        }),
+      ] satisfies [string, ExtendedData[]],
+  )
+const initialList = reversedList.slice(0, 1)
+const restList = reversedList.slice(1)
 ---
 
 <BaseLayout>
-  <div slot="main">
-    <p class="text-2xl">
-      A boilerplate built with Astro, Preact, and TypeScript styled with Tailwind CSS.
-    </p>
+  <div slot="main" class="homepage md:px-4">
+    {
+      initialList.map(([period, list], index) => (
+        <Period period={period} list={list} isLatest={index === 0} />
+      ))
+    }
+    <PreactRestPart client:only="preact" data={restList} />
   </div>
 </BaseLayout>
