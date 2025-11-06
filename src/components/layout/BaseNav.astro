@@ -1,12 +1,45 @@
 ---
 import ThemeToggle from './ThemeToggle.astro'
+import logoImage from '@/assets/icons/logo.png'
+import Dropdown from './Dropdown.astro'
+import { defaultWebsiteName, siteList } from '@/configs/sites'
+import { Image } from 'astro:assets'
+import { groupBy } from 'lodash-es'
+
+const data = groupBy(siteList, 'year')
 ---
 
-<nav class="navbar z-20 bg-base-300 **:not-[.ignore-inherit]:text-inherit max-md:min-h-0">
-  <ul class="menu menu-horizontal hidden w-full flex-nowrap text-base md:flex">
-    <div class="divider mr-0 ml-auto divider-horizontal"></div>
-    <ThemeToggle />
+<nav
+  class="navbar z-20 grid grid-cols-[minmax(0,1fr)_40px] bg-base-300 **:not-[.ignore-inherit]:text-inherit"
+>
+  <!-- logo, title  -->
+  <a href="#" class="flex items-center">
+    <Image
+      src={logoImage}
+      alt="Meseum Logo"
+      class="GTM-site-logo mr-3 h-6 w-6 md:h-9 md:w-9"
+      widths={[24, 36]}
+      sizes="(min-width: 48rem) 36px, 24px"
+    />
+    <span class="GTM-site-title self-center text-xl font-semibold whitespace-nowrap"
+      >{defaultWebsiteName}</span
+    >
+  </a>
+  <div class="col-span-full row-start-2 divider my-0 max-md:hidden"></div>
+  <!-- mobile menu toggle -->
+  <ul
+    class="menu menu-horizontal hidden flex-col justify-self-center p-0 md:col-span-full md:row-start-3 md:flex md:flex-row md:space-x-1 md:text-sm md:font-medium"
+  >
+    {
+      Object.entries(data)
+        .reverse()
+        .map(([year, list]) => <Dropdown year={year} list={list} />)
+    }
   </ul>
+  <div class="hidden flex-row md:col-start-2 md:flex">
+    <div class="divider mx-0 divider-horizontal"></div>
+    <ThemeToggle />
+  </div>
   <div class="col-start-2 md:hidden">
     <label for="hidden-drawer-input" aria-label="open sidebar" class="btn btn-square btn-ghost">
       <svg

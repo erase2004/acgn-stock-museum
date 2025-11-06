@@ -1,0 +1,35 @@
+---
+import type { Round } from '@/configs/sites'
+import { isString } from 'lodash-es'
+
+type Props = {
+  site: Round
+}
+
+const { site } = Astro.props
+const isExternal = isString(site.externalUrl)
+const url = site.disabled
+  ? '#'
+  : isExternal
+    ? site.externalUrl
+    : `/round${site.dbname!.split('-')[1]}`
+---
+
+<li class="*:text-nowrap">
+  {
+    site.disabled ? (
+      <a href={url} class="dropdown-item link-disabled" rel="noopener" onclick="return false">
+        {site.title}
+      </a>
+    ) : (
+      <a
+        href={url}
+        class="dropdown-item GTM-site-link"
+        target={isExternal ? '_blank' : '_self'}
+        rel="noopener"
+      >
+        {site.title}
+      </a>
+    )
+  }
+</li>
