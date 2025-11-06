@@ -2,7 +2,7 @@
 import '@fontsource/source-sans-pro'
 import '@/styles/global.css'
 import BaseNav from '@/components/layout/BaseNav.astro'
-import DrawerSide from '@/components/layout/DrawerSide.astro'
+import BaseDrawerSide from '@/components/layout/BaseDrawerSide.astro'
 import BackToTopButton from '@/components/layout/BackToTopButton.astro'
 import AlertDialog from '@/components/layout/preact/AlertDialog'
 import OpenGraph from '@/components/layout/OpenGraph.astro'
@@ -47,7 +47,7 @@ import OpenGraph from '@/components/layout/OpenGraph.astro'
           <BaseNav />
           <slot name="main" />
         </div>
-        <DrawerSide />
+        <BaseDrawerSide />
       </main>
       <BackToTopButton />
       <AlertDialog client:only="preact" />

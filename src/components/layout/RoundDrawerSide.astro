@@ -2,26 +2,48 @@
 import MobileNavLinkGroup from './MobileNavLinkGroup.astro'
 import NavLink from './NavLink.astro'
 import MobileUserFavoriteList from './preact/MobileUserFavoriteList'
+import ThemeToggle from './ThemeToggle.astro'
 import { getCurrentRound, PAGE } from '@/libs/routes'
 
 const round = getCurrentRound(Astro)!
 ---
 
-<NavLink pageName={PAGE.MAIN} isRoundBounded={true} />
-<NavLink pageName={PAGE.ANNOUNCEMENT_LIST} isRoundBounded={true} />
-<MobileNavLinkGroup text="交易大廳">
-  <NavLink pageName={PAGE.COMPANY_LIST} isRoundBounded={true} />
-  <NavLink pageName={PAGE.ADVERTISING} isRoundBounded={true} />
-  <NavLink pageName={PAGE.PRODUCT_CENTER_BY_SEASON} isRoundBounded={true} />
-  <NavLink pageName={PAGE.ARENA_INFO} isRoundBounded={true} />
-</MobileNavLinkGroup>
-<MobileNavLinkGroup text="其他資訊">
-  <NavLink pageName={PAGE.TUTORIAL} isRoundBounded={true} />
-  <NavLink pageName={PAGE.SEASONAL_REPORT} isRoundBounded={true} />
-  <NavLink pageName={PAGE.RULE_AGENDA_LIST} isRoundBounded={true} />
-  <NavLink pageName={PAGE.VIOLATION_CASE_LIST} isRoundBounded={true} />
-  <NavLink pageName={PAGE.FSC_LOG} isRoundBounded={true} />
-  <NavLink pageName={PAGE.FSC_STOCK} isRoundBounded={true} />
-  <NavLink pageName={PAGE.MAIN}>歷史博館物首頁</NavLink>
-</MobileNavLinkGroup>
-<MobileUserFavoriteList client:only="preact" round={round} />
+<div class="drawer-side z-50 **:not-[.ignore-inherit]:text-inherit">
+  <label for="hidden-drawer-input" aria-label="close sidebar" class="drawer-overlay"></label>
+  <div class="flex h-screen min-w-1/2 flex-col overflow-y-hidden bg-base-100 **:bg-base-100">
+    <div class="flex justify-end p-1">
+      <ThemeToggle />
+      <label
+        for="hidden-drawer-input"
+        aria-label="close sidebar"
+        class="btn btn-circle border-0 text-xl shadow-none btn-md"
+      >
+        ✕
+      </label>
+    </div>
+    <div class="divider my-0"></div>
+    <div></div>
+    <div class="overflow-y-scroll">
+      <ul class="menu">
+        <NavLink pageName={PAGE.MAIN} isRoundBounded={true} />
+        <NavLink pageName={PAGE.ANNOUNCEMENT_LIST} isRoundBounded={true} />
+        <MobileNavLinkGroup text="交易大廳">
+          <NavLink pageName={PAGE.COMPANY_LIST} isRoundBounded={true} />
+          <NavLink pageName={PAGE.ADVERTISING} isRoundBounded={true} />
+          <NavLink pageName={PAGE.PRODUCT_CENTER_BY_SEASON} isRoundBounded={true} />
+          <NavLink pageName={PAGE.ARENA_INFO} isRoundBounded={true} />
+        </MobileNavLinkGroup>
+        <MobileNavLinkGroup text="其他資訊">
+          <NavLink pageName={PAGE.TUTORIAL} isRoundBounded={true} />
+          <NavLink pageName={PAGE.SEASONAL_REPORT} isRoundBounded={true} />
+          <NavLink pageName={PAGE.RULE_AGENDA_LIST} isRoundBounded={true} />
+          <NavLink pageName={PAGE.VIOLATION_CASE_LIST} isRoundBounded={true} />
+          <NavLink pageName={PAGE.FSC_LOG} isRoundBounded={true} />
+          <NavLink pageName={PAGE.FSC_STOCK} isRoundBounded={true} />
+          <NavLink pageName={PAGE.MAIN}>歷史博館物首頁</NavLink>
+        </MobileNavLinkGroup>
+        <MobileUserFavoriteList client:only="preact" round={round} />
+      </ul>
+    </div>
+  </div>
+</div>
