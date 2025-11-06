@@ -18,9 +18,9 @@ const url = site.disabled
 <li class="*:text-nowrap">
   {
     site.disabled ? (
-      <a href={url} class="dropdown-item link-disabled" rel="noopener" onclick="return false">
+      <button class="dropdown-item btn-disabled btn h-auto border-none px-3 py-1.5 font-medium opacity-50">
         {site.title}
-      </a>
+      </button>
     ) : (
       <a
         href={url}
