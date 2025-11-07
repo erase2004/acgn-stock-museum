@@ -88,7 +88,6 @@ export const listItemSchema = schema.pick({
   category: true,
   subject: true,
   createdAt: true,
-  readers: true,
   voided: true,
 })
 
