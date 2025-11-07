@@ -3,6 +3,7 @@ import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import ListContainer from '@/components/round/fscLog/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
+import Reminder from '@/components/common/Reminder.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
 import { fscLogTypeList, getDBLog, schema as schemaLog } from '@/services/dbLog'
@@ -10,7 +11,7 @@ import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { dataStoreKey } from '@/configs/general'
 import { rounds } from '@/configs/sites'
 import { z } from 'astro/zod'
-import { handlePromiseParser } from '@/utils/helpers'
+import { handlePromiseParser, isLatestRound } from '@/utils/helpers'
 
 export const getStaticPaths = (() => {
   return rounds.map((round) => ({
@@ -25,7 +26,21 @@ const STORE_KEY = dataStoreKey.fscLogs
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 
-const currentRound = await getCurrentRoundFromDB(connection)
+const filterRule = {
+  logType: {
+    $in: fscLogTypeList,
+  },
+}
+if (!isLatestRound(round)) {
+  const roundData = await getCurrentRoundFromDB(connection)
+
+  Object.assign(filterRule, {
+    createdAt: {
+      $gte: roundData!.beginDate,
+      $lt: roundData!.endDate,
+    },
+  })
+}
 
 const fscLogs =
   (await (async function () {
@@ -34,22 +49,11 @@ const fscLogs =
     return handlePromiseParser(
       z.promise(schemaLog.array()).parse(
         dbLog
-          .find(
-            {
-              logType: {
-                $in: fscLogTypeList,
-              },
-              createdAt: {
-                $gte: currentRound!.beginDate,
-                $lt: currentRound!.endDate,
-              },
+          .find(filterRule, {
+            sort: {
+              createdAt: -1,
             },
-            {
-              sort: {
-                createdAt: -1,
-              },
-            },
-          )
+          })
           .toArray(),
       ),
     )
@@ -59,7 +63,8 @@ const fscLogs =
 <RoundLayout useUserDict={true} useProductDict={true}>
   <h1 class="round-block-title">金管會執行紀錄</h1>
   <div class="divider"></div>
-  <p class="mb-2">總共{fscLogs.length}筆紀錄</p>
+  <Reminder />
+  <p class="my-2">總共{fscLogs.length}筆紀錄</p>
   <ListContainer client:only="preact" round={round} data={fscLogs} storeKey={STORE_KEY} />
   <LoadMore client:only="preact" storeKey={STORE_KEY} />
 </RoundLayout>
