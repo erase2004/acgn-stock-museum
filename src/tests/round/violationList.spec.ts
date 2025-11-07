@@ -21,6 +21,9 @@ for (const round of rounds) {
 
         await expect(element).toHaveText('違規案件列表')
         await expect(element).toBeVisible()
+
+        const reminder = page.getByText('最新賽季會顯示所有資料，其他賽季僅會顯示該賽季資料')
+        await expect(reminder).toBeVisible()
       })
     })
   })
