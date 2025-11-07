@@ -9,6 +9,7 @@ import {
   getViolationCasesByUserId,
   getViolationCasesByCompanyId,
 } from '@/services/dbViolationCases'
+import { isLatestRound } from '@/utils/helpers'
 
 type Props = {
   type: 'userViolated' | 'companyViolated'
@@ -24,9 +25,17 @@ const roundData = await getCurrentRoundFromDB(connection)
 
 let data: z.infer<typeof simpleSchema>[] = []
 if (type === 'userViolated') {
-  data = (await getViolationCasesByUserId(connection, targetId, roundData!.beginDate)) ?? []
+  if (isLatestRound(round)) {
+    data = (await getViolationCasesByUserId(connection, targetId)) ?? []
+  } else {
+    data = (await getViolationCasesByUserId(connection, targetId, roundData!.beginDate)) ?? []
+  }
 } else if (type === 'companyViolated') {
-  data = (await getViolationCasesByCompanyId(connection, targetId, roundData!.beginDate)) ?? []
+  if (isLatestRound(round)) {
+    data = (await getViolationCasesByCompanyId(connection, targetId)) ?? []
+  } else {
+    data = (await getViolationCasesByCompanyId(connection, targetId, roundData!.beginDate)) ?? []
+  }
 } else {
   const _unreachable: never = type
 }

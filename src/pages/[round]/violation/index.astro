@@ -10,6 +10,7 @@ import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getConnection } from '@/libs/databases'
 import { STORE_KEY } from '@/stores/violation'
 import { rounds } from '@/configs/sites'
+import { isLatestRound } from '@/utils/helpers'
 
 export const getStaticPaths = (() => {
   return rounds.map((round) => ({
@@ -22,8 +23,14 @@ export const getStaticPaths = (() => {
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 
-const roundData = await getCurrentRoundFromDB(connection)
-const result = await getViolationCases(connection, roundData!.beginDate)
+let result
+if (isLatestRound(round)) {
+  result = await getViolationCases(connection)
+} else {
+  const roundData = await getCurrentRoundFromDB(connection)
+  result = await getViolationCases(connection, roundData!.beginDate)
+}
+
 const data = result?.[0]?.data ?? []
 
 const itemAmount = 3
@@ -43,6 +50,9 @@ const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
   {shouldShowLDJson && <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />}
   <h1 class="round-block-title">違規案件列表</h1>
   <div class="divider"></div>
+  <div role="alert" class="alert alert-info">
+    <i class="fa fa-info-circle"></i><span>最新賽季會顯示所有資料，其他賽季僅會顯示該賽季資料</span>
+  </div>
   <Filter client:only="preact" data={data} storeKey={STORE_KEY} />
   <ListContainer client:only="preact" round={round} />
   <LoadMore client:only="preact" storeKey={STORE_KEY} />

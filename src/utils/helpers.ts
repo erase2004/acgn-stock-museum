@@ -7,6 +7,8 @@ import footnotes from 'showdown-footnotes'
 import katex from 'katex'
 import { ZodError } from 'astro/zod'
 import removeMd from 'remove-markdown'
+import { last } from 'lodash-es'
+import { rounds } from '@/configs/sites'
 
 export function currencyFormat(money: any, formatOption: Intl.NumberFormatOptions = {}) {
   switch (typeof money) {
@@ -193,4 +195,8 @@ export function formatDescription(text: string) {
   }
 
   return text
+}
+
+export function isLatestRound(round: string) {
+  return last(rounds) === round
 }

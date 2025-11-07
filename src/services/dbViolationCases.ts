@@ -91,19 +91,24 @@ export const casesWithCountSchema = withCountSchema(listItemSchema)
 
 const DESCRIPTION_DIGEST_LENGTH_LIMIT = 100
 
-export function getViolationCases(db: Db, roundBegin: Date) {
+export function getViolationCases(db: Db, roundBegin?: Date) {
   const dbViolationCases = getDBViolationCase(db)
+
+  const filterRule = {}
+  if (roundBegin) {
+    Object.assign(filterRule, {
+      updatedAt: {
+        $gte: roundBegin,
+      },
+    })
+  }
 
   return handlePromiseParser(
     z.promise(casesWithCountSchema).parse(
       dbViolationCases
         .aggregate([
           {
-            $match: {
-              updatedAt: {
-                $gte: roundBegin,
-              },
-            },
+            $match: filterRule,
           },
           {
             $sort: {
@@ -141,20 +146,20 @@ export function getViolationCases(db: Db, roundBegin: Date) {
   )
 }
 
-export async function getViolationCaseById(db: Db, caseId: string, roundBegin: Date) {
+export async function getViolationCaseById(db: Db, caseId: string, roundBegin?: Date) {
   const dbViolationCases = getDBViolationCase(db)
 
-  return handlePromiseParser(
-    z.promise(schema).parse(
-      dbViolationCases.findOne({
-        // @ts-expect-error: caseId is valid ObjectId
-        _id: caseId,
-        updatedAt: {
-          $gte: roundBegin,
-        },
-      }),
-    ),
-  )
+  const filterRule = { _id: caseId }
+  if (roundBegin) {
+    Object.assign(filterRule, {
+      updatedAt: {
+        $gte: roundBegin,
+      },
+    })
+  }
+
+  // @ts-expect-error: caseId is valid ObjectId
+  return handlePromiseParser(z.promise(schema).parse(dbViolationCases.findOne(filterRule)))
 }
 
 export const simpleSchema = schema.pick({
@@ -164,61 +169,64 @@ export const simpleSchema = schema.pick({
   createdAt: true,
 })
 
-export async function getViolationCasesByUserId(db: Db, userId: string, roundBegin: Date) {
+export async function getViolationCasesByUserId(db: Db, userId: string, roundBegin?: Date) {
   const dbViolationCases = getDBViolationCase(db)
 
+  const filterRule = {
+    'violators.violatorType': 'user',
+    'violators.violatorId': userId,
+  }
+  if (roundBegin) {
+    Object.assign(filterRule, {
+      updatedAt: {
+        $gte: roundBegin,
+      },
+    })
+  }
+
   return handlePromiseParser(
-    z.promise(simpleSchema.array()).parse(
-      dbViolationCases
-        .find(
-          {
-            'violators.violatorType': 'user',
-            'violators.violatorId': userId,
-            updatedAt: {
-              $gte: roundBegin,
-            },
-          },
-          { sort: { createdAt: -1 } },
-        )
-        .toArray(),
-    ),
+    z
+      .promise(simpleSchema.array())
+      .parse(dbViolationCases.find(filterRule, { sort: { createdAt: -1 } }).toArray()),
   )
 }
 
-export async function getViolationCasesByCompanyId(db: Db, companyId: string, roundBegin: Date) {
+export async function getViolationCasesByCompanyId(db: Db, companyId: string, roundBegin?: Date) {
   const dbViolationCases = getDBViolationCase(db)
 
+  const filterRule = {
+    'violators.violatorType': 'company',
+    'violators.violatorId': companyId,
+  }
+  if (roundBegin) {
+    Object.assign(filterRule, {
+      updatedAt: {
+        $gte: roundBegin,
+      },
+    })
+  }
+
   return handlePromiseParser(
-    z.promise(simpleSchema.array()).parse(
-      dbViolationCases
-        .find(
-          {
-            'violators.violatorType': 'company',
-            'violators.violatorId': companyId,
-            updatedAt: {
-              $gte: roundBegin,
-            },
-          },
-          { sort: { createdAt: -1 } },
-        )
-        .toArray(),
-    ),
+    z
+      .promise(simpleSchema.array())
+      .parse(dbViolationCases.find(filterRule, { sort: { createdAt: -1 } }).toArray()),
   )
 }
 
-export async function getAllBasicViolationCase(db: Db, roundBegin: Date) {
+export async function getAllBasicViolationCase(db: Db, roundBegin?: Date) {
   const _schema = schema.pick({ _id: true })
   const dbViolationCases = getDBViolationCase(db)
 
+  const filterRule = {}
+  if (roundBegin) {
+    Object.assign(filterRule, {
+      updatedAt: {
+        $gte: roundBegin,
+      },
+    })
+  }
+
   return handlePromiseParser(
-    z.promise(_schema.array()).parse(
-      dbViolationCases
-        .find({
-          updatedAt: {
-            $gte: roundBegin,
-          },
-        })
-        .toArray(),
-    ),
+    z.promise(_schema.array()).parse(dbViolationCases.find(filterRule).toArray()),
   )
 }

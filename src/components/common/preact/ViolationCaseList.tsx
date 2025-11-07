@@ -65,6 +65,10 @@ export default function ViolationCaseList({ round, storeKey, pageSize, data }: P
 
   return (
     <>
+      <div role="alert" class="alert alert-info">
+        <i class="fa fa-info-circle"></i>
+        <span>最新賽季會顯示所有資料，其他賽季僅會顯示該賽季資料</span>
+      </div>
       <div class="flex flex-col flex-wrap gap-2 py-2 *:w-full md:flex-row md:*:w-44">
         <label class="select select-sm">
           <span class="label">案件分類</span>

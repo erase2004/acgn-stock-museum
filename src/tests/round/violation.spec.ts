@@ -7,6 +7,7 @@ import { getAllBasicViolationCase, schema } from '@/services/dbViolationCases'
 import { getCurrentRound } from '@/services/dbRound'
 import { shuffle } from 'lodash-es'
 import { MINIMUM_TEST_TIMEOUT } from '@/configs/general'
+import { isLatestRound } from '@/utils/helpers'
 
 const MAX_ITEM_PERCENTAGE = 2
 const RUN_ALL_TEST = process.env.RUN_ALL_TEST === 'true'
@@ -19,8 +20,16 @@ for (const round of rounds) {
 
     test.beforeAll(async () => {
       const connection = getConnection(round)
-      const roundData = await getCurrentRound(connection)
-      const results = (await getAllBasicViolationCase(connection, roundData!.beginDate)) ?? []
+
+      let results
+      if (isLatestRound(round)) {
+        results = await getAllBasicViolationCase(connection)
+      } else {
+        const roundData = await getCurrentRound(connection)
+        results = await getAllBasicViolationCase(connection, roundData!.beginDate)
+      }
+      results = results ?? []
+
       if (RUN_ALL_TEST) {
         violationCases = results
       } else {
