@@ -4,7 +4,7 @@ import RoundLayout from '@/layouts/Round.astro'
 import Filter from '@/components/round/violation/preact/Filter'
 import ListContainer from '@/components/round/violation/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { getCurrentRound } from '@/libs/routes'
+import { getCurrentRound, getViolationCaseUrl } from '@/libs/routes'
 import { getViolationCases } from '@/services/dbViolationCases'
 import { getConnection } from '@/libs/databases'
 import { STORE_KEY } from '@/stores/violation'
@@ -23,9 +23,22 @@ const connection = getConnection(round)!
 
 const result = await getViolationCases(connection)
 const data = result?.[0]?.data ?? []
+
+const itemAmount = 3
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: data.slice(0, itemAmount).map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    url: new URL(getViolationCaseUrl(round, item._id), Astro.url),
+  })),
+}
+const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
 ---
 
 <RoundLayout useUserDict={true} useProductDict={true}>
+  {shouldShowLDJson && <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />}
   <h1 class="round-block-title">違規案件列表</h1>
   <div class="divider"></div>
   <Filter client:only="preact" data={data} storeKey={STORE_KEY} />

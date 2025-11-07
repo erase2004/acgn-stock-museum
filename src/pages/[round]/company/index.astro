@@ -7,7 +7,7 @@ import ListContainer from '@/components/round/company/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound } from '@/libs/routes'
+import { getCompanyUrl, getCurrentRound } from '@/libs/routes'
 import { getCompanies } from '@/services/dbCompanies'
 import { getDBEmployees, schema as schemaEmployee } from '@/services/dbEmployees'
 import { handlePromiseParser } from '@/utils/helpers'
@@ -60,9 +60,22 @@ const data: ListItem[] = companies.map((company) => {
     eps,
   }
 })
+
+const itemAmount = 3
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: companies.slice(0, itemAmount).map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    url: new URL(getCompanyUrl(round, item._id), Astro.url),
+  })),
+}
+const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
 ---
 
 <RoundLayout useUserDict={true}>
+  {shouldShowLDJson && <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />}
   <h1 class="round-block-title">股市總覽</h1>
   <div class="divider"></div>
   <Filter client:only="preact" data={data} />
