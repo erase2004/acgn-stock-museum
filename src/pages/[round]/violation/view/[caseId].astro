@@ -11,6 +11,7 @@ import { getConnection } from '@/libs/databases'
 import { getAllBasicViolationCase, getViolationCaseById } from '@/services/dbViolationCases'
 import { getRelatedActionLog } from '@/services/dbViolationCaseActionLogs'
 import { getViolationCaseRelatedLogs } from '@/services/dbLog'
+import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import {
   getCurrentRound,
   getViolationCaseUrl,
@@ -27,7 +28,9 @@ export const getStaticPaths = (async () => {
   const results = await Promise.allSettled(
     rounds.map(async (round) => {
       const connection = getConnection(round)!
-      const violationCases = (await getAllBasicViolationCase(connection)) ?? []
+      const roundData = await getCurrentRoundFromDB(connection)
+      const violationCases =
+        (await getAllBasicViolationCase(connection, roundData!.beginDate)) ?? []
 
       return violationCases.map((violationCase) => ({
         params: {
@@ -35,11 +38,11 @@ export const getStaticPaths = (async () => {
           caseId: violationCase._id,
         },
       }))
-    }),
+    })
   )
 
   return flatten(
-    results.filter((result) => result.status === 'fulfilled').map((result) => result.value),
+    results.filter((result) => result.status === 'fulfilled').map((result) => result.value)
   )
 }) satisfies GetStaticPaths
 
@@ -48,8 +51,9 @@ const STORE_KEY = dataStoreKey.violationRelatedLog
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)
 
+const roundData = await getCurrentRoundFromDB(connection)
 const { caseId = '' } = Astro.params
-const violation = await getViolationCaseById(connection, caseId)
+const violation = await getViolationCaseById(connection, caseId, roundData!.beginDate)
 
 if (!violation) {
   return Astro.redirect(getRoundMainPageUrl(round))

@@ -91,13 +91,20 @@ export const casesWithCountSchema = withCountSchema(listItemSchema)
 
 const DESCRIPTION_DIGEST_LENGTH_LIMIT = 100
 
-export function getViolationCases(db: Db) {
+export function getViolationCases(db: Db, roundBegin: Date) {
   const dbViolationCases = getDBViolationCase(db)
 
   return handlePromiseParser(
     z.promise(casesWithCountSchema).parse(
       dbViolationCases
         .aggregate([
+          {
+            $match: {
+              updatedAt: {
+                $gte: roundBegin,
+              },
+            },
+          },
           {
             $sort: {
               createdAt: -1,
@@ -134,11 +141,20 @@ export function getViolationCases(db: Db) {
   )
 }
 
-export async function getViolationCaseById(db: Db, caseId: string) {
+export async function getViolationCaseById(db: Db, caseId: string, roundBegin: Date) {
   const dbViolationCases = getDBViolationCase(db)
 
-  // @ts-expect-error: caseId is valid ObjectId
-  return handlePromiseParser(z.promise(schema).parse(dbViolationCases.findOne({ _id: caseId })))
+  return handlePromiseParser(
+    z.promise(schema).parse(
+      dbViolationCases.findOne({
+        // @ts-expect-error: caseId is valid ObjectId
+        _id: caseId,
+        updatedAt: {
+          $gte: roundBegin,
+        },
+      }),
+    ),
+  )
 }
 
 export const simpleSchema = schema.pick({
@@ -148,20 +164,24 @@ export const simpleSchema = schema.pick({
   createdAt: true,
 })
 
-export async function getViolationCasesByUserId(db: Db, userId: string) {
+export async function getViolationCasesByUserId(db: Db, userId: string, roundBegin: Date) {
   const dbViolationCases = getDBViolationCase(db)
 
   return handlePromiseParser(
-    z
-      .promise(simpleSchema.array())
-      .parse(
-        dbViolationCases
-          .find(
-            { 'violators.violatorType': 'user', 'violators.violatorId': userId },
-            { sort: { createdAt: -1 } },
-          )
-          .toArray(),
-      ),
+    z.promise(simpleSchema.array()).parse(
+      dbViolationCases
+        .find(
+          {
+            'violators.violatorType': 'user',
+            'violators.violatorId': userId,
+            updatedAt: {
+              $gte: roundBegin,
+            },
+          },
+          { sort: { createdAt: -1 } },
+        )
+        .toArray(),
+    ),
   )
 }
 
@@ -175,7 +195,9 @@ export async function getViolationCasesByCompanyId(db: Db, companyId: string, ro
           {
             'violators.violatorType': 'company',
             'violators.violatorId': companyId,
-            createdAt: { $gt: roundBegin },
+            updatedAt: {
+              $gte: roundBegin,
+            },
           },
           { sort: { createdAt: -1 } },
         )
@@ -184,9 +206,19 @@ export async function getViolationCasesByCompanyId(db: Db, companyId: string, ro
   )
 }
 
-export async function getAllBasicViolationCase(db: Db) {
+export async function getAllBasicViolationCase(db: Db, roundBegin: Date) {
   const _schema = schema.pick({ _id: true })
   const dbViolationCases = getDBViolationCase(db)
 
-  return handlePromiseParser(z.promise(_schema.array()).parse(dbViolationCases.find({}).toArray()))
+  return handlePromiseParser(
+    z.promise(_schema.array()).parse(
+      dbViolationCases
+        .find({
+          updatedAt: {
+            $gte: roundBegin,
+          },
+        })
+        .toArray(),
+    ),
+  )
 }

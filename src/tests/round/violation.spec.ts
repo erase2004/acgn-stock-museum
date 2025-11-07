@@ -4,6 +4,7 @@ import { rounds, siteList } from '@/configs/sites'
 import { getViolationCaseUrl } from '@/libs/routes'
 import { getConnection } from '@/tests/_utils/database'
 import { getAllBasicViolationCase, schema } from '@/services/dbViolationCases'
+import { getCurrentRound } from '@/services/dbRound'
 import { shuffle } from 'lodash-es'
 import { MINIMUM_TEST_TIMEOUT } from '@/configs/general'
 
@@ -18,7 +19,8 @@ for (const round of rounds) {
 
     test.beforeAll(async () => {
       const connection = getConnection(round)
-      const results = (await getAllBasicViolationCase(connection)) ?? []
+      const roundData = await getCurrentRound(connection)
+      const results = (await getAllBasicViolationCase(connection, roundData!.beginDate)) ?? []
       if (RUN_ALL_TEST) {
         violationCases = results
       } else {

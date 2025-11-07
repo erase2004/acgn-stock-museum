@@ -6,6 +6,7 @@ import ListContainer from '@/components/round/violation/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { getCurrentRound, getViolationCaseUrl } from '@/libs/routes'
 import { getViolationCases } from '@/services/dbViolationCases'
+import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getConnection } from '@/libs/databases'
 import { STORE_KEY } from '@/stores/violation'
 import { rounds } from '@/configs/sites'
@@ -21,7 +22,8 @@ export const getStaticPaths = (() => {
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 
-const result = await getViolationCases(connection)
+const roundData = await getCurrentRoundFromDB(connection)
+const result = await getViolationCases(connection, roundData!.beginDate)
 const data = result?.[0]?.data ?? []
 
 const itemAmount = 3
