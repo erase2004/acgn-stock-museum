@@ -120,6 +120,16 @@ export function getWebsiteName(astro: APIContext) {
   return defaultWebsiteName
 }
 
+export function getWebsiteTitle(astro: APIContext) {
+  const round = getCurrentRound(astro)
+
+  if (checkIsValidRound(round)) {
+    return siteList[round].title
+  }
+
+  return ''
+}
+
 export function getPageTitle(pageName: string) {
   return pageNameHash[pageName as keyof typeof pageNameHash]
 }

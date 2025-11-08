@@ -15,11 +15,13 @@ import {
   getRuleAgendaUrl,
   getSeasonalReportUrl,
   getViolationCaseUrl,
+  getWebsiteTitle,
   PAGE,
 } from '@/libs/routes'
 
 const currentPage = getCurrentPage(Astro)
 const currentRound = getCurrentRound(Astro)
+const websiteTitle = getWebsiteTitle(Astro)
 // @ts-expect-error: currentRound should exists
 const order = rounds.indexOf(currentRound)
 const prevRound = rounds[order - 1]
@@ -106,11 +108,12 @@ function getUrl(
 ---
 
 <div
-  class="col-span-2 row-start-2 mt-1 flex flex-row justify-between border-t border-base-content/25 pt-1"
+  class="col-span-2 row-start-2 mt-1 flex flex-row items-center justify-between border-t border-base-content/25 pt-1"
 >
   <a class={`btn btn-soft btn-xs btn-info ${!prevUrl ? 'btn-disabled' : ''}`} href={prevUrl}
     ><i class="fa fa-arrow-left"></i>上一個賽季</a
   >
+  <span class="px-2 text-center text-sm md:text-base">{websiteTitle}</span>
   <a class={`btn btn-soft btn-xs btn-info ${!nextUrl ? 'btn-disabled' : ''}`} href={nextUrl}
     >下一個賽季<i class="fa fa-arrow-right"></i></a
   >
