@@ -6,6 +6,7 @@ import { defineConfig, envField } from 'astro/config';
 import favicons from 'astro-favicons';
 import preact from '@astrojs/preact';
 import partytown from '@astrojs/partytown';
+import sitemap from '@astrojs/sitemap'
 import { defaultWebsiteName, siteUrl } from './src/configs/sites';
 
 // https://astro.build/config
@@ -67,6 +68,13 @@ export default defineConfig({
     partytown({
       config: {
         forward: ['dataLayer.push', 'gtag']
+      }
+    }),
+    sitemap({
+      entryLimit: 10000,
+      namespaces: {
+        image: false,
+        video: false,
       }
     })
   ],

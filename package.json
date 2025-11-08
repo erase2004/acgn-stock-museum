@@ -17,6 +17,7 @@
     "@astrojs/mdx": "4",
     "@astrojs/partytown": "^2.1.4",
     "@astrojs/preact": "4",
+    "@astrojs/sitemap": "^3.6.0",
     "@fontsource/source-sans-pro": "^5.2.5",
     "@nanostores/preact": "^1.0.0",
     "@tailwindcss/vite": "4",
