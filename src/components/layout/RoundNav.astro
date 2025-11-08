@@ -6,6 +6,7 @@ import NavLink from './NavLink.astro'
 import ThemeToggle from './ThemeToggle.astro'
 import RoundSwitch from './RoundSwitch.astro'
 import { getCurrentRound, PAGE } from '@/libs/routes'
+import { feedbackUrl } from '@/configs/sites'
 
 const round = getCurrentRound(Astro)!
 ---
@@ -31,6 +32,7 @@ const round = getCurrentRound(Astro)!
       <NavLink pageName={PAGE.VIOLATION_CASE_LIST} isRoundBounded={true} />
       <NavLink pageName={PAGE.FSC_LOG} isRoundBounded={true} />
       <NavLink pageName={PAGE.FSC_STOCK} isRoundBounded={true} />
+      <NavLink pageName="other" externalUrl={feedbackUrl}>問題回報</NavLink>
       <NavLink pageName={PAGE.MAIN}>歷史博館物首頁</NavLink>
     </NavLinkGroup>
     <div class="divider mr-0 ml-auto divider-horizontal"></div>

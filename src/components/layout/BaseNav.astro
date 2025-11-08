@@ -2,7 +2,7 @@
 import ThemeToggle from './ThemeToggle.astro'
 import logoImage from '@/assets/icons/logo.png'
 import Dropdown from './Dropdown.astro'
-import { defaultWebsiteName, siteList } from '@/configs/sites'
+import { defaultWebsiteName, siteList, feedbackUrl } from '@/configs/sites'
 import { Image } from 'astro:assets'
 import { groupBy } from 'lodash-es'
 
@@ -10,7 +10,7 @@ const data = groupBy(siteList, 'year')
 ---
 
 <nav
-  class="navbar z-20 grid grid-cols-[minmax(0,1fr)_40px] bg-base-300 **:not-[.ignore-inherit]:text-inherit"
+  class="navbar z-20 grid grid-cols-[minmax(0,1fr)_150px] bg-base-300 **:not-[.ignore-inherit]:text-inherit"
 >
   <!-- logo, title  -->
   <a href="#" class="flex items-center">
@@ -37,10 +37,13 @@ const data = groupBy(siteList, 'year')
     }
   </ul>
   <div class="hidden flex-row md:col-start-2 md:flex">
+    <a class="ignore-inherit btn btn-soft btn-sm" href={feedbackUrl} target="_blank">
+      問題回報<i class="fa fa-external-link ml-1"></i>
+    </a>
     <div class="divider mx-0 divider-horizontal"></div>
     <ThemeToggle />
   </div>
-  <div class="col-start-2 md:hidden">
+  <div class="col-start-2 flex justify-end md:hidden">
     <label for="hidden-drawer-input" aria-label="open sidebar" class="btn btn-square btn-ghost">
       <svg
         xmlns="http://www.w3.org/2000/svg"

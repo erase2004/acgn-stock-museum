@@ -258,3 +258,5 @@ export const rounds = range(6, Object.keys(siteList).length + 1)
 export const roundDefaultDescription = '｜ 尋找你的老婆！ \n｜ 喜歡嗎？那麼就入股吧！'
 
 export const mediaBasePath = '/src/assets/media'
+
+export const feedbackUrl = 'https://github.com/erase2004/acgn-stock-museum/issues'
