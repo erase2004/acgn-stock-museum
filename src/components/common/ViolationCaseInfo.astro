@@ -1,6 +1,7 @@
 ---
 import type { simpleSchema } from '@/services/dbViolationCases'
 import ViolationCaseList from '@/components/common/preact/ViolationCaseList'
+import Reminder from '@/components/common/Reminder.astro'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
@@ -41,6 +42,7 @@ if (type === 'userViolated') {
 }
 ---
 
+<Reminder />
 <ViolationCaseList
   client:only="preact"
   round={round}
