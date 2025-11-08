@@ -22,17 +22,17 @@ const title = getCurrentPageFullTitle(Astro)
 ---
 
 <BaseLayout {...props}>
-  <slot slot="round-only-resource">
+  <slot slot="head-seo" name="head-seo">
+    <OpenGraph title={title} description={roundDefaultDescription} />
+  </slot>
+  <Fragment slot="round-only-resource">
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css"
       integrity="sha384-TEMocfGvRuD1rIAacqrknm5BQZ7W7uWitoih+jMNFXQIbNl16bO8OZmylH/Vi/Ei"
       crossorigin="anonymous"
     />
-  </slot>
-  <slot slot="head-seo" name="head-seo">
-    <OpenGraph title={title} description={roundDefaultDescription} />
-  </slot>
+  </Fragment>
   <main class="drawer drawer-end container mx-auto px-4">
     <input id="hidden-drawer-input" type="checkbox" class="drawer-toggle" />
     <div class="relative drawer-content">
