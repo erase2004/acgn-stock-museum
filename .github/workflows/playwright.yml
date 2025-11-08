@@ -1,11 +1,19 @@
 name: Playwright Tests
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+  # TODO: 先設定為僅能手動觸發，等前置的 build action 建置完成後，再增加自動觸發的處理
+  workflow_dispatch:
+    inputs:
+      RUN_ALL_TEST:
+        description: '是否跑全部的資料測試'
+        required: false
+        default: false
+        type: boolean
+
 jobs:
   test:
+    env:
+      RUN_ALL_TEST: ${{ inputs.RUN_ALL_TEST }}
+
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
