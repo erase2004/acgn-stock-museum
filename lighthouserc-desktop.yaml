@@ -1,5 +1,8 @@
 ci:
   collect:
+    url:
+      - http://localhost/index.html
+    staticDistDir: ./dist
     numberOfRuns: 5
     settings:
       preset: desktop
