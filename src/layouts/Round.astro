@@ -22,13 +22,13 @@ const title = getCurrentPageFullTitle(Astro)
 ---
 
 <BaseLayout {...props}>
+  <slot slot="head-seo" name="head-seo">
+    <OpenGraph title={title} description={roundDefaultDescription} />
+  </slot>
   <main class="drawer drawer-end container mx-auto px-4">
     <input id="hidden-drawer-input" type="checkbox" class="drawer-toggle" />
     <div class="relative drawer-content">
       <RoundNav />
-      <slot name="head-seo" slot="head-seo">
-        <OpenGraph title={title} description={roundDefaultDescription} />
-      </slot>
       <div class="round-container">
         <div class="round-block"><slot /></div>
       </div>
