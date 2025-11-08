@@ -25,7 +25,14 @@ const {
     </Fragment>
   )
 }
-{description && <meta property="og:description" content={formatDescription(description)} />}
+{
+  description && (
+    <Fragment>
+      <meta name="description" content={formatDescription(description)} />
+      <meta property="og:description" content={formatDescription(description)} />
+    </Fragment>
+  )
+}
 {
   image && (
     <Fragment>
