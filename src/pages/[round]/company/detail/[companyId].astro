@@ -4,6 +4,7 @@ import RoundLayout from '@/layouts/Round.astro'
 import SealedDetailContent from '@/components/round/company/SealedDetailContent.astro'
 import NormalDetailContent from '@/components/round/company/NormalDetailContent.astro'
 import OpenGraph from '@/components/layout/OpenGraph.astro'
+import InconsistentCompanyIdReminder from '@/components/common/InconsistentCompanyIdReminder.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentPageFullTitle, getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
 import {
@@ -54,5 +55,6 @@ const description = removeMarkdown(company.description)
 
 <RoundLayout useUserDict={true} useProductDict={true}>
   <OpenGraph slot="head-seo" title={title} description={description} image={company.pictureSmall} />
+  <InconsistentCompanyIdReminder />
   {company.isSeal ? <SealedDetailContent /> : <NormalDetailContent />}
 </RoundLayout>

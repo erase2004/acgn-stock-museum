@@ -1,0 +1,20 @@
+---
+import { inconsistentCompanyIdRounds } from '@/configs/sites'
+import { getCurrentRound } from '@/libs/routes'
+
+const round = getCurrentRound(Astro)!
+const matched = inconsistentCompanyIdRounds.includes(round)
+---
+
+{
+  matched ? (
+    <div role="alert" class="mb-2 alert alert-info">
+      <i class="fa fa-info-circle" />
+      <span>
+        第一到第六賽季間的公司 ID 與名稱沒有綁定，在賽季間切換會導致 404，因此關閉切換功能
+      </span>
+    </div>
+  ) : (
+    <Fragment />
+  )
+}

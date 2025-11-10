@@ -260,3 +260,13 @@ export const roundDefaultDescription = '｜ 尋找你的老婆！ \n｜ 喜歡�
 export const mediaBasePath = '/src/assets/media'
 
 export const feedbackUrl = 'https://github.com/erase2004/acgn-stock-museum/issues'
+
+// 公司 ID 與名稱沒有綁定，需要特殊處理的賽季
+export const inconsistentCompanyIdRounds: string[] = [
+  'round1',
+  'round2',
+  'round3',
+  'round4',
+  'round5',
+  'round6',
+] satisfies RoundKey[]
