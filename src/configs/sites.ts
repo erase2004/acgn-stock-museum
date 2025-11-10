@@ -251,7 +251,7 @@ export const siteList = {
   },
 } satisfies Record<RoundKey, Round>
 
-export const rounds = range(6, Object.keys(siteList).length + 1)
+export const rounds = range(5, Object.keys(siteList).length + 1)
   .map<RoundKey>((n) => `round${n}`)
   .filter((key) => key in siteList && siteList[key as keyof typeof siteList].disabled !== true)
 

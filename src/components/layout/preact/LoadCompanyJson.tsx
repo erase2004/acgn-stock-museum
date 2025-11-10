@@ -9,17 +9,10 @@ type Props = {
 }
 
 export default function LoadCompanyJson({ round }: Props) {
-  const schema = z.preprocess(
-    (value) => {
-      // @ts-expect-error: treat value as any
-      return { _id: value.u, companyName: value.c, status: value.s }
-    },
-    schemaCompanyArchive.pick({
-      _id: true,
-      companyName: true,
-      status: true,
-    }),
-  )
+  const schema = z.preprocess((value) => {
+    // @ts-expect-error: treat value as any
+    return { _id: value.u, companyName: value.c, status: value.s }
+  }, schemaCompanyArchive)
 
   const jsonUrl = getCompanyJsonUrl(round)
   fetch(jsonUrl).then(async (response) => {
