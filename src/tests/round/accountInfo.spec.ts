@@ -35,7 +35,7 @@ for (const round of rounds) {
       const page = await context.newPage()
 
       for (const user of users) {
-        await page.goto(getAccountUrl(round, user._id))
+        await page.goto(getAccountUrl(round, user._id), { waitUntil: 'commit' })
 
         await test.step('has title', async () => {
           const websiteName = siteList[round as keyof typeof siteList]?.name

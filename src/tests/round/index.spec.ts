@@ -17,7 +17,7 @@ for (const round of rounds) {
           response.status() === 200,
       )
 
-      await page.goto(getRoundMainPageUrl(round))
+      await page.goto(getRoundMainPageUrl(round), { waitUntil: 'commit' })
 
       await test.step('has title', async () => {
         const title = siteList[round as keyof typeof siteList]?.name

@@ -31,7 +31,7 @@ for (const round of rounds) {
     })
 
     test('pages', async ({ context }) => {
-      test.setTimeout(Math.max(1000 * companies.length, MINIMUM_TEST_TIMEOUT))
+      test.setTimeout(Math.max(2000 * companies.length, MINIMUM_TEST_TIMEOUT))
 
       const page = await context.newPage()
 
@@ -39,14 +39,18 @@ for (const round of rounds) {
         // FIXME: this is a workaround to clear browser cache
         await page.route('*', async (route) => route.continue())
 
-        const h2ResponsePromise = page.waitForResponse(
+        const companyJsonPromise = page.waitForResponse(
           (response) =>
-            response.url().includes('CompanyLink') &&
+            response.url().includes('company.json') &&
             response.request().method() === 'GET' &&
             response.status() === 200,
         )
 
-        await page.goto(getProductCenterByCompanyUrl(round, company._id))
+        // company json 會需要比較多的載入時間
+        await page.goto(getProductCenterByCompanyUrl(round, company._id), {
+          waitUntil: 'commit',
+          timeout: 2000,
+        })
 
         await test.step('has title', async () => {
           const websiteName = siteList[round as keyof typeof siteList]?.name
@@ -73,7 +77,7 @@ for (const round of rounds) {
           // h2 heading
           {
             // 等待 island component 載入
-            await h2ResponsePromise
+            await companyJsonPromise
 
             const element = page.locator('h2')
             await expect(element).toContainText(company.companyName)

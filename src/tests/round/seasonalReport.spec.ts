@@ -31,7 +31,7 @@ for (const round of rounds) {
             response.status() === 200,
         )
 
-        await page.goto(getSeasonalReportUrl(round, season._id))
+        await page.goto(getSeasonalReportUrl(round, season._id), { waitUntil: 'commit' })
 
         await test.step('has title', async () => {
           const websiteName = siteList[round as keyof typeof siteList]?.name

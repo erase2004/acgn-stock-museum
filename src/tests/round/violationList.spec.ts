@@ -7,7 +7,7 @@ for (const round of rounds) {
     test('suites', async ({ context }) => {
       const page = await context.newPage()
 
-      await page.goto(getViolationCaseListUrl(round))
+      await page.goto(getViolationCaseListUrl(round), { waitUntil: 'commit' })
 
       await test.step('has title', async () => {
         const websiteName = siteList[round as keyof typeof siteList]?.name

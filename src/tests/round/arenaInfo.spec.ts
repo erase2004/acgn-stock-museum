@@ -31,7 +31,8 @@ for (const round of rounds) {
             response.status() === 200,
         )
 
-        await page.goto(getArenaInfoUrl(round, arena._id))
+        // 特定回合的資料量大，需要比較久的載入時間
+        await page.goto(getArenaInfoUrl(round, arena._id), { waitUntil: 'commit', timeout: 2000 })
 
         await test.step('has title', async () => {
           const websiteName = siteList[round as keyof typeof siteList]?.name
