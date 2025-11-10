@@ -48,7 +48,11 @@ const company = (await getCompanyFilterByCustomSchema(connection, companyId, sch
 <div class="flex flex-col flex-nowrap gap-8 md:flex-row">
   <div class="-mx-4 max-w-80 md:mx-0 md:size-80 md:shrink-0">
     {/* eslint-disable-next-line astro/jsx-a11y/alt-text  */}
-    <img class="size-full object-scale-down" src={company.pictureBig || fallbackImageUrl} />
+    <img
+      class="size-full object-scale-down"
+      src={company.pictureBig || fallbackImageUrl}
+      decoding="async"
+    />
   </div>
   <div
     class="-mx-4 max-h-80 grow overflow-y-auto border border-base-content/25 px-4 py-1 md:mx-0 md:border-0 md:p-0"
