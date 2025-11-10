@@ -215,7 +215,6 @@ export const siteList = {
     name: `(ε) ${defaultWebsiteName}`,
     disabled: false,
     dbname: 'museum-5',
-    externalUrl: `https://r5-${museumBaseDomain}`,
   },
   round4: {
     year: 2018,
