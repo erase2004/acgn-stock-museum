@@ -1,6 +1,6 @@
 import type { z } from 'astro/zod'
 import { test, expect } from '@playwright/test'
-import { rounds, siteList } from '@/configs/sites'
+import { inconsistentCompanyIdRounds, rounds, siteList } from '@/configs/sites'
 import { getCompanyUrl } from '@/libs/routes'
 import { getConnection } from '@/tests/_utils/database'
 import { getAllBasicCompanies, schema } from '@/services/dbCompanies'
@@ -46,16 +46,24 @@ for (const round of rounds) {
         })
 
         await test.step('has content', async () => {
-          if (company.isSeal) {
-            // 被查封的公司
-            const element = page.getByText('該公司已被金融管理委員會查封！')
+          if (inconsistentCompanyIdRounds.includes(round)) {
+            // alert info
+            const element = page.getByRole('alert')
+            await expect(element).toContainText('第一到第六賽季間的公司 ID 與名稱沒有綁定')
+          }
 
-            await expect(element).toBeVisible()
-          } else {
-            // h1 heading
-            const element = page.locator('.round-block-title')
-            await expect(element).toContainText(company.companyName)
-            await expect(element).toBeVisible()
+          {
+            if (company.isSeal) {
+              // 被查封的公司
+              const element = page.getByText('該公司已被金融管理委員會查封！')
+
+              await expect(element).toBeVisible()
+            } else {
+              // h1 heading
+              const element = page.locator('.round-block-title')
+              await expect(element).toContainText(company.companyName)
+              await expect(element).toBeVisible()
+            }
           }
         })
       }

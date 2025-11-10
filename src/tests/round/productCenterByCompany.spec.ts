@@ -1,6 +1,6 @@
 import type { z } from 'astro/zod'
 import { test, expect } from '@playwright/test'
-import { rounds, siteList } from '@/configs/sites'
+import { inconsistentCompanyIdRounds, rounds, siteList } from '@/configs/sites'
 import { getProductCenterByCompanyUrl } from '@/libs/routes'
 import { getConnection } from '@/tests/_utils/database'
 import { getAllBasicCompanies, schema } from '@/services/dbCompanies'
@@ -56,6 +56,12 @@ for (const round of rounds) {
         })
 
         await test.step('has content', async () => {
+          if (inconsistentCompanyIdRounds.includes(round)) {
+            // alert info
+            const element = page.getByRole('alert')
+            await expect(element).toContainText('第一到第六賽季間的公司 ID 與名稱沒有綁定')
+          }
+
           // h1 heading
           {
             const element = page.locator('.round-block-title')
