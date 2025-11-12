@@ -1,7 +1,7 @@
 {
   "name": "acgn-stock-museum",
   "description": "Museum of ACGN Stock (https://github.com/mrbigmouth/acgn-stock)",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "license": "MIT",
   "author": "Tsuki Akiba <erase2004@gmail.com>",
