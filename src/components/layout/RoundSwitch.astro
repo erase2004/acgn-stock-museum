@@ -1,6 +1,6 @@
 ---
 import type { APIContext } from 'astro'
-import { rounds, inconsistentCompanyIdRounds } from '@/configs/sites'
+import { rounds } from '@/configs/sites'
 import {
   getAccountUrl,
   getAnnouncementRejectionUrl,
@@ -27,14 +27,13 @@ const order = rounds.indexOf(currentRound)
 const prevRound = rounds[order - 1]
 const nextRound = rounds[order + 1]
 
-const prevUrl = getUrl(Astro, prevRound, currentPage, 'prev')
-const nextUrl = getUrl(Astro, nextRound, currentPage, 'next')
+const prevUrl = getUrl(Astro, prevRound, currentPage)
+const nextUrl = getUrl(Astro, nextRound, currentPage)
 
 function getUrl(
   context: APIContext,
   round: string | undefined,
   currentPage: ReturnType<typeof getCurrentPage>,
-  direction: 'prev' | 'next',
 ) {
   if (!round) return undefined
 
@@ -70,29 +69,11 @@ function getUrl(
     }
 
     case PAGE.COMPANY_DETAIL: {
-      if (direction === 'next' && inconsistentCompanyIdRounds.includes(round)) {
-        return undefined
-      } else if (
-        direction === 'prev' &&
-        inconsistentCompanyIdRounds.filter((v) => v !== 'round6').includes(round)
-      ) {
-        return undefined
-      }
-
       const companyId = context.params['companyId'] ?? ''
       return getCompanyUrl(round, companyId)
     }
 
     case PAGE.PRODUCT_CENTER_BY_COMPANY: {
-      if (direction === 'next' && inconsistentCompanyIdRounds.includes(round)) {
-        return undefined
-      } else if (
-        direction === 'prev' &&
-        inconsistentCompanyIdRounds.filter((v) => v !== 'round6').includes(round)
-      ) {
-        return undefined
-      }
-
       const companyId = context.params['companyId'] ?? ''
       return getProductCenterByCompanyUrl(round, companyId)
     }

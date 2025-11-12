@@ -4,7 +4,6 @@ import RoundLayout from '@/layouts/Round.astro'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import CompanyListContainer from '@/components/round/productCenter/preact/CompanyListContainer'
 import OpenGraph from '@/components/layout/OpenGraph.astro'
-import InconsistentCompanyIdReminder from '@/components/common/InconsistentCompanyIdReminder.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
 import { getArchivedCompany } from '@/services/dbCompanyArchive'
@@ -50,7 +49,6 @@ const title = getCurrentPageFullTitle(Astro, company.companyName)
 
 <RoundLayout useProductDict={true}>
   <OpenGraph slot="head-seo" title={title} description={roundDefaultDescription} />
-  <InconsistentCompanyIdReminder />
   <h1 class="round-block-title">產品中心</h1>
   <h2 class="my-2 text-3xl">
     <CompanyLink client:only="preact" round={round} companyId={companyId} />
