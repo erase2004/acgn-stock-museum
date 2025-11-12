@@ -4,34 +4,13 @@ import { handlePromiseParser } from '@/utils/helpers'
 import { z } from 'astro/zod'
 import { objectId } from './schema'
 
-export const schema = z
-  .object({
-    /** 公司名稱 */
-    name: z.string(),
-    /** 公司名稱 (第六季之後) */
-    companyName: z.string(),
-  })
-  .partial()
-  .merge(
-    z.object({
-      _id: objectId,
-      /** 保管狀態 */
-      status: z.enum(['archived', 'foundation', 'market']),
-    }),
-  )
-  .refine((value) => 'name' in value || 'companyName' in value, {
-    message: 'name or companyName should be set',
-  })
-  .transform((value) => {
-    if ('name' in value) {
-      return {
-        ...value,
-        companyName: value['name'],
-      }
-    }
-
-    return value
-  })
+export const schema = z.object({
+  _id: objectId,
+  /** 公司名稱 */
+  companyName: z.string(),
+  /** 保管狀態 */
+  status: z.enum(['archived', 'foundation', 'market']),
+})
 
 export function getDBCompanyArchive(db: Db) {
   return db.collection('companyArchive')
@@ -49,10 +28,11 @@ export async function getArchivedCompany(db: Db, companyId: string) {
 }
 
 export async function getAllArchivedCompanies(db: Db) {
+  const _schema = schema.pick({ _id: true, companyName: true })
   const dbCompanyArchive = getDBCompanyArchive(db)
 
   return handlePromiseParser(
-    z.promise(schema.array()).parse(
+    z.promise(_schema.array()).parse(
       dbCompanyArchive
         .find(
           {

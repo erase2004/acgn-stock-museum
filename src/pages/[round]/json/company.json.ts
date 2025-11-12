@@ -11,6 +11,11 @@ export const GET: APIRoute = async ({ params }) => {
   const connection = getConnection(round!)
 
   const schema = schemaCompanyArchive
+    .pick({
+      _id: true,
+      companyName: true,
+      status: true,
+    })
     // 縮短 key，減少輸出的檔案尺寸
     .transform((value) => ({ u: value._id, c: value.companyName, s: value.status }))
 

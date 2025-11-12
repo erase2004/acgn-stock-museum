@@ -71,7 +71,7 @@ if (!allCompanies || !allUsers) {
 
 const allCompaniesDict = allCompanies.reduce(
   (acc, item) => {
-    acc[item._id] = item.companyName!
+    acc[item._id] = item.companyName
     return acc
   },
   {} as Record<string, string>,
