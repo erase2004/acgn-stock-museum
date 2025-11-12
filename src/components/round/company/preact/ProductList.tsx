@@ -10,17 +10,19 @@ import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { useDisplayItems, useUser } from '@/utils/hooks'
 import { currencyFormat } from '@/utils/helpers'
 import { isRestrictedRating } from '@/utils/product'
+import { noProductReplenishRounds } from '@/configs/sites'
 
 const PAGE_SIZE = dataNumberPerPage.company.product
 const STORE_KEY = dataStoreKey.company.product
 
 type Product = z.infer<typeof schema>
 type Props = {
+  round: string
   manager: string
   data: Product[]
 }
 
-export default function ProductList({ manager, data }: Props) {
+export default function ProductList({ round, manager, data }: Props) {
   const { user } = useUser()
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
   const isCompanyManager = user ? user._id === manager : false
@@ -29,7 +31,12 @@ export default function ProductList({ manager, data }: Props) {
     <>
       {displayItems.length ? (
         displayItems.map((item) => (
-          <ProductCard key={item._id} item={item} isCompanyManager={isCompanyManager} />
+          <ProductCard
+            key={item._id}
+            item={item}
+            round={round}
+            isCompanyManager={isCompanyManager}
+          />
         ))
       ) : (
         <em class="col-span-full">哦不！本季沒有推出任何產品！</em>
@@ -42,6 +49,7 @@ export default function ProductList({ manager, data }: Props) {
 }
 
 type CardProps = {
+  round: string
   isCompanyManager: boolean
   item: Product
 }
@@ -59,6 +67,7 @@ function ProductCard({
     replenishBaseAmountType,
     replenishBatchSizeType,
   },
+  round,
   isCompanyManager,
 }: CardProps) {
   return (
@@ -76,10 +85,12 @@ function ProductCard({
           <div class="flex w-full flex-wrap items-baseline gap-x-4 text-info">
             <span>庫存：{stockAmount}</span>
             <span class="mr-auto">賣出：{totalAmount - stockAmount - availableAmount}</span>
-            <span class="text-sm">
-              方案：依{productReplenishBaseAmountTypeDisplayName(replenishBaseAmountType)}補
-              {productReplenishBatchSizeTypeDisplayName(replenishBatchSizeType)}
-            </span>
+            {!noProductReplenishRounds.includes(round) && (
+              <span class="text-sm">
+                方案：依{productReplenishBaseAmountTypeDisplayName(replenishBaseAmountType)}補
+                {productReplenishBatchSizeTypeDisplayName(replenishBatchSizeType)}
+              </span>
+            )}
           </div>
         )}
       </div>

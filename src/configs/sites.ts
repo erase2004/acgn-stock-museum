@@ -222,7 +222,6 @@ export const siteList = {
     name: `(δ) ${defaultWebsiteName}`,
     disabled: false,
     dbname: 'museum-4',
-    externalUrl: `https://r4-${museumBaseDomain}`,
   },
   round3: {
     year: 2018,
@@ -250,7 +249,7 @@ export const siteList = {
   },
 } satisfies Record<RoundKey, Round>
 
-export const rounds = range(5, Object.keys(siteList).length + 1)
+export const rounds = range(4, Object.keys(siteList).length + 1)
   .map<RoundKey>((n) => `round${n}`)
   .filter((key) => key in siteList && siteList[key as keyof typeof siteList].disabled !== true)
 
@@ -259,3 +258,11 @@ export const roundDefaultDescription = '｜ 尋找你的老婆！ \n｜ 喜歡�
 export const mediaBasePath = '/src/assets/media'
 
 export const feedbackUrl = 'https://github.com/erase2004/acgn-stock-museum/issues'
+
+/** 第五季之前沒有產品補貨的設定 */
+export const noProductReplenishRounds: string[] = [
+  'round1',
+  'round2',
+  'round3',
+  'round4',
+] satisfies RoundKey[]

@@ -66,7 +66,12 @@ const company = await getCompanyFilterByCustomSchema(
       <UserProductQuotaInfo client:only="preact" companyId={companyId} capital={company!.capital} />
     </div>
     <div class="grid max-h-96 grid-cols-1 gap-x-6 gap-y-4 overflow-y-auto lg:grid-cols-2">
-      <ProductList client:only="preact" data={marketingProducts} manager={company!.manager} />
+      <ProductList
+        client:only="preact"
+        data={marketingProducts}
+        round={round}
+        manager={company!.manager}
+      />
     </div>
   </div>
   <div class="divider my-2"></div>
