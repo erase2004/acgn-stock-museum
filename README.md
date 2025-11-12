@@ -68,7 +68,7 @@ and boilerplate:
   * [ ] Round 1
   * [ ] Round 2
   * [ ] Round 3
-  * [ ] Round 4
+  * [x] Round 4
   * [x] Round 5
 * [ ] Add build action to CI/CD pipeline
   * [ ] Upload build artifact to external storage. (Due to GitHub quota limit)
