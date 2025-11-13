@@ -9,6 +9,7 @@ import { currencyFormat, interleave } from '@/utils/helpers'
 import { stoneDisplayName } from '@/utils/stone'
 import { getViolationCaseUrl } from '@/libs/routes'
 import { formatDateTimeText } from '@/libs/timeFormat'
+import { beforeTaxSeperatedRounds } from '@/configs/sites'
 
 type Log = z.infer<typeof schema>
 type Props = Log & { round: string }
@@ -400,13 +401,22 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '季度賦稅': {
-      contentJsx = (
-        <>
-          【季度賦稅】{usersJsx[0]}在此次商業季度中產生了${currencyFormat(data.stockTax)}
-          的股票資產稅、${currencyFormat(data.moneyTax)}的現金資產稅與$
-          {currencyFormat(data.zombieTax)}的殭屍稅！
-        </>
-      )
+      if (beforeTaxSeperatedRounds.includes(round)) {
+        contentJsx = (
+          <>
+            【季度賦稅】{usersJsx[0]}在此次商業季度中產生了${currencyFormat(data.assetTax)}
+            的財富稅與${currencyFormat(data.zombieTax)}的殭屍稅！
+          </>
+        )
+      } else {
+        contentJsx = (
+          <>
+            【季度賦稅】{usersJsx[0]}在此次商業季度中產生了${currencyFormat(data.stockTax)}
+            的股票資產稅、${currencyFormat(data.moneyTax)}的現金資產稅與$
+            {currencyFormat(data.zombieTax)}的殭屍稅！
+          </>
+        )
+      }
       break
     }
 

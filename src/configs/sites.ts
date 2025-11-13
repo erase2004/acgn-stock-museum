@@ -229,7 +229,6 @@ export const siteList = {
     name: `(γ) ${defaultWebsiteName}`,
     disabled: false,
     dbname: 'museum-3',
-    externalUrl: `https://r3-${museumBaseDomain}`,
   },
   round2: {
     year: 2018,
@@ -249,7 +248,7 @@ export const siteList = {
   },
 } satisfies Record<RoundKey, Round>
 
-export const rounds = range(4, Object.keys(siteList).length + 1)
+export const rounds = range(3, Object.keys(siteList).length + 1)
   .map<RoundKey>((n) => `round${n}`)
   .filter((key) => key in siteList && siteList[key as keyof typeof siteList].disabled !== true)
 
@@ -265,4 +264,11 @@ export const noProductReplenishRounds: string[] = [
   'round2',
   'round3',
   'round4',
+] satisfies RoundKey[]
+
+/** 第四季之前，財富稅還沒拆分成股票資產稅和現金資產稅 */
+export const beforeTaxSeperatedRounds: string[] = [
+  'round1',
+  'round2',
+  'round3',
 ] satisfies RoundKey[]

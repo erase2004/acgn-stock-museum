@@ -120,7 +120,7 @@ const description = user.about.description ?? ''
   <div class="account-detail">
     <div>
       <PanelFolder client:only="preact" title="稅務資訊" classes="text-2xl" state={false}>
-        <TaxList client:only="preact" data={taxInfo} />
+        <TaxList client:only="preact" round={round} data={taxInfo} />
       </PanelFolder>
     </div>
     <div>
