@@ -1,11 +1,11 @@
 import type { z } from 'astro/zod'
 import { test, expect } from '@playwright/test'
-import { rounds, siteList } from '@/configs/sites'
+import { legacyRounds, rounds, siteList } from '@/configs/sites'
 import { getViolationCaseUrl } from '@/libs/routes'
 import { getConnection } from '@/tests/_utils/database'
 import { getAllBasicViolationCase, schema } from '@/services/dbViolationCases'
 import { getCurrentRound } from '@/services/dbRound'
-import { shuffle } from 'lodash-es'
+import { filter, shuffle } from 'lodash-es'
 import { MINIMUM_TEST_TIMEOUT } from '@/configs/general'
 import { isLatestRound } from '@/utils/helpers'
 
@@ -14,7 +14,9 @@ const RUN_ALL_TEST = process.env.RUN_ALL_TEST === 'true'
 
 type Violation = Pick<z.infer<typeof schema>, '_id'>
 
-for (const round of rounds) {
+const filteredRounds = filter(rounds, (r) => !legacyRounds.includes(r))
+
+for (const round of filteredRounds) {
   test.describe(`[${round}] violation case`, () => {
     let violationCases: Violation[] = []
 

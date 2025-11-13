@@ -1,10 +1,10 @@
 import type { z } from 'astro/zod'
 import { test, expect } from '@playwright/test'
-import { rounds, siteList } from '@/configs/sites'
+import { legacyRounds, rounds, siteList } from '@/configs/sites'
 import { getAnnouncementUrl } from '@/libs/routes'
 import { getConnection } from '@/tests/_utils/database'
 import { getAllBasicAnnouncements, schema } from '@/services/dbAnnouncements'
-import { shuffle } from 'lodash-es'
+import { filter, shuffle } from 'lodash-es'
 import { MINIMUM_TEST_TIMEOUT } from '@/configs/general'
 
 const MAX_ITEM_PERCENTAGE = 30
@@ -12,7 +12,9 @@ const RUN_ALL_TEST = process.env.RUN_ALL_TEST === 'true'
 
 type Announcement = Pick<z.infer<typeof schema>, '_id' | 'subject'>
 
-for (const round of rounds) {
+const filteredRounds = filter(rounds, (r) => !legacyRounds.includes(r))
+
+for (const round of filteredRounds) {
   test.describe(`[${round}] announcement`, () => {
     let announcements: Announcement[] = []
 
