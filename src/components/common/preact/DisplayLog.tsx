@@ -9,7 +9,7 @@ import { currencyFormat, interleave } from '@/utils/helpers'
 import { stoneDisplayName } from '@/utils/stone'
 import { getViolationCaseUrl } from '@/libs/routes'
 import { formatDateTimeText } from '@/libs/timeFormat'
-import { beforeTaxSeperatedRounds } from '@/configs/sites'
+import { beforeTaxSeperatedRounds, legacyRounds } from '@/configs/sites'
 
 type Log = z.infer<typeof schema>
 type Props = Log & { round: string }
@@ -35,6 +35,11 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
         </>
       )
       break
+    }
+
+    case '免費得石': {
+      // 適用於第三季之前
+      return `【免費得石】因為「${escape(data.reason)}」的理由獲得了${data.stones}顆聖晶石！`
     }
 
     case '購買得石': {
@@ -235,13 +240,22 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '撤職紀錄': {
-      contentJsx = (
-        <>
-          【撤職紀錄】{usersJsx[0]}以「{escape(data.reason)}」的理由撤除{usersJsx[1]}於「
-          {companyJsx}」公司的經理人職務與候選資格！
-          {displayViolationCaseOrNot(round, data.violationCaseId)}
-        </>
-      )
+      if (legacyRounds.includes(round)) {
+        contentJsx = (
+          <>
+            【撤職紀錄】{usersJsx[0]}以金管會的名義撤除{usersJsx[1]}於「
+            {companyJsx}」公司的經理人職務與候選資格！
+          </>
+        )
+      } else {
+        contentJsx = (
+          <>
+            【撤職紀錄】{usersJsx[0]}以「{escape(data.reason)}」的理由撤除{usersJsx[1]}於「
+            {companyJsx}」公司的經理人職務與候選資格！
+            {displayViolationCaseOrNot(round, data.violationCaseId)}
+          </>
+        )
+      }
       break
     }
 
@@ -473,13 +487,22 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '廣告追加': {
-      // NOTE: users[1] 存在與否是第三賽季的過渡，以後將可省略
-      contentJsx = (
-        <>
-          【廣告競價】{usersJsx[0]}追加了${currencyFormat(data.cost)}的廣告費用在$
-          {usersJsx[1] ? <>{usersJsx[1]}發佈的</> : ''}廣告：「{escape(data.message)}」上！
-        </>
-      )
+      if (legacyRounds.includes(round)) {
+        contentJsx = (
+          <>
+            【廣告競價】${usersJsx[0]}追加了${currencyFormat(data.cost)}的廣告費用在廣告：「
+            {escape(data.message)}」上！
+          </>
+        )
+      } else {
+        // NOTE: users[1] 存在與否是第三賽季的過渡，以後將可省略
+        contentJsx = (
+          <>
+            【廣告競價】{usersJsx[0]}追加了${currencyFormat(data.cost)}的廣告費用在$
+            {usersJsx[1] ? <>{usersJsx[1]}發佈的</> : ''}廣告：「{escape(data.message)}」上！
+          </>
+        )
+      }
       break
     }
 
@@ -617,10 +640,12 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '課以罰款': {
+      const isLegacyRound = legacyRounds.includes(round)
       const target = usersJsx[1] || <>「{companyJsx}」公司</>
       contentJsx = (
         <>
-          【課以罰款】{usersJsx[0]}以「{escape(data.reason)}」的理由向{target}課以總數為$
+          【{isLegacyRound ? '違規處理' : '課以罰款'}】{usersJsx[0]}以「{escape(data.reason)}
+          」的理由向{target}課以總數為$
           {currencyFormat(data.fine)}的罰金。
           {displayViolationCaseOrNot(round, data.violationCaseId)}
         </>
@@ -651,9 +676,11 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '沒收股份': {
+      const isLegacyRound = legacyRounds.includes(round)
       contentJsx = (
         <>
-          【沒收股份】{usersJsx[0]}以「{escape(data.reason)}」的理由將{usersJsx[1]}持有的「
+          【{isLegacyRound ? '違規處理' : '沒收股份'}】{usersJsx[0]}以「{escape(data.reason)}
+          」的理由將{usersJsx[1]}持有的「
           {companyJsx}」公司股份數量{data.stocks}給沒收了。
           {displayViolationCaseOrNot(round, data.violationCaseId)}
         </>
@@ -967,17 +994,21 @@ function stopOrResumePrvilegeInfo(
   { reason, violationCaseId }: any,
   usersJsx: preact.JSX.Element[],
 ) {
+  const isLegacyRound = legacyRounds.includes(round)
+
   if (type === 'stop') {
     return (
       <>
-        【玩家停權】{usersJsx[0]}以「{escape(reason)}」的理由禁止{usersJsx[1]}今後的所有{privilege}
+        【{isLegacyRound ? '違規處理' : '玩家停權'}】{usersJsx[0]}以「{escape(reason)}」的理由禁止
+        {usersJsx[1]}今後的所有{privilege}
         行為。{displayViolationCaseOrNot(round, violationCaseId)}
       </>
     )
   }
   return (
     <>
-      【玩家復權】{usersJsx[0]}以「{escape(reason)}」的理由中止了{usersJsx[1]}的{privilege}禁令。
+      【{isLegacyRound ? '解除禁令' : '玩家復權'}】{usersJsx[0]}以「{escape(reason)}」的理由中止了
+      {usersJsx[1]}的{privilege}禁令。
       {displayViolationCaseOrNot(round, violationCaseId)}
     </>
   )

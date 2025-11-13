@@ -19,6 +19,11 @@ const logTypeList = [
   '登入紀錄',
 
   /**
+   * 因為「data.reason」的理由獲得了data.stones顆聖晶石！(僅限第一、二季)
+   */
+  '免費得石',
+
+  /**
    * 【購買得石】userId0花費$data.cost購買了data.amount個data.stoneType！
    */
   '購買得石',
@@ -112,7 +117,8 @@ const logTypeList = [
   '辭職紀錄',
 
   /**
-   * 【撤職紀錄】userId0以「data.reason」的理由撤除userId1於「companyId」公司的經理人職務與候選資格！
+   * 【撤職紀錄】userId0以金管會的名義撤除userId1於「companyId」公司的經理人職務與候選資格！(適用於第三季以前)
+   * 【撤職紀錄】userId0以「data.reason」的理由撤除userId1於「companyId」公司的經理人職務與候選資格！（適用於第三季以後）
    */
   '撤職紀錄',
 
@@ -210,7 +216,8 @@ const logTypeList = [
   '廣告宣傳',
 
   /**
-   * 【廣告競價】userId0追加了$data.cost的廣告費用在userId1發佈的廣告：「data.message」上！
+   * 【廣告競價】userId0追加了$data.cost的廣告費用在廣告：「data.message」上！(適用於第三季以前)
+   * 【廣告競價】userId0追加了$data.cost的廣告費用在userId1發佈的廣告：「data.message」上！(適用於第三季以後)
    */
   '廣告追加',
 
@@ -231,22 +238,26 @@ const logTypeList = [
   '通報金管',
 
   /**
-   * 【玩家停權】userId0以「data.reason」的理由禁止userId1今後的所有舉報違規行為。
+   * 【違規處理】userId0以「data.reason」的理由禁止userId1今後的所有舉報違規行為。(適用第三季以前)
+   * 【玩家停權】userId0以「data.reason」的理由禁止userId1今後的所有舉報違規行為。（適用第三季以後）
    */
   '禁止舉報',
 
   /**
-   * 【玩家停權】userId0以「data.reason」的理由禁止userId1今後的所有投資下單行為。
+   * 【違規處理】userId0以「data.reason」的理由禁止userId1今後的所有投資下單行為。（適用第三季以前）
+   * 【玩家停權】userId0以「data.reason」的理由禁止userId1今後的所有投資下單行為。（適用第三季以後）
    */
   '禁止下單',
 
   /**
-   * 【玩家停權】userId0以「data.reason」的理由禁止userId1今後的所有聊天發言行為。
+   * 【違規處理】userId0以「data.reason」的理由禁止userId1今後的所有聊天發言行為。（適用第三季以前）
+   * 【玩家停權】userId0以「data.reason」的理由禁止userId1今後的所有聊天發言行為。（適用第三季以後）
    */
   '禁止聊天',
 
   /**
-   * 【玩家停權】userId0以「data.reason」的理由禁止userId1今後的所有廣告宣傳行為。
+   * 【違規處理】userId0以「data.reason」的理由禁止userId1今後的所有廣告宣傳行為。(適用第三季以前)
+   * 【玩家停權】userId0以「data.reason」的理由禁止userId1今後的所有廣告宣傳行為。（適用第三季以後）
    */
   '禁止廣告',
 
@@ -256,12 +267,14 @@ const logTypeList = [
   '禁止簡介',
 
   /**
-   * 【課以罰款】userId0以「data.reason」的理由向(userId1||「companyId」公司)課以總數為$data.fine的罰金。
+   * 【違規處理】userId0以「data.reason」的理由向(userId1||「companyId」公司)課以總數為$data.fine的罰金。（適用第三季以前）
+   * 【課以罰款】userId0以「data.reason」的理由向(userId1||「companyId」公司)課以總數為$data.fine的罰金。（適用第三季以後）
    */
   '課以罰款',
 
   /**
-   * 【沒收股份】userId0以「data.reason」的理由將userId1持有的「companyId」公司股份數量data.stocks給沒收了。
+   * 【違規處理】userId0以「data.reason」的理由將userId1持有的「companyId」公司股份數量data.stocks給沒收了。（適用第三季以前）
+   * 【沒收股份】userId0以「data.reason」的理由將userId1持有的「companyId」公司股份數量data.stocks給沒收了。（適用第三季以後）
    */
   '沒收股份',
 
@@ -276,27 +289,32 @@ const logTypeList = [
   '金管撤單',
 
   /**
-   * 【玩家停權】userId0以「data.reason」的理由禁止userId1今後擔任經理人的資格。
+   * 【違規處理】userId0以「data.reason」的理由禁止userId1今後擔任經理人的資格。（適用第三季以前）
+   * 【玩家停權】userId0以「data.reason」的理由禁止userId1今後擔任經理人的資格。（適用第三季以後）
    */
   '禁任經理',
 
   /**
-   * 【玩家復權】userId0以「data.reason」的理由中止了userId1的舉報違規禁令。
+   * 【解除禁令】userId0以「data.reason」的理由中止了userId1的舉報違規禁令。（適用第三季以前）
+   * 【玩家復權】userId0以「data.reason」的理由中止了userId1的舉報違規禁令。（適用第三季以後）
    */
   '解除舉報',
 
   /**
-   * 【玩家復權】userId0以「data.reason」的理由中止了userId1的投資下單禁令。
+   * 【解除禁令】userId0以「data.reason」的理由中止了userId1的投資下單禁令。（適用第三季以前）
+   * 【玩家復權】userId0以「data.reason」的理由中止了userId1的投資下單禁令。（適用第三季以後）
    */
   '解除下單',
 
   /**
-   * 【玩家復權】userId0以「data.reason」的理由中止了userId1的聊天發言禁令。
+   * 【解除禁令】userId0以「data.reason」的理由中止了userId1的聊天發言禁令。（適用第三季以前）
+   * 【玩家復權】userId0以「data.reason」的理由中止了userId1的聊天發言禁令。（適用第三季以後）
    */
   '解除聊天',
 
   /**
-   * 【玩家復權】userId0以「data.reason」的理由中止了userId1的廣告宣傳禁令。
+   * 【解除禁令】userId0以「data.reason」的理由中止了userId1的廣告宣傳禁令。（適用第三季以前）
+   * 【玩家復權】userId0以「data.reason」的理由中止了userId1的廣告宣傳禁令。（適用第三季以後）
    */
   '解除廣告',
 
@@ -311,7 +329,8 @@ const logTypeList = [
   '退還罰款',
 
   /**
-   * 【玩家復權】userId0以「data.reason」的理由中止了userId1禁任經理人的處置。
+   * 【解除禁令】userId0以「data.reason」的理由中止了userId1禁任經理人的處置。（適用第三季以前）
+   * 【玩家復權】userId0以「data.reason」的理由中止了userId1禁任經理人的處置。（適用第三季以後）
    */
   '解除禁任',
 
@@ -417,7 +436,7 @@ export const logTypeGroupMap = {
   },
   miningMachines: {
     displayName: '挖礦機與石頭相關',
-    logTypes: ['購買得石', '礦機營利'],
+    logTypes: ['購買得石', '礦機營利', '免費得石'],
   },
   foundations: {
     displayName: '新創計創相關',

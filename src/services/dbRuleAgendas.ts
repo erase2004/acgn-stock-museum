@@ -27,7 +27,7 @@ export const schema = z.object({
   /** 已投票使用者 User ID */
   votes: itemId.array(),
   /** 活躍玩家人數 */
-  activeUserCount: integer.min(0),
+  activeUserCount: integer.min(0).default(0),
 })
 
 export function getDBRuleAgendas(db: Db) {

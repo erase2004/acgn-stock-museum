@@ -12,7 +12,7 @@ import { getRelatedIssues } from '@/services/dbRuleIssues'
 import { getRelatedIssueOptions } from '@/services/dbRuleIssueOptions'
 import { markdownToHtml, removeMarkdown } from '@/utils/helpers'
 import { flatten, keyBy, map } from 'lodash-es'
-import { rounds } from '@/configs/sites'
+import { legacyRounds, rounds } from '@/configs/sites'
 
 export const getStaticPaths = (async () => {
   const results = await Promise.allSettled(
@@ -57,6 +57,8 @@ const data = issues.map((issue) =>
   }),
 )
 
+const isLegacyRound = legacyRounds.includes(round)
+
 const title = getCurrentPageFullTitle(Astro, agenda.title)
 const description = `${removeMarkdown(agenda.description)}`
 ---
@@ -71,9 +73,7 @@ const description = `${removeMarkdown(agenda.description)}`
   <p class="text-xl">
     議程建立委員：<UserLink client:only="preact" round={round} userId={agenda.creator} />
   </p>
-  <p>
-    活躍玩家人數：{agenda.activeUserCount} 人
-  </p>
+  {!isLegacyRound && <p>活躍玩家人數：{agenda.activeUserCount} 人</p>}
   <div class="divider"></div>
   <div>
     <div>
