@@ -67,7 +67,7 @@ and boilerplate:
 * [ ] Add round 1 to round 5 results
   * [ ] Round 1
   * [ ] Round 2
-  * [ ] Round 3
+  * [x] Round 3
   * [x] Round 4
   * [x] Round 5
 * [ ] Add build action to CI/CD pipeline
