@@ -1,5 +1,5 @@
 import type { APIContext } from 'astro'
-import { defaultWebsiteName, siteList } from '@/configs/sites'
+import { defaultWebsiteName, legacyRounds, siteList } from '@/configs/sites'
 
 export const PAGE = {
   MAIN: 'mainPage',
@@ -130,7 +130,11 @@ export function getWebsiteTitle(astro: APIContext) {
   return ''
 }
 
-export function getPageTitle(pageName: string) {
+export function getPageTitle(pageName: string, round?: string | null) {
+  if (pageName === PAGE.FSC_LOG && legacyRounds.includes(round ?? '')) {
+    return '舉報違規紀錄'
+  }
+
   return pageNameHash[pageName as keyof typeof pageNameHash]
 }
 
@@ -164,7 +168,7 @@ export function getCurrentPageFullTitle(astro: APIContext, detailName?: string) 
     return websiteName
   }
 
-  let title = `${getPageTitle(page)} - ${websiteName}`
+  let title = `${getPageTitle(page, getCurrentRound(astro))} - ${websiteName}`
   if (detailName) {
     title = `${detailName} - ${title}`
   }

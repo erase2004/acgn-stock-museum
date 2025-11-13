@@ -15,6 +15,7 @@ import CompanyLogInfo from './CompanyLogInfo.astro'
 import { getCurrentRound } from '@/libs/routes'
 import { dataStoreKey } from '@/configs/general'
 import { dataNumberPerPage } from '@/configs/general'
+import { legacyRounds } from '@/configs/sites'
 
 type Props = {
   companyId: string
@@ -22,6 +23,8 @@ type Props = {
 
 const { companyId } = Astro.props
 const round = getCurrentRound(Astro)!
+
+const isLegacyRound = legacyRounds.includes(round)
 ---
 
 <div class="company-detail">
@@ -95,16 +98,20 @@ const round = getCurrentRound(Astro)!
   </div>
 
   {/* 違規案件列表 */}
-  <div>
-    <PanelFolder client:only="preact" title="違規案件列表" state={false} classes="text-2xl">
-      <ViolationCaseInfo
-        type="companyViolated"
-        targetId={companyId}
-        storeKey={dataStoreKey.company.violation}
-        pageSize={dataNumberPerPage.company.violation}
-      />
-    </PanelFolder>
-  </div>
+  {
+    !isLegacyRound && (
+      <div>
+        <PanelFolder client:only="preact" title="違規案件列表" state={false} classes="text-2xl">
+          <ViolationCaseInfo
+            type="companyViolated"
+            targetId={companyId}
+            storeKey={dataStoreKey.company.violation}
+            pageSize={dataNumberPerPage.company.violation}
+          />
+        </PanelFolder>
+      </div>
+    )
+  }
 
   {/* 所有紀錄 */}
   <div>

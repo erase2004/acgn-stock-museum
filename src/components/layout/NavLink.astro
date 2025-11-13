@@ -11,14 +11,13 @@ type Props = Omit<Parameters<typeof getPageUrl>[0], 'round'> & {
 const { pageName, params, isRoundBounded, externalUrl } = Astro.props
 const isCurrentPage = isRoundBounded ? getCurrentPage(Astro) === pageName : false
 const isExternal = typeof externalUrl === 'string' && externalUrl.length > 0
+const round = getCurrentRound(Astro)
 
 let href: HTMLAttributes<'a'>['href']
 if (isExternal) {
   href = externalUrl
 } else {
   if (isRoundBounded) {
-    const round = getCurrentRound(Astro)
-
     if (typeof round !== 'string') throw new Error('Round is not valid')
 
     href = getPageUrl({
@@ -33,7 +32,7 @@ if (isExternal) {
     })
   }
 }
-const linkText = getPageTitle(pageName)
+const linkText = getPageTitle(pageName, round)
 ---
 
 <li>

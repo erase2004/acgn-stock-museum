@@ -200,3 +200,7 @@ export function formatDescription(text: string) {
 export function isLatestRound(round: string) {
   return last(rounds) === round
 }
+
+export function decimalToPercentage(n: number) {
+  return Math.round(n * 100)
+}

@@ -4,12 +4,12 @@ import RoundLayout from '@/layouts/Round.astro'
 import Filter from '@/components/round/violation/preact/Filter'
 import ListContainer from '@/components/round/violation/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { getCurrentRound, getViolationCaseUrl } from '@/libs/routes'
+import { getCurrentRound, getRoundMainPageUrl, getViolationCaseUrl } from '@/libs/routes'
 import { getViolationCases } from '@/services/dbViolationCases'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getConnection } from '@/libs/databases'
 import { STORE_KEY } from '@/stores/violation'
-import { rounds } from '@/configs/sites'
+import { legacyRounds, rounds } from '@/configs/sites'
 import { isLatestRound } from '@/utils/helpers'
 import Reminder from '@/components/common/Reminder.astro'
 
@@ -22,6 +22,11 @@ export const getStaticPaths = (() => {
 }) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
+
+if (legacyRounds.includes(round)) {
+  return Astro.redirect(getRoundMainPageUrl(round))
+}
+
 const connection = getConnection(round)!
 
 let result

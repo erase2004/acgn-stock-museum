@@ -24,7 +24,7 @@ import {
 import { getAccountLogs } from '@/services/dbLog'
 import { handlePromiseParser } from '@/utils/helpers'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
-import { rounds } from '@/configs/sites'
+import { legacyRounds, rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
 
 export const getStaticPaths = (async () => {
@@ -105,6 +105,8 @@ const productInfo =
 // log info
 const logs = (await getAccountLogs(connection, userId)) ?? []
 
+const isLegacyRound = legacyRounds.includes(round)
+
 const title = getCurrentPageFullTitle(Astro, user.profile.name)
 const description = user.about.description ?? ''
 ---
@@ -138,16 +140,20 @@ const description = user.about.description ?? ''
         <ProductList client:only="preact" round={round} data={productInfo} />
       </PanelFolder>
     </div>
-    <div class="max-md:max-h-screen">
-      <PanelFolder client:only="preact" title="違規案件列表" classes="text-2xl" state={false}>
-        <ViolationCaseInfo
-          type="userViolated"
-          targetId={userId}
-          storeKey={dataStoreKey.account.violation}
-          pageSize={dataNumberPerPage.account.violation}
-        />
-      </PanelFolder>
-    </div>
+    {
+      !isLegacyRound && (
+        <div class="max-md:max-h-screen">
+          <PanelFolder client:only="preact" title="違規案件列表" classes="text-2xl" state={false}>
+            <ViolationCaseInfo
+              type="userViolated"
+              targetId={userId}
+              storeKey={dataStoreKey.account.violation}
+              pageSize={dataNumberPerPage.account.violation}
+            />
+          </PanelFolder>
+        </div>
+      )
+    }
     <div class="max-h-screen">
       <PanelFolder client:only="preact" title="玩家紀錄" classes="text-2xl" state={false}>
         <LogList client:only="preact" round={round} data={logs} />

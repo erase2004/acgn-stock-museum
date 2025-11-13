@@ -22,6 +22,14 @@ export const gradeFactorTable = {
     C: 0.1,
     D: 0,
   },
+  // 排名切分比例
+  proportion: {
+    S: 0.05,
+    A: 0.25,
+    B: 0.5,
+    C: 0.75,
+    D: 1.0,
+  },
 } satisfies Record<string, Record<Grade, number>>
 
 export const schema = z.object({

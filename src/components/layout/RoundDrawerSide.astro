@@ -4,9 +4,10 @@ import NavLink from './NavLink.astro'
 import MobileUserFavoriteList from './preact/MobileUserFavoriteList'
 import ThemeToggle from './ThemeToggle.astro'
 import { getCurrentRound, PAGE } from '@/libs/routes'
-import { feedbackUrl } from '@/configs/sites'
+import { feedbackUrl, legacyRounds } from '@/configs/sites'
 
 const round = getCurrentRound(Astro)!
+const isLegacyRound = legacyRounds.includes(round)
 ---
 
 <div class="drawer-side z-50 **:not-[.ignore-inherit]:text-inherit">
@@ -27,7 +28,7 @@ const round = getCurrentRound(Astro)!
     <div class="overflow-y-scroll">
       <ul class="menu">
         <NavLink pageName={PAGE.MAIN} isRoundBounded={true} />
-        <NavLink pageName={PAGE.ANNOUNCEMENT_LIST} isRoundBounded={true} />
+        {!isLegacyRound && <NavLink pageName={PAGE.ANNOUNCEMENT_LIST} isRoundBounded={true} />}
         <MobileNavLinkGroup text="交易大廳">
           <NavLink pageName={PAGE.COMPANY_LIST} isRoundBounded={true} />
           <NavLink pageName={PAGE.ADVERTISING} isRoundBounded={true} />
@@ -38,7 +39,7 @@ const round = getCurrentRound(Astro)!
           <NavLink pageName={PAGE.TUTORIAL} isRoundBounded={true} />
           <NavLink pageName={PAGE.SEASONAL_REPORT} isRoundBounded={true} />
           <NavLink pageName={PAGE.RULE_AGENDA_LIST} isRoundBounded={true} />
-          <NavLink pageName={PAGE.VIOLATION_CASE_LIST} isRoundBounded={true} />
+          {!isLegacyRound && <NavLink pageName={PAGE.VIOLATION_CASE_LIST} isRoundBounded={true} />}
           <NavLink pageName={PAGE.FSC_LOG} isRoundBounded={true} />
           <NavLink pageName={PAGE.FSC_STOCK} isRoundBounded={true} />
           <NavLink pageName="other" externalUrl={feedbackUrl}>問題回報</NavLink>

@@ -21,7 +21,7 @@ import {
 import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/violation'
 import { dataStoreKey } from '@/configs/general'
 import { markdownToHtml, removeMarkdown, isLatestRound } from '@/utils/helpers'
-import { rounds } from '@/configs/sites'
+import { legacyRounds, rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
 
 export const getStaticPaths = (async () => {
@@ -57,6 +57,11 @@ const STORE_KEY = dataStoreKey.violationRelatedLog
 const { caseId = '' } = Astro.params
 
 const round = getCurrentRound(Astro)!
+
+if (legacyRounds.includes(round)) {
+  return Astro.redirect(getRoundMainPageUrl(round))
+}
+
 const connection = getConnection(round)
 
 let violation

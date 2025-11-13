@@ -10,7 +10,7 @@ import { getAllBasicAnnouncements, getAnnouncementById } from '@/services/dbAnno
 import { categoryDisplayName } from '@/utils/announcement'
 import { markdownToHtml, removeMarkdown } from '@/utils/helpers'
 import { getCurrentPageFullTitle } from '@/libs/routes'
-import { rounds } from '@/configs/sites'
+import { legacyRounds, rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
 
 export const getStaticPaths = (async () => {
@@ -34,6 +34,11 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
+
+if (legacyRounds.includes(round)) {
+  return Astro.redirect(getRoundMainPageUrl(round))
+}
+
 const connection = getConnection(round)!
 
 const { announcementId = '' } = Astro.params

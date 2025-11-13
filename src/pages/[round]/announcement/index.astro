@@ -4,11 +4,11 @@ import RoundLayout from '@/layouts/Round.astro'
 import Filter from '@/components/round/announcement/preact/Filter'
 import ListContainer from '@/components/round/announcement/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { getAnnouncementUrl, getCurrentRound } from '@/libs/routes'
+import { getAnnouncementUrl, getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAnnouncements } from '@/services/dbAnnouncements'
 import { STORE_KEY } from '@/stores/announcement'
-import { rounds } from '@/configs/sites'
+import { legacyRounds, rounds } from '@/configs/sites'
 
 export const getStaticPaths = (() => {
   return rounds.map((round) => ({
@@ -19,6 +19,11 @@ export const getStaticPaths = (() => {
 }) satisfies GetStaticPaths
 
 const round = getCurrentRound(Astro)!
+
+if (legacyRounds.includes(round)) {
+  return Astro.redirect(getRoundMainPageUrl(round))
+}
+
 const connection = getConnection(round)!
 const announcements = (await getAnnouncements(connection)) ?? []
 
