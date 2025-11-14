@@ -3,7 +3,11 @@ import StatusItem from './StatusItem.astro'
 import ClientDatetime from '@/components/common/preact/ClientDatetime'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
-import { announceSalaryTime, companyProfitDistribution } from '@/configs/general'
+import {
+  announceSalaryTime,
+  companyProfitDistribution,
+  companyProfitDistributionForFirstRound,
+} from '@/configs/general'
 import { getCurrentRound, getMuseumMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
@@ -12,6 +16,7 @@ import { FULL_DATETIME_FORMAT } from '@/libs/timeFormat'
 import { currencyFormat } from '@/utils/helpers'
 import { getLatestSeason } from '@/services/dbSeason'
 import { datetime } from '@/services/schema'
+import { FIRST_ROUND } from '@/configs/sites'
 
 dayjs.extend(isBetween)
 
@@ -37,6 +42,10 @@ const updateSalaryDeadline = dayjs(latestSeason.endDate).subtract(announceSalary
 
 const updateProfitDistributionDeadline = dayjs(latestSeason.endDate)
   .subtract(companyProfitDistribution.lockTime, 'ms')
+  .toDate()
+
+const updateBonusDeadline = dayjs(latestSeason.endDate)
+  .subtract(companyProfitDistributionForFirstRound.lockTime, 'ms')
   .toDate()
 
 function createFormatter(formatter: (v: any) => any) {
@@ -71,6 +80,8 @@ function taskIsReady(begin: dayjs.ConfigType, end: dayjs.ConfigType) {
 
   return ''
 }
+
+const isFirstRound = round === FIRST_ROUND
 ---
 
 <div class="flex flex-wrap *:last-of-type:md:ml-auto">
@@ -95,11 +106,23 @@ function taskIsReady(begin: dayjs.ConfigType, end: dayjs.ConfigType) {
       <ClientDatetime client:only="preact" value={updateSalaryDeadline} />
     </span>
   </StatusItem>
-  <StatusItem title="營利分配修改期限">
-    <span class="whitespace-nowrap">
-      <ClientDatetime client:only="preact" value={updateProfitDistributionDeadline} />
-    </span>
-  </StatusItem>
+
+  {
+    isFirstRound ? (
+      <StatusItem title="員工分紅修改期限">
+        <span class="whitespace-nowrap">
+          <ClientDatetime client:only="preact" value={updateBonusDeadline} />
+        </span>
+      </StatusItem>
+    ) : (
+      <StatusItem title="營利分配修改期限">
+        <span class="whitespace-nowrap">
+          <ClientDatetime client:only="preact" value={updateProfitDistributionDeadline} />
+        </span>
+      </StatusItem>
+    )
+  }
+
   <StatusItem
     title="最近股價更新區間"
     statusClass={taskIsReady(stockPriceUpdateBegin, stockPriceUpdateEnd)}

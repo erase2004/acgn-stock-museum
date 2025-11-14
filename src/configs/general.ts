@@ -35,6 +35,16 @@ export const companyProfitDistribution = {
   },
 }
 
+/** 公司營利的分配設定（適用第一季） */
+export const companyProfitDistributionForFirstRound = {
+  /** 分配設定調整的封關時間 (ms) */
+  lockTime: 86400000,
+  /** 公司所得稅佔比 (%) */
+  incomeTaxRatePercent: 15,
+  /** 經理人分紅 (%) */
+  managerBonusRatePercent: 5,
+}
+
 /** 挖礦機的運作時間 (ms) */
 export const miningMachineOperationTime = 86400000
 

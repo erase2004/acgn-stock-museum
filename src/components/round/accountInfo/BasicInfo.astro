@@ -4,6 +4,7 @@ import AccountCard from './AccountCard.astro'
 import AccountCompanyTitle from './AccountCompanyTitle.astro'
 import { currencyFormat, styledValidateTypeMarkHtml } from '@/utils/helpers'
 import ClientDatetime from '@/components/common/preact/ClientDatetime'
+import { FIRST_ROUND } from '@/configs/sites'
 
 type BanType = (typeof BanTypeList)[number]
 
@@ -39,6 +40,8 @@ function showValidateType(user: User) {
     }
   }
 }
+
+const isFirstRound = round === FIRST_ROUND
 ---
 
 <h1
@@ -87,9 +90,7 @@ function showValidateType(user: User) {
     <p>
       帳號當前餘額：{currencyFormat(user.profile.money)}
     </p>
-    <p>
-      帳號剩餘消費券：{currencyFormat(user.profile.vouchers)}
-    </p>
+    {!isFirstRound && <p>帳號剩餘消費券：{currencyFormat(user.profile.vouchers)}</p>}
     <p>
       帳號剩餘推薦票：{user.profile.voteTickets}
     </p>

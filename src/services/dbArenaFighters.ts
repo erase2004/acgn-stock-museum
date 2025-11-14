@@ -14,6 +14,14 @@ export const arenaFighterSortableFields = [
   'totalInvestedAmount',
 ] as const
 
+const attributeParametersForFirstRound = {
+  hp: { cost: 200, base: 50 },
+  sp: { cost: 1000, base: 5 },
+  atk: { cost: 1000, base: 1 },
+  def: { cost: 1000, base: 0 },
+  agi: { cost: 1000, base: 0 },
+}
+
 const attributeParameters = {
   hp: { cost: 200, base: 100 },
   sp: { cost: 1000, base: 10 },
@@ -22,8 +30,14 @@ const attributeParameters = {
   agi: { cost: 1000, base: 0 },
 }
 
-export function getAttributeNumber(attribute: keyof typeof attributeParameters, amount: number) {
-  const { cost, base } = attributeParameters[attribute]
+export function getAttributeNumber(
+  attribute: keyof typeof attributeParameters,
+  amount: number,
+  isFirstRound: boolean,
+) {
+  const { cost, base } = isFirstRound
+    ? attributeParametersForFirstRound[attribute]
+    : attributeParameters[attribute]
 
   return base + Math.floor(amount / cost)
 }

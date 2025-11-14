@@ -24,7 +24,7 @@ import {
 import { getAccountLogs } from '@/services/dbLog'
 import { handlePromiseParser } from '@/utils/helpers'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
-import { legacyRounds, rounds } from '@/configs/sites'
+import { FIRST_ROUND, legacyRounds, rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
 
 export const getStaticPaths = (async () => {
@@ -106,6 +106,7 @@ const productInfo =
 const logs = (await getAccountLogs(connection, userId)) ?? []
 
 const isLegacyRound = legacyRounds.includes(round)
+const isFirstRound = round === FIRST_ROUND
 
 const title = getCurrentPageFullTitle(Astro, user.profile.name)
 const description = user.about.description ?? ''
@@ -135,11 +136,15 @@ const description = user.about.description ?? ''
         <StoneList client:only="preact" round={round} profile={user.profile} data={stoneInfo} />
       </PanelFolder>
     </div>
-    <div>
-      <PanelFolder client:only="preact" title="持有產品" classes="text-2xl" state={false}>
-        <ProductList client:only="preact" round={round} data={productInfo} />
-      </PanelFolder>
-    </div>
+    {
+      !isFirstRound && (
+        <div>
+          <PanelFolder client:only="preact" title="持有產品" classes="text-2xl" state={false}>
+            <ProductList client:only="preact" round={round} data={productInfo} />
+          </PanelFolder>
+        </div>
+      )
+    }
     {
       !isLegacyRound && (
         <div class="max-md:max-h-screen">

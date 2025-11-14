@@ -1,5 +1,6 @@
 ---
 import UserLink from '@/components/common/preact/UserLink'
+import { FIRST_ROUND } from '@/configs/sites'
 import { importantFscLogTypeList } from '@/services/dbLog'
 
 type Props = {
@@ -8,6 +9,8 @@ type Props = {
 }
 
 const { round, fscMembers } = Astro.props
+
+const isFirstRound = round === FIRST_ROUND
 ---
 
 <div class="collapse-arrow collapse">
@@ -44,7 +47,13 @@ const { round, fscMembers } = Astro.props
         <li>股價趨勢區塊可以讓使用者觀看該公司一段時間內的股價曲線圖或K線圖。</li>
         <li>數據資訊區塊可以讓使用者查閱該公司的各種數字資訊。</li>
         <li>交易訂單區塊可以讓使用者查閱該公司目前的買賣單情況，並進行下單操作。</li>
-        <li>產品中心區塊可以讓使用者查看該公司的當季產品、購買當季產品與投推薦票。</li>
+        <li>
+          {
+            isFirstRound
+              ? '產品中心區塊可以讓使用者查看該公司的當季產品、投推薦票。在暢銷產品排行區塊中顯示的則是該公司曾經發布的所有產品的使用者按讚排行，按讚並不需要推薦票，且隨時可以取消。'
+              : '產品中心區塊可以讓使用者查看該公司的當季產品、購買當季產品與投推薦票。'
+          }
+        </li>
         <li>所有紀錄區塊可以讓使用者查閱該公司過去的所有紀錄。</li>
       </ol>
       <li>新創計劃頁面：</li>

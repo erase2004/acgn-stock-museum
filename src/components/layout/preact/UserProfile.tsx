@@ -18,6 +18,7 @@ import { ownStocks, companyProductTotal } from '@/stores/account'
 import { map, zipObject } from 'lodash-es'
 import { firestore } from '@/libs/firebase'
 import { collection, getDocs, query, where } from 'firebase/firestore'
+import { FIRST_ROUND } from '@/configs/sites'
 
 type Props = {
   round: string
@@ -76,6 +77,7 @@ export default function UserProfile({ round }: Props) {
   const [shouldShowError, setShouldShowError] = useState(false)
   const dropdownRef = useRef<HTMLDetailsElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const isFirstRound = round === FIRST_ROUND
 
   const collectionRef = collection(firestore, round)
 
@@ -213,10 +215,12 @@ export default function UserProfile({ round }: Props) {
               <i class="fa fa-usd" aria-hidden="true"></i>
               <span>{currencyFormat(user.profile.money)}</span>
             </div>
-            <div title={`現有消費券：${user.profile.vouchers}`}>
-              <i class="fa fa-money" aria-hidden="true"></i>
-              <span>{currencyFormat(user.profile.vouchers)}</span>
-            </div>
+            {!isFirstRound && (
+              <div title={`現有消費券：${user.profile.vouchers}`}>
+                <i class="fa fa-money" aria-hidden="true"></i>
+                <span>{currencyFormat(user.profile.vouchers)}</span>
+              </div>
+            )}
             <div title={`現有推薦票：${user.profile.voteTickets}`}>
               <i class="fa fa-ticket" aria-hidden="true"></i>
               <span>{currencyFormat(user.profile.voteTickets)}</span>

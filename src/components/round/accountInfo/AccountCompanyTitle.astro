@@ -12,6 +12,7 @@ import { getDBCompanies, schema as schemaCompany } from '@/services/dbCompanies'
 import { getDBEmployees, schema as schemaEmployee } from '@/services/dbEmployees'
 import { getDBVips, schema as schemaVip } from '@/services/dbVips'
 import { handlePromiseParser } from '@/utils/helpers'
+import { FIRST_ROUND } from '@/configs/sites'
 
 const TITLE_MAP = {
   chairman: '董事長',
@@ -23,6 +24,7 @@ const TITLE_MAP = {
 
 const userId = Astro.params['userId'] ?? ''
 const round = getCurrentRound(Astro)!
+const isFirstRound = round === FIRST_ROUND
 const connection = getConnection(round)!
 const dbCompanies = getDBCompanies(connection)
 
@@ -89,11 +91,15 @@ const vipTitles =
   (await handlePromiseParser(
     z.promise(schemaVip.array()).parse(dbVips.find({ userId }, { sort: { level: -1 } }).toArray()),
   )) ?? []
+
+const titleList = isFirstRound
+  ? Object.values(TITLE_MAP).filter((v) => v !== TITLE_MAP.vip)
+  : Object.values(TITLE_MAP)
 ---
 
 <div class="tabs-lift tabs w-full">
   {
-    Object.values(TITLE_MAP).map((value, index) => {
+    titleList.map((value, index) => {
       return (
         <Fragment>
           <input

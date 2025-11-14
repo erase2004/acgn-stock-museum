@@ -15,8 +15,10 @@ import {
   getCompanyPERatio,
   getCompanyEPS,
   priceDisplayClass,
+  getCompanyEPSForFirstRound,
 } from '@/utils/company'
 import { integer } from '@/services/schema'
+import { FIRST_ROUND } from '@/configs/sites'
 
 type Props = {
   round: string
@@ -104,8 +106,9 @@ const item = await (async function () {
   })
 })()
 
-const PERatio = getCompanyPERatio(item)
-const EPRatio = getCompanyEPRatio(item)
+const isFirstRound = round === FIRST_ROUND
+const PERatio = getCompanyPERatio(isFirstRound, item)
+const EPRatio = getCompanyEPRatio(isFirstRound, item)
 ---
 
 <div class="company-market-data-panel">
@@ -139,7 +142,7 @@ const EPRatio = getCompanyEPRatio(item)
   </div>
   <div class="col-span-6 md:col-span-3 lg:col-span-2">
     <p>每股盈餘</p>
-    <p>$ {currencyFormat(getCompanyEPS(item))}</p>
+    <p>$ {currencyFormat(isFirstRound ? getCompanyEPSForFirstRound(item) : getCompanyEPS(item))}</p>
   </div>
   <div class="col-span-6 md:col-span-3 lg:col-span-2">
     <p>本益比</p>

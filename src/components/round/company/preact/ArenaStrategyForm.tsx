@@ -3,6 +3,7 @@ import { arenaMaximumRound } from '@/configs/general'
 import { getAttributeNumber, type schema } from '@/services/dbArenaFighters'
 import { useUser } from '@/utils/hooks'
 import CompanyLink from '@/components/common/preact/CompanyLink'
+import { FIRST_ROUND } from '@/configs/sites'
 
 type Fighter = z.infer<typeof schema>
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
 
 export default function ArenaStrategyForm({ round, manager, fighter, attackSequnce }: Props) {
   const { user } = useUser()
+  const isFirstRound = round === FIRST_ROUND
 
   if (user?._id !== manager) return <></>
 
@@ -27,7 +29,7 @@ export default function ArenaStrategyForm({ round, manager, fighter, attackSequn
             設定的特攻消耗數值(1~10)：<span class="bg-base-300 px-4 py-1">{fighter['spCost']}</span>
           </p>
           <p class="text-warning">特攻消耗數值越高越容易使出特殊攻擊，但也會越快耗盡SP。</p>
-          <p class="text-info">{spForecast(fighter)}</p>
+          <p class="text-info">{spForecast(fighter, isFirstRound)}</p>
         </div>
         <div class="flex flex-col max-lg:gap-y-1 lg:flex-row lg:gap-x-8">
           <div class="flex w-full flex-col gap-y-1 overflow-x-hidden lg:w-1/2">
@@ -64,8 +66,8 @@ export default function ArenaStrategyForm({ round, manager, fighter, attackSequn
   )
 }
 
-function spForecast(fighter: Fighter) {
-  const sp = getAttributeNumber('sp', fighter['sp'])
+function spForecast(fighter: Fighter, isFirstRound: boolean) {
+  const sp = getAttributeNumber('sp', fighter['sp'], isFirstRound)
   const spCost = fighter['spCost']
   const tenRoundForecast = Math.floor(Math.min((sp + 1) / spCost, spCost))
   const maximumForecast = Math.floor(

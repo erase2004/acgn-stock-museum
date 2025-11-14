@@ -9,7 +9,7 @@ import { currencyFormat, interleave } from '@/utils/helpers'
 import { stoneDisplayName } from '@/utils/stone'
 import { getViolationCaseUrl } from '@/libs/routes'
 import { formatDateTimeText } from '@/libs/timeFormat'
-import { beforeTaxSeperatedRounds, legacyRounds } from '@/configs/sites'
+import { beforeTaxSeperatedRounds, FIRST_ROUND, legacyRounds } from '@/configs/sites'
 
 type Log = z.infer<typeof schema>
 type Props = Log & { round: string }
@@ -39,7 +39,12 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
 
     case '免費得石': {
       // 適用於第三季之前
-      return `【免費得石】因為「${escape(data.reason)}」的理由獲得了${data.stones}顆聖晶石！`
+      contentJsx = (
+        <>
+          【免費得石】因為「{escape(data.reason)}」的理由獲得了{data.stones}顆聖晶石！
+        </>
+      )
+      break
     }
 
     case '購買得石': {
@@ -313,13 +318,24 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '推薦產品': {
-      contentJsx = (
-        <>
-          【推薦產品】{usersJsx[0]}向「{companyJsx}」公司的產品「
-          <ProductLink productId={data.productId} />
-          」投了一張推薦票！
-        </>
-      )
+      const isFirstRound = round === FIRST_ROUND
+      if (isFirstRound) {
+        contentJsx = (
+          <>
+            【推薦產品】{usersJsx[0]}向「{companyJsx}」公司的產品「
+            <ProductLink productId={data.productId} />
+            」投了一張推薦票，使其獲得了${currencyFormat(data.profit)}的營利額！
+          </>
+        )
+      } else {
+        contentJsx = (
+          <>
+            【推薦產品】{usersJsx[0]}向「{companyJsx}」公司的產品「
+            <ProductLink productId={data.productId} />
+            」投了一張推薦票！
+          </>
+        )
+      }
       break
     }
 
@@ -847,6 +863,26 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
         <>
           【最萌亂鬥】「{companyJsx}」公司在這一屆最萌亂鬥大賽中表現出眾，獲得了$
           {currencyFormat(data.reward)}的營利金額！
+        </>
+      )
+      break
+    }
+
+    case '礦機放石': {
+      contentJsx = (
+        <>
+          【礦機放石】{usersJsx[0]}在「{companyJsx}」公司的挖礦機放置了一個
+          {stoneDisplayName(data.stoneType)}！
+        </>
+      )
+      break
+    }
+
+    case '礦機取石': {
+      contentJsx = (
+        <>
+          【礦機取石】{usersJsx[0]}從「{companyJsx}」公司的挖礦機拿回了一個
+          {stoneDisplayName(data.stoneType)}！
         </>
       )
       break

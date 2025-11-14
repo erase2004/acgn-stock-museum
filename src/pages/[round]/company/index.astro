@@ -11,10 +11,10 @@ import { getCompanyUrl, getCurrentRound } from '@/libs/routes'
 import { getCompanies } from '@/services/dbCompanies'
 import { getDBEmployees, schema as schemaEmployee } from '@/services/dbEmployees'
 import { handlePromiseParser } from '@/utils/helpers'
-import { getCompanyEPS } from '@/utils/company'
+import { getCompanyEPS, getCompanyEPSForFirstRound } from '@/utils/company'
 import { countBy } from 'lodash-es'
 import { LIST_STORE_KEY } from '@/stores/company'
-import { rounds } from '@/configs/sites'
+import { FIRST_ROUND, rounds } from '@/configs/sites'
 
 export const getStaticPaths = (() => {
   return rounds.map((round) => ({
@@ -49,10 +49,14 @@ const employeeMap = await (async function () {
   return countBy(employees, (item) => item.companyId)
 })()
 
+const isFirstRound = round === FIRST_ROUND
+
 const companies = (await getCompanies(connection)) ?? []
 const data: ListItem[] = companies.map((company) => {
   const employeeCount = employeeMap[company._id] || 0
-  const eps = getCompanyEPS({ ...company, employeeCount })
+  const eps = isFirstRound
+    ? getCompanyEPSForFirstRound({ ...company, employeeCount })
+    : getCompanyEPS({ ...company, employeeCount })
 
   return {
     ...company,

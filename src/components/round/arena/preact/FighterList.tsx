@@ -13,6 +13,7 @@ import { orderBy } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { useDisplayItems } from '@/utils/hooks'
+import { FIRST_ROUND } from '@/configs/sites'
 
 type OrderKey = (typeof arenaFighterSortableFields)[number]
 type SortOrder<T = 1 | 0> = Partial<Record<OrderKey, T>>
@@ -38,6 +39,7 @@ type Props = {
 }
 
 export default function FighterList({ round, isArenaEnded, minInvestment, data }: Props) {
+  const isFirstRound = round === FIRST_ROUND
   const [sortOrder, setSortOrder] = useState<SortOrder>(isArenaEnded ? { rank: 1 } : { agi: 0 })
 
   const sortedItems = useMemo(() => {
@@ -135,7 +137,7 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
                 </td>
                 {fighterAttributes.map((field) => (
                   <td key={field} class="truncate text-center" data-title={fieldNameMap[field]}>
-                    {getAttributeNumber(field, item[field])}
+                    {getAttributeNumber(field, item[field], isFirstRound)}
                   </td>
                 ))}
                 <td class="truncate text-center" data-title="名次">

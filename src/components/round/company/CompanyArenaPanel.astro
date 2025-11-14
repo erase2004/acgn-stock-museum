@@ -15,6 +15,7 @@ import { getCompanyFilterByCustomSchema, schema as schemaCompany } from '@/servi
 import { currencyFormat, handlePromiseParser } from '@/utils/helpers'
 import { arenaMinInvestedAmount } from '@/configs/general'
 import { isString } from 'lodash-es'
+import { FIRST_ROUND } from '@/configs/sites'
 
 type Props = {
   round: string
@@ -39,9 +40,9 @@ const joinData = await (async function () {
       dbArenaFighters.findOne({
         arenaId: arenaData?._id ?? '',
         companyId,
-      })
+      }),
     ),
-    true
+    true,
   )
 })()
 
@@ -51,6 +52,8 @@ const attackSequence = (function () {
 
   return (joinData?.attackSequence ?? []).map((index) => companyIdList[index]).filter(isString)
 })()
+
+const isFirstRound = round === FIRST_ROUND
 ---
 
 <div>
@@ -84,7 +87,7 @@ const attackSequence = (function () {
                 <Fragment>
                   <p class="col-span-1">{attr.toUpperCase()}：</p>
                   <p class="col-span-4 text-right md:col-span-2">
-                    {getAttributeNumber(attr, joinData[attr])}
+                    {getAttributeNumber(attr, joinData[attr], isFirstRound)}
                     (已投資${currencyFormat(joinData[attr])})
                   </p>
                   <div class="hidden md:col-span-2 md:block" />

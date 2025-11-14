@@ -15,7 +15,7 @@ import CompanyLogInfo from './CompanyLogInfo.astro'
 import { getCurrentRound } from '@/libs/routes'
 import { dataStoreKey } from '@/configs/general'
 import { dataNumberPerPage } from '@/configs/general'
-import { legacyRounds } from '@/configs/sites'
+import { FIRST_ROUND, legacyRounds } from '@/configs/sites'
 
 type Props = {
   companyId: string
@@ -25,6 +25,7 @@ const { companyId } = Astro.props
 const round = getCurrentRound(Astro)!
 
 const isLegacyRound = legacyRounds.includes(round)
+const isFirstRound = round === FIRST_ROUND
 ---
 
 <div class="company-detail">
@@ -70,11 +71,15 @@ const isLegacyRound = legacyRounds.includes(round)
   </div>
 
   {/* VIP 名冊 */}
-  <div>
-    <PanelFolder client:only="preact" title="VIP名冊" state={false} classes="text-2xl">
-      <CompanyVipPanel round={round} companyId={companyId} />
-    </PanelFolder>
-  </div>
+  {
+    !isFirstRound && (
+      <div>
+        <PanelFolder client:only="preact" title="VIP名冊" state={false} classes="text-2xl">
+          <CompanyVipPanel round={round} companyId={companyId} />
+        </PanelFolder>
+      </div>
+    )
+  }
 
   {/* 員工名冊 */}
   <div>

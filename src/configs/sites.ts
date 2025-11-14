@@ -243,11 +243,10 @@ export const siteList = {
     name: `(α) ${defaultWebsiteName}`,
     disabled: false,
     dbname: 'museum-1',
-    externalUrl: `https://r1-${museumBaseDomain}`,
   },
 } satisfies Record<RoundKey, Round>
 
-export const rounds = range(2, Object.keys(siteList).length + 1)
+export const rounds = range(1, Object.keys(siteList).length + 1)
   .map<RoundKey>((n) => `round${n}`)
   .filter((key) => key in siteList && siteList[key as keyof typeof siteList].disabled !== true)
 
@@ -274,3 +273,5 @@ export const beforeTaxSeperatedRounds: string[] = [
 
 /** 第三季以前，還沒有獨立的系統公告、違規案件列表 */
 export const legacyRounds: string[] = ['round1', 'round2'] satisfies RoundKey[]
+
+export const FIRST_ROUND: string = 'round1' satisfies RoundKey
