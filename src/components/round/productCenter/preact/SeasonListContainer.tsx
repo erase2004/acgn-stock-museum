@@ -6,6 +6,8 @@ import LoadMore from '@/components/common/preact/LoadMore'
 import { isRestrictedRating, useProductCenter } from '@/utils/product'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { FIRST_ROUND } from '@/configs/sites'
+import { useStore } from '@nanostores/preact'
+import { totalAmount } from '@/stores/pagination'
 
 const STORE_KEY = dataStoreKey.productCenter.season
 const PAGE_SIZE = dataNumberPerPage.productCenter.season
@@ -18,6 +20,7 @@ type Props = {
 export default function SeasonListContainer({ round, data }: Props) {
   const isFirstRound = round === FIRST_ROUND
 
+  const $totalAmount = useStore(totalAmount)
   const { displayItems, handleSortChange, getSortButtonClass, getSortIcon } = useProductCenter(
     data,
     PAGE_SIZE,
@@ -26,6 +29,7 @@ export default function SeasonListContainer({ round, data }: Props) {
 
   return (
     <>
+      <p>總共{$totalAmount[STORE_KEY]}項產品</p>
       <div class="sticky-control mb-2 flex gap-x-2 py-4 md:hidden">
         <button
           class={`btn-default btn btn-outline btn-sm ${getSortButtonClass('type')}`}
