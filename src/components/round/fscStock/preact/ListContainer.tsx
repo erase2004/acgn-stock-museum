@@ -1,5 +1,5 @@
 import { z } from 'astro/zod'
-import { stocksWithCountSchema } from '@/services/dbDirectors'
+import { stockSchemaExtendWithCompany } from '@/services/dbDirectors'
 import { useDisplayItems } from '@/utils/hooks'
 import { dataNumberPerPage } from '@/configs/general'
 import { useStore } from '@nanostores/preact'
@@ -8,7 +8,7 @@ import { getCompanyUrl } from '@/libs/routes'
 
 const PAGE_SIZE = dataNumberPerPage.fscStock
 
-type Stock = z.infer<typeof stocksWithCountSchema>[number]['data'][number]
+type Stock = z.infer<typeof stockSchemaExtendWithCompany>
 type Props = {
   storeKey: string
   round: string

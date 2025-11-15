@@ -27,8 +27,7 @@ const connection = getConnection(round)!
 
 const fscStocks =
   (await (async function () {
-    const result = await getAccountOwnStocks(connection, userId)
-    return result?.[0].data
+    return getAccountOwnStocks(connection, userId)
   })()) ?? []
 ---
 

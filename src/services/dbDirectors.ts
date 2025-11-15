@@ -2,7 +2,7 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
-import { integer, itemId, withCountSchema } from './schema'
+import { integer, itemId } from './schema'
 import { schema as schemaCompany } from './dbCompanies'
 
 export const schema = z.object({
@@ -20,17 +20,24 @@ export function getDBDirectors(db: Db) {
   return db.collection('directors')
 }
 
-export const stocksWithCountSchema = withCountSchema(
-  schema.merge(schemaCompany.pick({ companyName: true, isSeal: true })),
+export const stockSchemaExtendWithCompany = schema.merge(
+  schemaCompany.pick({ companyName: true, isSeal: true }),
 )
 
 export async function getAccountOwnStocks(db: Db, userId: string) {
   const dbDirectors = getDBDirectors(db)
 
   return handlePromiseParser(
-    z.promise(stocksWithCountSchema).parse(
+    z.promise(stockSchemaExtendWithCompany.array()).parse(
       dbDirectors
         .aggregate([
+          {
+            $match: {
+              userId: {
+                $eq: userId,
+              },
+            },
+          },
           {
             $lookup: {
               from: 'companies',
@@ -46,22 +53,9 @@ export async function getAccountOwnStocks(db: Db, userId: string) {
           },
           { $project: { fromItems: 0 } },
           {
-            $match: {
-              userId: {
-                $eq: userId,
-              },
-            },
-          },
-          {
             $sort: {
               isSeal: 1,
               createdAt: -1,
-            },
-          },
-          {
-            $facet: {
-              total: [{ $count: 'total' }],
-              data: [],
             },
           },
         ])

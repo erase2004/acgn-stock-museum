@@ -1,5 +1,5 @@
 import type { z } from 'astro/zod'
-import type { stocksWithCountSchema } from '@/services/dbDirectors'
+import type { stockSchemaExtendWithCompany } from '@/services/dbDirectors'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { useDisplayItems } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
@@ -7,7 +7,7 @@ import { getCompanyUrl } from '@/libs/routes'
 import { useStore } from '@nanostores/preact'
 import { totalAmount } from '@/stores/pagination'
 
-type Stock = z.infer<typeof stocksWithCountSchema>[number]['data'][number]
+type Stock = z.infer<typeof stockSchemaExtendWithCompany>
 
 type Props = {
   round: string

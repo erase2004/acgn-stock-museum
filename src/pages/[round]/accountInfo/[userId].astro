@@ -77,7 +77,7 @@ const taxInfo =
   })()) ?? []
 
 // stock info
-const stockInfo = await getAccountOwnStocks(connection, userId)
+const stockInfo = (await getAccountOwnStocks(connection, userId)) ?? []
 
 // stone info
 const stoneInfo =
@@ -139,7 +139,7 @@ const description = user.about.description ?? ''
     </div>
     <div>
       <PanelFolder client:only="preact" title="持股資訊" classes="text-2xl" state={false}>
-        <StockList client:only="preact" round={round} data={stockInfo?.[0]?.data ?? []} />
+        <StockList client:only="preact" round={round} data={stockInfo} />
       </PanelFolder>
     </div>
     <div class="max-md:max-h-screen">
