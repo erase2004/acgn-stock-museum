@@ -1,11 +1,13 @@
 import UserLink from '@/components/common/preact/UserLink'
-import { levelConfig, type schema } from '@/services/dbVips'
 import type { z } from 'astro/zod'
+import type { TargetedEvent } from 'preact'
+import { levelConfig, type schema } from '@/services/dbVips'
 import { useFilter, useUser } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { isArray, isString } from 'lodash-es'
 import LoadMore from '@/components/common/preact/LoadMore'
-import type { TargetedEvent } from 'preact'
+import { useStore } from '@nanostores/preact'
+import { totalAmount } from '@/stores/pagination'
 
 const displayVipLevelOptions = levelConfig
   .slice(1)
@@ -34,7 +36,8 @@ export default function VipList({ round, thresholds, data }: Props) {
   const { user } = useUser()
   const userVipInfo = user ? data.find((i) => i.userId === user._id) : undefined
 
-  const { filteredItems, setFilterValue } = useFilter(
+  const $totalAmount = useStore(totalAmount)
+  const { filteredItems, filterObject, setFilterValue } = useFilter(
     STORE_KEY,
     PAGE_SIZE,
     data,
@@ -74,6 +77,10 @@ export default function VipList({ round, thresholds, data }: Props) {
             ))}
           </select>
         </label>
+        <p class="sm:ml-4 sm:inline-block">
+          總共{$totalAmount[STORE_KEY]}位
+          {filterObject['level'] && ` ${getLevelText(filterObject['level'])}`}
+        </p>
         <div class="company-panel-table -mx-2 max-h-72 *:px-4 md:-mx-4">
           <div class="sticky-control header">
             <div class="col-span-6">使用者帳號</div>

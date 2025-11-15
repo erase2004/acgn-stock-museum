@@ -6,6 +6,8 @@ import { useState, useEffect } from 'preact/hooks'
 import { useFilter, useUser } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { intersection, isArray, isString } from 'lodash-es'
+import { useStore } from '@nanostores/preact'
+import { totalAmount } from '@/stores/pagination'
 
 const STORE_KEY = dataStoreKey.company.log
 const PAGE_SIZE = dataNumberPerPage.company.log
@@ -20,6 +22,7 @@ export default function CompanyLogList({ round, data }: Props) {
   const [filterOn, setFilterOn] = useState(false)
   const { user } = useUser()
 
+  const $totalAmount = useStore(totalAmount)
   const { filteredItems, setFilterValue } = useFilter(
     STORE_KEY,
     PAGE_SIZE,
@@ -71,6 +74,7 @@ export default function CompanyLogList({ round, data }: Props) {
           {filterOn ? '只檢視自身紀錄' : '檢視所有紀錄'}
         </button>
       )}
+      <p>總共{$totalAmount[STORE_KEY]}筆紀錄</p>
       {filteredItems.length > 0 ? (
         <>
           {filteredItems.map((item) => (

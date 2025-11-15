@@ -1,9 +1,11 @@
 import LoadMore from '@/components/common/preact/LoadMore'
 import UserLink from '@/components/common/preact/UserLink'
-import { formatDateTimeText } from '@/libs/timeFormat'
 import type { schema } from '@/services/dbEmployees'
-import { useDisplayItems } from '@/utils/hooks'
 import type { z } from 'astro/zod'
+import { formatDateTimeText } from '@/libs/timeFormat'
+import { totalAmount } from '@/stores/pagination'
+import { useDisplayItems } from '@/utils/hooks'
+import { useStore } from '@nanostores/preact'
 
 type EmployeeType = 'current' | 'next'
 type Employee = z.infer<typeof schema>
@@ -28,12 +30,16 @@ function showMessage(type: EmployeeType, message?: string) {
 }
 
 export default function EmployeeList({ type, round, storeKey, pageSize, data }: Props) {
+  const $totalAmount = useStore(totalAmount)
   const displayItems = useDisplayItems(data, storeKey, pageSize)
   const label = typeLabel(type)
 
   return (
     <div class="-mx-2 border-t border-base-content/25 px-2 md:-mx-4 md:px-4">
-      <p class="mb-1 text-xl">{label}</p>
+      <p class="mb-1 text-xl">
+        {label}
+        <span class="ml-4 text-base">-總共{$totalAmount[storeKey]}人-</span>
+      </p>
       <div class="company-panel-table max-h-72 px-2 md:px-4">
         <div class="sticky-control header">
           <div class="col-span-2">使用者帳號</div>

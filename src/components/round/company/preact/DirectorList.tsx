@@ -5,6 +5,8 @@ import type { z } from 'astro/zod'
 import { useDisplayItems } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { getStockPercentage } from '@/utils/company'
+import { useStore } from '@nanostores/preact'
+import { totalAmount } from '@/stores/pagination'
 
 const STORE_KEY = dataStoreKey.company.director
 const PAGE_SIZE = dataNumberPerPage.company.director
@@ -17,10 +19,12 @@ type Props = {
 }
 
 export default function DirectorList({ round, totalRelease, data }: Props) {
+  const $totalAmount = useStore(totalAmount)
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
 
   return (
     <div class="company-panel-table max-h-72 border-t *:px-4 md:*:gap-x-4">
+      <p>總共{$totalAmount[STORE_KEY]}位股東</p>
       <div class="sticky-control header">
         <div class="col-span-3">使用者帳號</div>
         <div class="col-span-1">股份數</div>

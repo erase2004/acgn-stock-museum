@@ -74,7 +74,8 @@ export function useFilter<T extends Record<string, any>, U extends FilterConfig<
 
     newList = filter(newList, (item) => filterFn(item, filters))
 
-    const totalAmount = newList.length
+    const _totalAmount = newList.length
+    totalAmount.setKey(storeKey, _totalAmount)
 
     if (reset) {
       newList = newList.slice(0, pageSize)
@@ -83,7 +84,8 @@ export function useFilter<T extends Record<string, any>, U extends FilterConfig<
       newList = newList.slice(0, pageSize * $currentPage[storeKey])
     }
 
-    hasMore.setKey(storeKey, newList.length < totalAmount)
+    currentAmount.setKey(storeKey, newList.length)
+    hasMore.setKey(storeKey, newList.length < _totalAmount)
     isDataLoading.setKey(storeKey, false)
     setFilteredItems(newList)
   }
