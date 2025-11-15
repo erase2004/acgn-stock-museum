@@ -5,6 +5,7 @@ import ProductLink from '@/components/common/preact/ProductLink'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { isRestrictedRating, useProductCenter } from '@/utils/product'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { FIRST_ROUND } from '@/configs/sites'
 
 const STORE_KEY = dataStoreKey.productCenter.season
 const PAGE_SIZE = dataNumberPerPage.productCenter.season
@@ -15,6 +16,8 @@ type Props = {
 }
 
 export default function SeasonListContainer({ round, data }: Props) {
+  const isFirstRound = round === FIRST_ROUND
+
   const { displayItems, handleSortChange, getSortButtonClass, getSortIcon } = useProductCenter(
     data,
     PAGE_SIZE,
@@ -48,22 +51,17 @@ export default function SeasonListContainer({ round, data }: Props) {
             handleSortChange('voteCount')
           }}
         >
-          推薦數
+          得票數
           {getSortIcon('voteCount')}
         </button>
       </div>
       <table class="table-base custom-responsive-table-md table-pin-rows table">
         <thead>
           <tr class="*:px-0">
-            <th class="w-2/5 text-center" title="產品">
-              產品
-            </th>
-            <th class="w-1/5 text-center" title="公司名稱">
-              公司名稱
-            </th>
+            <th class="text-center">產品</th>
+            <th class="w-1/5 text-center">公司名稱</th>
             <th
               class="w-24 cursor-pointer text-center"
-              title="類別"
               onClick={() => {
                 handleSortChange('type')
               }}
@@ -73,7 +71,6 @@ export default function SeasonListContainer({ round, data }: Props) {
             </th>
             <th
               class="w-24 cursor-pointer text-center"
-              title="分級"
               onClick={() => {
                 handleSortChange('rating')
               }}
@@ -83,7 +80,6 @@ export default function SeasonListContainer({ round, data }: Props) {
             </th>
             <th
               class="w-24 cursor-pointer text-center"
-              title="得票數"
               onClick={() => {
                 handleSortChange('voteCount')
               }}
@@ -123,10 +119,14 @@ export default function SeasonListContainer({ round, data }: Props) {
                 )}
 
                 <td class="text-center text-nowrap" data-title="得票數">
-                  <button class="btn btn-sm btn-primary" type="button" disabled={true}>
+                  <span class="badge items-baseline badge-soft text-base badge-info">
                     {item.voteCount}
-                    <i class="fa fa-ticket" aria-hidden="true"></i>
-                  </button>
+                    {isFirstRound ? (
+                      <i class="fa fa-money" aria-hidden="true"></i>
+                    ) : (
+                      <i class="fa fa-ticket" aria-hidden="true"></i>
+                    )}
+                  </span>
                 </td>
               </tr>
             ))
