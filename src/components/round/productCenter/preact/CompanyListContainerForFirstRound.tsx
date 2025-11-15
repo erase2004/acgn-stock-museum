@@ -4,6 +4,8 @@ import ProductLink from '@/components/common/preact/ProductLink'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { isRestrictedRating, useProductCenter } from '@/utils/product'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { useStore } from '@nanostores/preact'
+import { totalAmount } from '@/stores/pagination'
 
 const STORE_KEY = dataStoreKey.productCenter.company
 const PAGE_SIZE = dataNumberPerPage.productCenter.company
@@ -13,6 +15,7 @@ type Props = {
 }
 
 export default function CompanyListContainerForFirstRound({ data }: Props) {
+  const $totalAmount = useStore(totalAmount)
   const { displayItems, handleSortChange, getSortButtonClass, getSortIcon } = useProductCenter(
     data,
     PAGE_SIZE,
@@ -22,6 +25,7 @@ export default function CompanyListContainerForFirstRound({ data }: Props) {
 
   return (
     <>
+      <p>總共{$totalAmount[STORE_KEY]}項產品</p>
       <div class="sticky-control mb-2 flex gap-x-2 py-4 md:hidden">
         <button
           class={`btn-default btn btn-outline btn-sm ${getSortButtonClass('type')}`}
