@@ -88,8 +88,8 @@ export const dataNumberPerPage = {
     season: 30,
   },
   arena: {
-    fighter: 20,
-    log: 30,
+    fighter: 40,
+    log: 60,
   },
   company: {
     log: 60,

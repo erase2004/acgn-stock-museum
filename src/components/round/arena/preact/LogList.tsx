@@ -10,6 +10,8 @@ import { isArray, isString, map, zipObject } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
 import { useFilter } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { useStore } from '@nanostores/preact'
+import { totalAmount } from '@/stores/pagination'
 
 const STORE_KEY = dataStoreKey.arena.log
 const PAGE_SIZE = dataNumberPerPage.arena.log
@@ -80,6 +82,7 @@ export default function LogList({ round, fighters, logs }: Props) {
     return zipObject(map(fighters, 'companyId'), fighters)
   }, [fighters])
 
+  const $totalAmount = useStore(totalAmount)
   const { setFilterValue, filteredItems } = useFilter(
     STORE_KEY,
     PAGE_SIZE,
@@ -154,7 +157,7 @@ export default function LogList({ round, fighters, logs }: Props) {
 
   return (
     <div>
-      <form class="sticky-control join py-4" onSubmit={onSubmit}>
+      <form class="sticky-control join py-2" onSubmit={onSubmit}>
         <label class="input input-sm join-item">
           <span class="label">篩選參賽者</span>
           <input
@@ -174,6 +177,7 @@ export default function LogList({ round, fighters, logs }: Props) {
           <i class="fa fa-search"></i>
         </button>
       </form>
+      <p class="mb-2">總共{$totalAmount[STORE_KEY]}筆紀錄</p>
       <div>{filteredItems.map(formatLog)}</div>
       <LoadMore storeKey={STORE_KEY} />
     </div>

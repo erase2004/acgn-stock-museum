@@ -14,6 +14,8 @@ import { currencyFormat } from '@/utils/helpers'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { useDisplayItems } from '@/utils/hooks'
 import { FIRST_ROUND } from '@/configs/sites'
+import { useStore } from '@nanostores/preact'
+import { totalAmount } from '@/stores/pagination'
 
 type OrderKey = (typeof arenaFighterSortableFields)[number]
 type SortOrder<T = 1 | 0> = Partial<Record<OrderKey, T>>
@@ -40,6 +42,7 @@ type Props = {
 
 export default function FighterList({ round, isArenaEnded, minInvestment, data }: Props) {
   const isFirstRound = round === FIRST_ROUND
+  const $totalAmount = useStore(totalAmount)
   const [sortOrder, setSortOrder] = useState<SortOrder>(isArenaEnded ? { rank: 1 } : { agi: 0 })
 
   const sortedItems = useMemo(() => {
@@ -93,6 +96,7 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
 
   return (
     <div class="max-h-dvh overflow-y-auto">
+      <p>總共{$totalAmount[STORE_KEY]}位參賽者</p>
       <div class="sticky-control mb-2 flex flex-wrap gap-2 py-4 md:hidden">
         {arenaFighterSortableFields.map((field) => (
           <button
