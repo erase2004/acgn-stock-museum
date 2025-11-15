@@ -5,11 +5,9 @@ import ListContainer from '@/components/round/fscStock/preact/ListContainer'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
-import { getDBDirectors, schema as schemaDirector } from '@/services/dbDirectors'
+import { getAccountOwnStocks } from '@/services/dbDirectors'
 import { SpecialUser } from '@/services/dbUsers'
 import { dataStoreKey } from '@/configs/general'
-import { z } from 'astro/zod'
-import { handlePromiseParser } from '@/utils/helpers'
 import { rounds } from '@/configs/sites'
 
 export const getStaticPaths = (() => {
@@ -29,25 +27,8 @@ const connection = getConnection(round)!
 
 const fscStocks =
   (await (async function () {
-    const schema = schemaDirector.pick({ companyId: true, stocks: true })
-    const dbDirectors = getDBDirectors(connection)
-
-    return handlePromiseParser(
-      z.promise(schema.array()).parse(
-        dbDirectors
-          .find(
-            {
-              userId,
-            },
-            {
-              sort: {
-                createdAt: -1,
-              },
-            },
-          )
-          .toArray(),
-      ),
-    )
+    const result = await getAccountOwnStocks(connection, userId, true)
+    return result?.[0].data
   })()) ?? []
 ---
 

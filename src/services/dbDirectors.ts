@@ -3,6 +3,7 @@ import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser } from '@/utils/helpers'
 import { integer, itemId, withCountSchema } from './schema'
+import { schema as schemaCompany } from './dbCompanies'
 
 export const schema = z.object({
   /** 公司 ID */
@@ -19,68 +20,49 @@ export function getDBDirectors(db: Db) {
   return db.collection('directors')
 }
 
-export const stocksWithCountSchema = withCountSchema(schema)
+export const stocksWithCountSchema = withCountSchema(
+  schema.merge(schemaCompany.pick({ companyName: true, isSeal: true })),
+)
 
 export async function getAccountOwnStocks(db: Db, userId: string, includeSeal: boolean = false) {
-  const dbDirectors = getDBDirectors(db)
-
-  if (!includeSeal) {
-    return handlePromiseParser(
-      z.promise(stocksWithCountSchema).parse(
-        dbDirectors
-          .aggregate([
-            {
-              $lookup: {
-                from: 'companies',
-                localField: 'companyId',
-                foreignField: '_id',
-                as: 'companyInfo',
-              },
-            },
-            {
-              $replaceRoot: {
-                newRoot: { $mergeObjects: [{ $arrayElemAt: ['$companyInfo', 0] }, '$$ROOT'] },
-              },
-            },
-            { $project: { fromItems: 0 } },
-            {
-              $match: {
-                userId: {
-                  $eq: userId,
-                },
-                isSeal: false,
-              },
-            },
-            {
-              $sort: {
-                createdAt: -1,
-              },
-            },
-            {
-              $facet: {
-                total: [{ $count: 'total' }],
-                data: [],
-              },
-            },
-          ])
-          .toArray(),
-      ),
-    )
+  const filter = {
+    userId: {
+      $eq: userId,
+    },
   }
+
+  if (includeSeal === false) {
+    Object.assign(filter, {
+      isSeal: false,
+    })
+  }
+
+  const dbDirectors = getDBDirectors(db)
 
   return handlePromiseParser(
     z.promise(stocksWithCountSchema).parse(
       dbDirectors
         .aggregate([
           {
-            $match: {
-              userId: {
-                $eq: userId,
-              },
+            $lookup: {
+              from: 'companies',
+              localField: 'companyId',
+              foreignField: '_id',
+              as: 'companyInfo',
             },
           },
           {
+            $replaceRoot: {
+              newRoot: { $mergeObjects: [{ $arrayElemAt: ['$companyInfo', 0] }, '$$ROOT'] },
+            },
+          },
+          { $project: { fromItems: 0 } },
+          {
+            $match: filter,
+          },
+          {
             $sort: {
+              isSeal: 1,
               createdAt: -1,
             },
           },

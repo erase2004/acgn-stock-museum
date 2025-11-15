@@ -1,12 +1,14 @@
-import CompanyLink from '@/components/common/preact/CompanyLink'
 import { z } from 'astro/zod'
-import { schema } from '@/services/dbDirectors'
+import { stocksWithCountSchema } from '@/services/dbDirectors'
 import { useDisplayItems } from '@/utils/hooks'
 import { dataNumberPerPage } from '@/configs/general'
+import { useStore } from '@nanostores/preact'
+import { totalAmount } from '@/stores/pagination'
+import { getCompanyUrl } from '@/libs/routes'
 
 const PAGE_SIZE = dataNumberPerPage.fscStock
 
-type Stock = Pick<z.infer<typeof schema>, 'companyId' | 'stocks'>
+type Stock = z.infer<typeof stocksWithCountSchema>[number]['data'][number]
 type Props = {
   storeKey: string
   round: string
@@ -14,6 +16,7 @@ type Props = {
 }
 
 export default function ListContainer({ storeKey, round, data }: Props) {
+  const $totalAmount = useStore(totalAmount)
   const displayItems = useDisplayItems(data, storeKey, PAGE_SIZE)
 
   let tbodyContent
@@ -30,7 +33,9 @@ export default function ListContainer({ storeKey, round, data }: Props) {
     tbodyContent = displayItems.map((item) => (
       <tr key={item.companyId}>
         <td>
-          <CompanyLink round={round} companyId={item.companyId} />
+          <a href={getCompanyUrl(round, item.companyId)} class={item.isSeal ? 'text-error' : ''}>
+            {item.companyName}
+          </a>
         </td>
         <td class="text-right">{item.stocks} 股</td>
       </tr>
@@ -38,7 +43,8 @@ export default function ListContainer({ storeKey, round, data }: Props) {
   }
 
   return (
-    <div class="mx-auto max-w-3xl border border-base-300">
+    <div class="mx-auto max-w-3xl">
+      <p>總共{$totalAmount[storeKey]}筆</p>
       <table class="table-pin-rows table-base table">
         <thead>
           <tr>
