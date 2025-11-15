@@ -12,11 +12,12 @@ type Props = {
   data: z.infer<typeof schemaProduct>[]
 }
 
-export default function CompanyListContainer({ data }: Props) {
+export default function CompanyListContainerForFirstRound({ data }: Props) {
   const { displayItems, handleSortChange, getSortButtonClass, getSortIcon } = useProductCenter(
     data,
     PAGE_SIZE,
     STORE_KEY,
+    { likeCount: 0 },
   )
 
   return (
@@ -48,6 +49,15 @@ export default function CompanyListContainer({ data }: Props) {
         >
           得票數
           {getSortIcon('voteCount')}
+        </button>
+        <button
+          class={`btn-default btn btn-outline btn-sm ${getSortButtonClass('likeCount')}`}
+          onClick={() => {
+            handleSortChange('likeCount')
+          }}
+        >
+          市場評價
+          {getSortIcon('likeCount')}
         </button>
       </div>
       <table class="table-base custom-responsive-table-md table-pin-rows table">
@@ -81,6 +91,15 @@ export default function CompanyListContainer({ data }: Props) {
               得票數
               {getSortIcon('voteCount')}
             </th>
+            <th
+              class="w-24 cursor-pointer px-0 text-center"
+              onClick={() => {
+                handleSortChange('likeCount')
+              }}
+            >
+              市場評價
+              {getSortIcon('likeCount')}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -112,14 +131,21 @@ export default function CompanyListContainer({ data }: Props) {
                 <td class="text-center text-nowrap" data-title="得票數">
                   <span class="badge items-baseline badge-soft text-base badge-info">
                     {item.voteCount}
-                    <i class="fa fa-ticket" aria-hidden="true"></i>
+                    <i class="fa fa-money" aria-hidden="true"></i>
+                  </span>
+                </td>
+
+                <td class="text-center text-nowrap" data-title="市場評價">
+                  <span class="badge items-baseline badge-soft text-base badge-info">
+                    {item.likeCount}
+                    <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
                   </span>
                 </td>
               </tr>
             ))
           ) : (
             <tr class="default-content">
-              <td colspan={4}>這家公司尚未推出任何產品！</td>
+              <td colspan={5}>這家公司尚未推出任何產品！</td>
             </tr>
           )}
         </tbody>

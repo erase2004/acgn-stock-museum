@@ -3,6 +3,7 @@ import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import CompanyListContainer from '@/components/round/productCenter/preact/CompanyListContainer'
+import CompanyListContainerForFirstRound from '@/components/round/productCenter/preact/CompanyListContainerForFirstRound'
 import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
@@ -10,7 +11,7 @@ import { getArchivedCompany } from '@/services/dbCompanyArchive'
 import { getAllBasicCompanies } from '@/services/dbCompanies'
 import { getProductsByCompany } from '@/services/dbProducts'
 import { getCurrentPageFullTitle } from '@/libs/routes'
-import { roundDefaultDescription, rounds } from '@/configs/sites'
+import { FIRST_ROUND, roundDefaultDescription, rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
 
 export const getStaticPaths = (async () => {
@@ -44,6 +45,8 @@ if (!company || company.status !== 'market') {
 
 const products = (await getProductsByCompany(connection, companyId)) ?? []
 
+const isFirstRound = round === FIRST_ROUND
+
 const title = getCurrentPageFullTitle(Astro, company.companyName)
 ---
 
@@ -54,5 +57,11 @@ const title = getCurrentPageFullTitle(Astro, company.companyName)
     <CompanyLink client:only="preact" round={round} companyId={companyId} />
   </h2>
   <div class="divider"></div>
-  <CompanyListContainer client:only="preact" data={products} />
+  {
+    isFirstRound ? (
+      <CompanyListContainerForFirstRound client:only="preact" data={products} />
+    ) : (
+      <CompanyListContainer client:only="preact" data={products} />
+    )
+  }
 </RoundLayout>

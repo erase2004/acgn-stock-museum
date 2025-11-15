@@ -8,6 +8,7 @@ type SortOrder<T = 1 | 0> = {
   type?: T
   rating?: T
   voteCount?: T
+  likeCount?: T
 }
 
 export function isRestrictedRating(rating: string) {
@@ -18,8 +19,9 @@ export function useProductCenter(
   data: z.infer<typeof schemaProduct>[],
   pageSize: number,
   storeKey: string,
+  defaultOrder: SortOrder = { voteCount: 0 },
 ) {
-  const [sortOrder, setSortOrder] = useState<SortOrder>({ voteCount: 0 })
+  const [sortOrder, setSortOrder] = useState<SortOrder>(defaultOrder)
 
   const sortedData = useMemo(() => {
     const keys: (keyof SortOrder)[] = []
