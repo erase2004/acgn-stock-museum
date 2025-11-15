@@ -70,6 +70,8 @@ export const schema = z.object({
   rating: z.enum(productRatingList),
   /** 產品描述 */
   description: z.string().max(500).nullish(),
+  /** 喜愛股東數（僅適用第一季） */
+  likeCount: integer.default(0),
   /** 推薦票的總票數 */
   voteCount: integer.default(0),
   /** 產品售價 */
