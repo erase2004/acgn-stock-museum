@@ -106,7 +106,7 @@ export const dataNumberPerPage = {
   companies: 24,
   fscLogs: 60,
   fscStock: 40,
-  violations: 10,
+  violations: 20,
   violationRelatedLog: 30,
   announcements: 20,
 } as const

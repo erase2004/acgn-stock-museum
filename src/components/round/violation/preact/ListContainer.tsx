@@ -4,16 +4,20 @@ import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/
 import { items } from '@/stores/violation'
 import { useStore } from '@nanostores/preact'
 import { getViolationCaseUrl } from '@/libs/routes'
+import { totalAmount } from '@/stores/pagination'
 
 type Props = {
   round: string
+  storeKey: string
 }
 
-export default function ListContainer({ round }: Props) {
+export default function ListContainer({ round, storeKey }: Props) {
+  const $totalAmount = useStore(totalAmount)
   const $items = useStore(items)
 
   return (
     <div class="relative flex flex-col gap-y-6">
+      <p class="-mb-4">總共{$totalAmount[storeKey]}筆</p>
       {$items.length > 0 ? (
         $items.map(
           ({
