@@ -32,7 +32,7 @@ const isInOperationTime = await (async function () {
   const lastRound = await getCurrentRound(connection)
   const timeToSeasonEnd = latestSeason!.endDate.getTime() - lastRound!.endDate.getTime()
 
-  return timeToSeasonEnd < miningMachineOperationTime
+  return timeToSeasonEnd > 0 && timeToSeasonEnd < miningMachineOperationTime
 })()
 
 const placedStoneList =
