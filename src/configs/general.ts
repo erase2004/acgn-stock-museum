@@ -103,7 +103,7 @@ export const dataNumberPerPage = {
     },
     violation: 10,
   },
-  companies: 12,
+  companies: 24,
   fscLogs: 30,
   fscStock: 20,
   violations: 10,

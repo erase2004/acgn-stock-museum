@@ -9,20 +9,24 @@ import { currencyFormat } from '@/utils/helpers'
 import { useUser } from '@/utils/hooks'
 import { useStore } from '@nanostores/preact'
 import { priceDisplayClass, getStockPercentage } from '@/utils/company'
+import { totalAmount } from '@/stores/pagination'
 
 type Props = {
   round: string
+  storeKey: string
 }
 
-export default function ListContainer({ round }: Props) {
+export default function ListContainer({ round, storeKey }: Props) {
   const { user } = useUser()
   const $listViewMode = useStore(listViewMode)
   const $items = useStore(items)
   const $ownStocks = useStore(ownStocks)
+  const $totalAmount = useStore(totalAmount)
 
   if ($listViewMode === 'card') {
     return (
       <div class="grid grid-cols-1 justify-items-center gap-y-6 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6">
+        <p class="col-span-full">總共{$totalAmount[storeKey]}家公司</p>
         {$items.map((item) => (
           <Card key={item._id} round={round} item={item} user={user} ownStocks={$ownStocks} />
         ))}
@@ -32,6 +36,7 @@ export default function ListContainer({ round }: Props) {
 
   return (
     <div class="flex flex-col gap-y-6">
+      <p>總共{$totalAmount[storeKey]}家公司</p>
       {$items.map((item) => (
         <Row key={item._id} round={round} item={item} user={user} ownStocks={$ownStocks} />
       ))}
@@ -54,7 +59,7 @@ function Card({ round, item, user, ownStocks }: CardProps) {
       <div
         class={`company-card card border border-base-content/25 shadow-lg/50 ${cardDisplayClass(item, user, ownStocks)}`}
       >
-        <div class="flex items-center justify-between border-b border-inherit px-4">
+        <div class="flex items-center justify-between border-b border-inherit px-2">
           <small>{formatDateTimeText(item.createdAt)} 創立</small>
           {user && (
             <>
@@ -78,6 +83,7 @@ function Card({ round, item, user, ownStocks }: CardProps) {
               class="size-40 object-cover"
               src={item.pictureSmall || fallbackImageUrl}
               alt={`${item.companyName}公司的小圖`}
+              decoding={'async'}
             />
           </div>
         </div>
@@ -175,6 +181,7 @@ function Row({ round, item, user, ownStocks }: RowProps) {
         class="size-28 shrink-0 object-cover"
         src={item.pictureSmall || fallbackImageUrl}
         alt={`${item.companyName}公司的小圖`}
+        decoding={'async'}
       />
 
       <div class="company-row grid grow grid-cols-3 border border-base-content/25 *:px-1 lg:grid-cols-4">

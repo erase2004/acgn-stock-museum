@@ -85,6 +85,6 @@ const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
   <div class="divider"></div>
   <Filter client:only="preact" data={data} />
   <div class="divider"></div>
-  <ListContainer client:only="preact" round={round} />
+  <ListContainer client:only="preact" round={round} storeKey={LIST_STORE_KEY} />
   <LoadMore client:only="preact" storeKey={LIST_STORE_KEY} />
 </RoundLayout>
