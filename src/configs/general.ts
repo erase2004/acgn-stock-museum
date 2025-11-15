@@ -76,12 +76,12 @@ export const dataNumberPerPage = {
     manager: 10,
     vip: 10,
     employee: 10,
-    stock: 10,
-    product: 10,
+    stock: 20,
+    product: 20,
     stone: 10,
     tax: 10,
     violation: 10,
-    log: 10,
+    log: 60,
   },
   productCenter: {
     company: 30,
@@ -108,7 +108,7 @@ export const dataNumberPerPage = {
   fscStock: 40,
   violations: 20,
   violationRelatedLog: 30,
-  announcements: 20,
+  announcements: 40,
 } as const
 
 /** 作為存取 nanostore 使用 */

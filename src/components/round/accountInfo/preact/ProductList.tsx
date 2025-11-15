@@ -5,6 +5,8 @@ import ProductLink from '@/components/common/preact/ProductLink'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { useDisplayItems } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { useStore } from '@nanostores/preact'
+import { totalAmount } from '@/stores/pagination'
 
 type Product = Pick<z.infer<typeof schema>, 'productId' | 'companyId' | 'amount'>
 
@@ -17,10 +19,12 @@ const STORE_KEY = dataStoreKey.account.product
 const PAGE_SIZE = dataNumberPerPage.account.product
 
 export default function ProductList({ round, data }: Props) {
+  const $totalAmount = useStore(totalAmount)
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
 
   return (
     <div class="overflow-y-auto">
+      <p>總共{$totalAmount[STORE_KEY]}筆</p>
       <table class="table-base custom-responsive-table-md table-pin-rows table">
         <thead>
           <tr class="*:px-1">

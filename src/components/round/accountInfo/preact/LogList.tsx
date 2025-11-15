@@ -6,6 +6,8 @@ import { logTypeGroupMap, type schema } from '@/services/dbLog'
 import { flatten, isArray, without } from 'lodash-es'
 import { useEffect, useRef } from 'preact/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { useStore } from '@nanostores/preact'
+import { totalAmount } from '@/stores/pagination'
 
 const PAGE_SIZE = dataNumberPerPage.account.log
 const STORE_KEY = dataStoreKey.account.log
@@ -24,6 +26,7 @@ function isSelected(key: string, filter: Record<string, string | string[]>) {
 export default function LogList({ round, data }: Props) {
   const isInitialized = useRef(false)
 
+  const $totalAmount = useStore(totalAmount)
   const { setFilterValue, filterObject, filteredItems } = useFilter(
     STORE_KEY,
     PAGE_SIZE,
@@ -120,6 +123,7 @@ export default function LogList({ round, data }: Props) {
         </div>
       </div>
       <div className="overflow-y-auto">
+        <p>總共{$totalAmount[STORE_KEY]}筆紀錄</p>
         {filteredItems.map((item) => (
           <p>
             <DisplayLog {...item} key={item._id} round={round} />

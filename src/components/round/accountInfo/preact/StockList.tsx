@@ -4,6 +4,8 @@ import CompanyLink from '@/components/common/preact/CompanyLink'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { useDisplayItems } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { useStore } from '@nanostores/preact'
+import { totalAmount } from '@/stores/pagination'
 
 type Props = {
   round: string
@@ -14,10 +16,12 @@ const STORE_KEY = dataStoreKey.account.stock
 const PAGE_SIZE = dataNumberPerPage.account.stock
 
 export default function StockList({ round, data }: Props) {
+  const $totalAmount = useStore(totalAmount)
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
 
   return (
     <div class="overflow-y-auto">
+      <p>總共{$totalAmount[STORE_KEY]}筆</p>
       <table class="table-base table-pin-rows table">
         <thead>
           <tr class="*:px-1">
