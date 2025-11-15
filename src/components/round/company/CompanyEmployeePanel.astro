@@ -29,7 +29,9 @@ const employees =
   (await handlePromiseParser(
     z
       .promise(schemaEmployee.array())
-      .parse(dbEmployees.find({ companyId }, { sort: { registerAt: 1 } }).toArray()),
+      .parse(
+        dbEmployees.find({ companyId, resigned: false }, { sort: { registerAt: 1 } }).toArray(),
+      ),
   )) ?? []
 
 const currentSeasonEmployees = employees.filter((i) => i.employed === true)

@@ -37,7 +37,9 @@ const employeeCount =
     return handlePromiseParser(
       z.promise(z.number()).parse(
         dbEmployees.countDocuments({
+          companyId,
           employed: true,
+          resigned: false,
         }),
       ),
     )

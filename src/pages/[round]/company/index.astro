@@ -38,6 +38,7 @@ const employeeMap = await (async function () {
           .find(
             {
               employed: true,
+              resigned: false,
             },
             // @ts-expect-error: companyId field exists
             { companyId: 1 },
