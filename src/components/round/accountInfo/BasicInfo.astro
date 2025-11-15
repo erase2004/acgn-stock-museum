@@ -21,6 +21,7 @@ const banMessage: Partial<Record<BanType, string>> = {
   chat: '目前被禁止聊天發言。',
   advertise: '目前被禁止廣告宣傳。',
   editUserAbout: '目前被禁止編輯個人簡介。',
+  manager: '被撤銷了擔任經理人的資格！',
 }
 
 function isBanned(user: User, type: BanType) {
@@ -114,8 +115,6 @@ const isFirstRound = round === FIRST_ROUND
         ))
       }
     </div>
-    <!-- TODO: 可能是 legacy 資料行為 -->
-    <!-- {user.profile.revokeQualification && <p class="text-alert">被撤銷了擔任經理人的資格！</p>} -->
   </div>
   <AccountCompanyTitle />
 </div>
