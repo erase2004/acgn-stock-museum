@@ -37,7 +37,7 @@ if (isLatestRound(round)) {
   result = await getViolationCases(connection, roundData!.beginDate)
 }
 
-const data = result?.[0]?.data ?? []
+const data = result ?? []
 
 const itemAmount = 3
 const ldJson = {

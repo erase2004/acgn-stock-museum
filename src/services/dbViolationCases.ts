@@ -2,7 +2,7 @@
 import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { handlePromiseParser, typedObjectKeys } from '@/utils/helpers'
-import { datetime, itemId, objectId, withCountSchema } from './schema'
+import { datetime, itemId, objectId } from './schema'
 
 const violatorTypeList = ['user', 'company', 'product'] as const
 
@@ -87,8 +87,6 @@ export const listItemSchema = schema
     descriptionOmittedLength: z.number(),
   })
 
-export const casesWithCountSchema = withCountSchema(listItemSchema)
-
 const DESCRIPTION_DIGEST_LENGTH_LIMIT = 100
 
 export function getViolationCases(db: Db, roundBegin?: Date) {
@@ -104,7 +102,7 @@ export function getViolationCases(db: Db, roundBegin?: Date) {
   }
 
   return handlePromiseParser(
-    z.promise(casesWithCountSchema).parse(
+    z.promise(listItemSchema.array()).parse(
       dbViolationCases
         .aggregate([
           {
@@ -132,12 +130,6 @@ export function getViolationCases(db: Db, roundBegin?: Date) {
                   },
                 ],
               },
-            },
-          },
-          {
-            $facet: {
-              total: [{ $count: 'total' }],
-              data: [],
             },
           },
         ])
