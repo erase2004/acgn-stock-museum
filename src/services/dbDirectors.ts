@@ -24,19 +24,7 @@ export const stocksWithCountSchema = withCountSchema(
   schema.merge(schemaCompany.pick({ companyName: true, isSeal: true })),
 )
 
-export async function getAccountOwnStocks(db: Db, userId: string, includeSeal: boolean = false) {
-  const filter = {
-    userId: {
-      $eq: userId,
-    },
-  }
-
-  if (includeSeal === false) {
-    Object.assign(filter, {
-      isSeal: false,
-    })
-  }
-
+export async function getAccountOwnStocks(db: Db, userId: string) {
   const dbDirectors = getDBDirectors(db)
 
   return handlePromiseParser(
@@ -58,7 +46,11 @@ export async function getAccountOwnStocks(db: Db, userId: string, includeSeal: b
           },
           { $project: { fromItems: 0 } },
           {
-            $match: filter,
+            $match: {
+              userId: {
+                $eq: userId,
+              },
+            },
           },
           {
             $sort: {
