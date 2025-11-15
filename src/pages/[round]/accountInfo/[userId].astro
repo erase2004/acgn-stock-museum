@@ -7,6 +7,7 @@ import TaxList from '@/components/round/accountInfo/preact/TaxList'
 import StockList from '@/components/round/accountInfo/preact/StockList'
 import StoneList from '@/components/round/accountInfo/preact/StoneList'
 import ProductList from '@/components/round/accountInfo/preact/ProductList'
+import LikedProductList from '@/components/round/accountInfo/preact/LikedProductList'
 import ViolationCaseInfo from '@/components/common/ViolationCaseInfo.astro'
 import LogList from '@/components/round/accountInfo/preact/LogList'
 import OpenGraph from '@/components/layout/OpenGraph.astro'
@@ -22,6 +23,7 @@ import {
   schema as schemaUserOwnedProduct,
 } from '@/services/dbUserOwnedProduct'
 import { getAccountLogs } from '@/services/dbLog'
+import { getDBProductLike, schema as schemaProductLike } from '@/services/dbProductLike'
 import { handlePromiseParser } from '@/utils/helpers'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { FIRST_ROUND, legacyRounds, rounds } from '@/configs/sites'
@@ -90,7 +92,6 @@ const stoneInfo =
   })()) ?? []
 
 // product info
-
 const productInfo =
   (await (async function () {
     const dbUserOwnedProduct = getDBUserOwnedProduct(connection)
@@ -99,6 +100,16 @@ const productInfo =
       z
         .promise(schemaUserOwnedProduct.array())
         .parse(dbUserOwnedProduct.find({ userId }, { sort: { createdAt: 1 } }).toArray()),
+    )
+  })()) ?? []
+
+// liked product info (for 1st round only)
+const likedProductInfo =
+  (await (async function () {
+    const dbProductLike = getDBProductLike(connection)
+
+    return handlePromiseParser(
+      z.promise(schemaProductLike.array()).parse(dbProductLike.find({ userId }).toArray()),
     )
   })()) ?? []
 
@@ -137,7 +148,13 @@ const description = user.about.description ?? ''
       </PanelFolder>
     </div>
     {
-      !isFirstRound && (
+      isFirstRound ? (
+        <div>
+          <PanelFolder client:only="preact" title="產品收藏" classes="text-2xl" state={false}>
+            <LikedProductList client:only="preact" round={round} data={likedProductInfo} />
+          </PanelFolder>
+        </div>
+      ) : (
         <div>
           <PanelFolder client:only="preact" title="持有產品" classes="text-2xl" state={false}>
             <ProductList client:only="preact" round={round} data={productInfo} />
