@@ -1,0 +1,53 @@
+---
+import LikedProductList from './preact/LikedProductList'
+import ProductList from './preact/ProductList'
+import { z } from 'astro/zod'
+import { FIRST_ROUND } from '@/configs/sites'
+import { getConnection } from '@/libs/databases'
+import { getDBProductLike, schema as schemaProductLike } from '@/services/dbProductLike'
+import {
+  getDBUserOwnedProduct,
+  schema as schemaUserOwnedProduct,
+} from '@/services/dbUserOwnedProduct'
+import { handlePromiseParser } from '@/utils/helpers'
+
+type Props = {
+  round: string
+  userId: string
+}
+
+const { round, userId } = Astro.props
+
+const connection = getConnection(round)
+// liked product info (for 1st round only)
+const likedProductInfo =
+  (await (async function () {
+    const dbProductLike = getDBProductLike(connection)
+
+    return handlePromiseParser(
+      z.promise(schemaProductLike.array()).parse(dbProductLike.find({ userId }).toArray()),
+    )
+  })()) ?? []
+
+// product info
+const productInfo =
+  (await (async function () {
+    const dbUserOwnedProduct = getDBUserOwnedProduct(connection)
+
+    return handlePromiseParser(
+      z
+        .promise(schemaUserOwnedProduct.array())
+        .parse(dbUserOwnedProduct.find({ userId }, { sort: { createdAt: 1 } }).toArray()),
+    )
+  })()) ?? []
+
+const isFirstRound = round === FIRST_ROUND
+---
+
+{
+  isFirstRound ? (
+    <LikedProductList client:only="preact" round={round} data={likedProductInfo} />
+  ) : (
+    <ProductList client:only="preact" round={round} data={productInfo} />
+  )
+}

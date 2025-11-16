@@ -1,0 +1,24 @@
+---
+import TaxList from './preact/TaxList'
+import { getConnection } from '@/libs/databases'
+import { getDBTaxes, schema } from '@/services/dbTaxes'
+import { handlePromiseParser } from '@/utils/helpers'
+import { z } from 'astro/zod'
+
+type Props = {
+  round: string
+  userId: string
+}
+
+const { round, userId } = Astro.props
+
+const connection = getConnection(round)
+const taxInfo =
+  (await (async function () {
+    const dbTaxes = getDBTaxes(connection)
+
+    return handlePromiseParser(z.promise(schema.array()).parse(dbTaxes.find({ userId }).toArray()))
+  })()) ?? []
+---
+
+<TaxList client:only="preact" round={round} data={taxInfo} />

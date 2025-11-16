@@ -1,0 +1,30 @@
+---
+import StoneList from './preact/StoneList'
+import type { schema as schemaUser } from '@/services/dbUsers'
+import { getConnection } from '@/libs/databases'
+import { getDBCompanyStones, schema } from '@/services/dbCompanyStones'
+import { handlePromiseParser } from '@/utils/helpers'
+import { z } from 'astro/zod'
+
+type Props = {
+  round: string
+  userId: string
+  profile: z.infer<typeof schemaUser>['profile']
+}
+
+const { round, userId, profile } = Astro.props
+
+const connection = getConnection(round)
+const stoneInfo =
+  (await (async function () {
+    const dbCompanyStones = getDBCompanyStones(connection)
+
+    return handlePromiseParser(
+      z
+        .promise(schema.array())
+        .parse(dbCompanyStones.find({ userId }, { sort: { placedAt: -1 } }).toArray()),
+    )
+  })()) ?? []
+---
+
+<StoneList client:only="preact" round={round} profile={profile} data={stoneInfo} />

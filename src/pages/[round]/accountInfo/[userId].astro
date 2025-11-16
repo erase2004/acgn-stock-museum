@@ -3,27 +3,17 @@ import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import BasicInfo from '@/components/round/accountInfo/BasicInfo.astro'
 import PanelFolder from '@/components/common/preact/PanelFolder'
-import TaxList from '@/components/round/accountInfo/preact/TaxList'
-import StockList from '@/components/round/accountInfo/preact/StockList'
-import StoneList from '@/components/round/accountInfo/preact/StoneList'
-import ProductList from '@/components/round/accountInfo/preact/ProductList'
-import LikedProductList from '@/components/round/accountInfo/preact/LikedProductList'
+import TaxInfoPanel from '@/components/round/accountInfo/TaxInfoPanel.astro'
+import StockInfoPanel from '@/components/round/accountInfo/StockInfoPanel.astro'
+import StoneInfoPanel from '@/components/round/accountInfo/StoneInfoPanel.astro'
+import ProductInfoPanel from '@/components/round/accountInfo/ProductInfoPanel.astro'
 import ViolationCaseInfo from '@/components/common/ViolationCaseInfo.astro'
-import LogList from '@/components/round/accountInfo/preact/LogList'
+import LogInfoPanel from '@/components/round/accountInfo/LogInfoPanel.astro'
 import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCurrentPageFullTitle, getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
 import { getAllBasicUsers, getDBUsers, schema as schemaUser } from '@/services/dbUsers'
-import { getDBTaxes, schema as schemaTax } from '@/services/dbTaxes'
-import { getAccountOwnStocks } from '@/services/dbDirectors'
-import { getDBCompanyStones, schema as schemaCompanyStone } from '@/services/dbCompanyStones'
-import {
-  getDBUserOwnedProduct,
-  schema as schemaUserOwnedProduct,
-} from '@/services/dbUserOwnedProduct'
-import { getAccountLogs } from '@/services/dbLog'
-import { getDBProductLike, schema as schemaProductLike } from '@/services/dbProductLike'
 import { handlePromiseParser } from '@/utils/helpers'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { FIRST_ROUND, legacyRounds, rounds } from '@/configs/sites'
@@ -66,56 +56,6 @@ if (!user) {
   return Astro.redirect(getRoundMainPageUrl(round))
 }
 
-// tax info
-const taxInfo =
-  (await (async function () {
-    const dbTaxes = getDBTaxes(connection)
-
-    return handlePromiseParser(
-      z.promise(schemaTax.array()).parse(dbTaxes.find({ userId }).toArray()),
-    )
-  })()) ?? []
-
-// stock info
-const stockInfo = (await getAccountOwnStocks(connection, userId)) ?? []
-
-// stone info
-const stoneInfo =
-  (await (async function () {
-    const dbCompanyStones = getDBCompanyStones(connection)
-
-    return handlePromiseParser(
-      z
-        .promise(schemaCompanyStone.array())
-        .parse(dbCompanyStones.find({ userId }, { sort: { placedAt: -1 } }).toArray()),
-    )
-  })()) ?? []
-
-// product info
-const productInfo =
-  (await (async function () {
-    const dbUserOwnedProduct = getDBUserOwnedProduct(connection)
-
-    return handlePromiseParser(
-      z
-        .promise(schemaUserOwnedProduct.array())
-        .parse(dbUserOwnedProduct.find({ userId }, { sort: { createdAt: 1 } }).toArray()),
-    )
-  })()) ?? []
-
-// liked product info (for 1st round only)
-const likedProductInfo =
-  (await (async function () {
-    const dbProductLike = getDBProductLike(connection)
-
-    return handlePromiseParser(
-      z.promise(schemaProductLike.array()).parse(dbProductLike.find({ userId }).toArray()),
-    )
-  })()) ?? []
-
-// log info
-const logs = (await getAccountLogs(connection, userId)) ?? []
-
 const isLegacyRound = legacyRounds.includes(round)
 const isFirstRound = round === FIRST_ROUND
 
@@ -134,34 +74,30 @@ const description = user.about.description ?? ''
   <div class="account-detail">
     <div>
       <PanelFolder client:only="preact" title="稅務資訊" classes="text-2xl" state={false}>
-        <TaxList client:only="preact" round={round} data={taxInfo} />
+        <TaxInfoPanel round={round} userId={userId} />
       </PanelFolder>
     </div>
     <div>
       <PanelFolder client:only="preact" title="持股資訊" classes="text-2xl" state={false}>
-        <StockList client:only="preact" round={round} data={stockInfo} />
+        <StockInfoPanel round={round} userId={userId} />
       </PanelFolder>
     </div>
     <div class="max-md:max-h-screen">
       <PanelFolder client:only="preact" title="石頭資訊" classes="text-2xl" state={false}>
-        <StoneList client:only="preact" round={round} profile={user.profile} data={stoneInfo} />
+        <StoneInfoPanel round={round} userId={userId} profile={user.profile} />
       </PanelFolder>
     </div>
-    {
-      isFirstRound ? (
-        <div>
-          <PanelFolder client:only="preact" title="產品收藏" classes="text-2xl" state={false}>
-            <LikedProductList client:only="preact" round={round} data={likedProductInfo} />
-          </PanelFolder>
-        </div>
-      ) : (
-        <div>
-          <PanelFolder client:only="preact" title="持有產品" classes="text-2xl" state={false}>
-            <ProductList client:only="preact" round={round} data={productInfo} />
-          </PanelFolder>
-        </div>
-      )
-    }
+    <div>
+      <PanelFolder
+        client:only="preact"
+        title={isFirstRound ? '產品收藏' : '持有產品'}
+        classes="text-2xl"
+        state={false}
+      >
+        <ProductInfoPanel round={round} userId={userId} />
+      </PanelFolder>
+    </div>
+
     {
       !isLegacyRound && (
         <div class="max-md:max-h-screen">
@@ -178,7 +114,7 @@ const description = user.about.description ?? ''
     }
     <div class="max-h-screen">
       <PanelFolder client:only="preact" title="玩家紀錄" classes="text-2xl" state={false}>
-        <LogList client:only="preact" round={round} data={logs} />
+        <LogInfoPanel round={round} userId={userId} />
       </PanelFolder>
     </div>
   </div>

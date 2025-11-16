@@ -1,0 +1,17 @@
+---
+import StockList from './preact/StockList'
+import { getConnection } from '@/libs/databases'
+import { getAccountOwnStocks } from '@/services/dbDirectors'
+
+type Props = {
+  round: string
+  userId: string
+}
+
+const { round, userId } = Astro.props
+
+const connection = getConnection(round)
+const stockInfo = (await getAccountOwnStocks(connection, userId)) ?? []
+---
+
+<StockList client:only="preact" round={round} data={stockInfo} />

@@ -598,7 +598,7 @@ export async function getViolationCaseRelatedLogs(db: Db, violationCaseId: strin
   )
 }
 
-export async function getAccountLogs(db: Db, userId: string) {
+export async function getAccountLogs(db: Db, userId: string, roundBegin: Date) {
   const dbLog = getDBLog(db)
 
   return handlePromiseParser(
@@ -607,6 +607,7 @@ export async function getAccountLogs(db: Db, userId: string) {
         .find(
           {
             userId: { $in: [userId, '!all'] },
+            createdAt: { $gte: roundBegin },
           },
           {
             sort: {
@@ -628,7 +629,7 @@ export async function getCompanyLog(db: Db, companyId: string, roundBegin: Date)
         .find(
           {
             companyId,
-            createdAt: { $gt: roundBegin },
+            createdAt: { $gte: roundBegin },
           },
           {
             sort: {
