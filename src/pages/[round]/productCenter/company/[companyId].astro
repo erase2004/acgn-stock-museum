@@ -7,8 +7,11 @@ import CompanyListContainerForFirstRound from '@/components/round/productCenter/
 import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
-import { getArchivedCompany } from '@/services/dbCompanyArchive'
-import { getAllBasicCompanies } from '@/services/dbCompanies'
+import {
+  getAllBasicNonsealedCompanies,
+  getCompanyFilterByCustomSchema,
+  schema as schemaCompany,
+} from '@/services/dbCompanies'
 import { getProductsByCompany } from '@/services/dbProducts'
 import { getCurrentPageFullTitle } from '@/libs/routes'
 import { FIRST_ROUND, roundDefaultDescription, rounds } from '@/configs/sites'
@@ -18,7 +21,7 @@ export const getStaticPaths = (async () => {
   const results = await Promise.allSettled(
     rounds.map(async (round) => {
       const connection = getConnection(round)!
-      const companies = (await getAllBasicCompanies(connection)) ?? []
+      const companies = (await getAllBasicNonsealedCompanies(connection)) ?? []
 
       return companies.map((company) => ({
         params: {
@@ -38,8 +41,12 @@ const companyId = Astro.params['companyId']!
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 
-const company = await getArchivedCompany(connection, companyId)
-if (!company || company.status !== 'market') {
+const company = await getCompanyFilterByCustomSchema(
+  connection,
+  companyId,
+  schemaCompany.pick({ companyName: true, isSeal: true }),
+)
+if (!company || company.isSeal) {
   return Astro.redirect(getRoundMainPageUrl(round))
 }
 

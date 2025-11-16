@@ -152,3 +152,12 @@ export async function getAllBasicCompanies(db: Db) {
 
   return handlePromiseParser(z.promise(_schema.array()).parse(dbCompanies.find({}).toArray()))
 }
+
+export async function getAllBasicNonsealedCompanies(db: Db) {
+  const _schema = schema.pick({ _id: true, companyName: true })
+  const dbCompanies = getDBCompanies(db)
+
+  return handlePromiseParser(
+    z.promise(_schema.array()).parse(dbCompanies.find({ isSeal: false }).toArray()),
+  )
+}

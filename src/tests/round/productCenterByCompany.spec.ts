@@ -10,7 +10,7 @@ import { MINIMUM_TEST_TIMEOUT } from '@/configs/general'
 const MAX_ITEM_PERCENTAGE = 10
 const RUN_ALL_TEST = process.env.RUN_ALL_TEST === 'true'
 
-type Company = Pick<z.infer<typeof schema>, '_id' | 'companyName'>
+type Company = Pick<z.infer<typeof schema>, '_id' | 'companyName' | 'isSeal'>
 
 for (const round of rounds) {
   test.describe(`[${round}] product center by company`, () => {
@@ -47,36 +47,42 @@ for (const round of rounds) {
         )
 
         // company json 會需要比較多的載入時間
-        await page.goto(getProductCenterByCompanyUrl(round, company._id), {
+        const response = await page.goto(getProductCenterByCompanyUrl(round, company._id), {
           waitUntil: 'commit',
           timeout: 2000,
         })
 
-        await test.step('has title', async () => {
-          const websiteName = siteList[round as keyof typeof siteList]?.name
-          const title = `${company.companyName} - 產品中心 - ${websiteName}`
+        if (company.isSeal) {
+          await test.step('got 404 status code', async () => {
+            await expect(response?.status()).toBe(404)
+          })
+        } else {
+          await test.step('has title', async () => {
+            const websiteName = siteList[round as keyof typeof siteList]?.name
+            const title = `${company.companyName} - 產品中心 - ${websiteName}`
 
-          await expect(page).toHaveTitle(title)
-        })
+            await expect(page).toHaveTitle(title)
+          })
 
-        await test.step('has content', async () => {
-          // h1 heading
-          {
-            const element = page.locator('.round-block-title')
+          await test.step('has content', async () => {
+            // h1 heading
+            {
+              const element = page.locator('.round-block-title')
 
-            await expect(element).toHaveText('產品中心')
-            await expect(element).toBeVisible()
-          }
+              await expect(element).toHaveText('產品中心')
+              await expect(element).toBeVisible()
+            }
 
-          // h2 heading
-          {
-            // 等待 island component 載入
-            await companyJsonPromise
+            // h2 heading
+            {
+              // 等待 island component 載入
+              await companyJsonPromise
 
-            const element = page.locator('h2')
-            await expect(element).toContainText(company.companyName)
-          }
-        })
+              const element = page.locator('h2')
+              await expect(element).toContainText(company.companyName)
+            }
+          })
+        }
       }
     })
   })
