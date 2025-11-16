@@ -1,5 +1,5 @@
 import type { TypeCompanyPriceRank } from '../types'
-import CompanyLink from '@/components/common/preact/CompanyLink'
+import SimpleCompanyLink from '@/components/common/preact/SimpleCompanyLink'
 import { currencyFormat } from '@/utils/helpers'
 
 type Props = {
@@ -35,11 +35,27 @@ export default function CompanyPriceRankTable({ round, data }: Props) {
       </thead>
       <tbody>
         {data.map(
-          ({ companyId, totalDealAmount, totalDealMoney, totalMoney, productProfit }, index) => (
+          (
+            {
+              companyId,
+              companyName,
+              isSeal,
+              totalDealAmount,
+              totalDealMoney,
+              totalMoney,
+              productProfit,
+            },
+            index,
+          ) => (
             <tr key={companyId} class="*:px-1">
               <td class="text-center text-nowrap">{index + 1}</td>
               <td class="truncate text-left">
-                <CompanyLink round={round} companyId={companyId} />
+                <SimpleCompanyLink
+                  round={round}
+                  companyId={companyId}
+                  companyName={companyName}
+                  isSeal={isSeal}
+                />
               </td>
               <td class="text-right text-nowrap">{currencyFormat(totalDealAmount)}</td>
               <td class="text-right text-nowrap">$ {currencyFormat(totalDealMoney)}</td>

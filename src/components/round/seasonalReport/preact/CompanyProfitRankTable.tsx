@@ -1,5 +1,5 @@
 import type { TypeCompanyProfitRank } from '../types'
-import CompanyLink from '@/components/common/preact/CompanyLink'
+import SimpleCompanyLink from '@/components/common/preact/SimpleCompanyLink'
 import { currencyFormat } from '@/utils/helpers'
 
 type Props = {
@@ -34,18 +34,28 @@ export default function CompanyProfitRankTable({ round, data }: Props) {
         </tr>
       </thead>
       <tbody>
-        {data.map(({ companyId, profit, totalRelease, avgPrice, priceToEarn }, index) => (
-          <tr key={companyId} class="*:px-1">
-            <td class="text-center text-nowrap">{index + 1}</td>
-            <td class="truncate text-left">
-              <CompanyLink round={round} companyId={companyId} />
-            </td>
-            <td class="text-right text-nowrap">$ {currencyFormat(profit)}</td>
-            <td class="text-right text-nowrap">{totalRelease}</td>
-            <td class="text-right text-nowrap">$ {currencyFormat(avgPrice)}</td>
-            <td class="text-right text-nowrap">{priceToEarn}</td>
-          </tr>
-        ))}
+        {data.map(
+          (
+            { companyId, companyName, isSeal, profit, totalRelease, avgPrice, priceToEarn },
+            index,
+          ) => (
+            <tr key={companyId} class="*:px-1">
+              <td class="text-center text-nowrap">{index + 1}</td>
+              <td class="truncate text-left">
+                <SimpleCompanyLink
+                  round={round}
+                  companyId={companyId}
+                  companyName={companyName}
+                  isSeal={isSeal}
+                />
+              </td>
+              <td class="text-right text-nowrap">$ {currencyFormat(profit)}</td>
+              <td class="text-right text-nowrap">{totalRelease}</td>
+              <td class="text-right text-nowrap">$ {currencyFormat(avgPrice)}</td>
+              <td class="text-right text-nowrap">{priceToEarn}</td>
+            </tr>
+          ),
+        )}
       </tbody>
     </table>
   )

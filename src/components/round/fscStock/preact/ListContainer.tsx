@@ -1,10 +1,10 @@
+import SimpleCompanyLink from '@/components/common/preact/SimpleCompanyLink'
 import { z } from 'astro/zod'
 import { stockSchemaExtendWithCompany } from '@/services/dbDirectors'
 import { useDisplayItems } from '@/utils/hooks'
 import { dataNumberPerPage } from '@/configs/general'
 import { useStore } from '@nanostores/preact'
 import { totalAmount } from '@/stores/pagination'
-import { getCompanyUrl } from '@/libs/routes'
 
 const PAGE_SIZE = dataNumberPerPage.fscStock
 
@@ -33,9 +33,7 @@ export default function ListContainer({ storeKey, round, data }: Props) {
     tbodyContent = displayItems.map((item) => (
       <tr key={item.companyId}>
         <td>
-          <a href={getCompanyUrl(round, item.companyId)} class={item.isSeal ? 'text-error' : ''}>
-            {item.companyName}
-          </a>
+          <SimpleCompanyLink {...item} round={round} />
         </td>
         <td class="text-right">{item.stocks} 股</td>
       </tr>

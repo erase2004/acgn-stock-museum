@@ -6,19 +6,27 @@ import type { schema as schemaRankCompanyCapital } from '@/services/dbRankCompan
 import type { schema as schemaRankUserWealth } from '@/services/dbRankUserWealth'
 
 export type TypeCompanyPriceRank = Array<
-  z.infer<typeof schemaRankCompanyPrice> & { totalMoney: number; companyName: string }
+  z.infer<typeof schemaRankCompanyPrice> & {
+    totalMoney: number
+    companyName: string
+    isSeal: boolean
+  }
 >
 
 export type TypeCompanyProfitRank = Array<
-  z.infer<typeof schemaRankCompanyProfit> & { companyName: string }
+  z.infer<typeof schemaRankCompanyProfit> & { companyName: string; isSeal: boolean }
 >
 
 export type TypeCompanyValueRank = Array<
-  z.infer<typeof schemaRankCompanyValue> & { totalValue: number; companyName: string }
+  z.infer<typeof schemaRankCompanyValue> & {
+    totalValue: number
+    companyName: string
+    isSeal: boolean
+  }
 >
 
 export type TypeCompanyCapitalRank = Array<
-  z.infer<typeof schemaRankCompanyCapital> & { companyName: string }
+  z.infer<typeof schemaRankCompanyCapital> & { companyName: string; isSeal: boolean }
 >
 
 export type TypeUserWealthRank = Array<

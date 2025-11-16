@@ -12,7 +12,7 @@ import SeasonNavbar from '@/components/common/preact/SeasonNavbar'
 import MainBody from '@/components/round/seasonalReport/preact/MainBody'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
-import { getAllArchivedCompanies } from '@/services/dbCompanyArchive'
+import { getAllBasicCompanies } from '@/services/dbCompanies'
 import { getAllArchivedUsers } from '@/services/dbUserArchive'
 import { getPreviousSeason, getNextSeason, getSeasonById, getAllSeasons } from '@/services/dbSeason'
 import { getRankCompanyCapitalBySeasonId } from '@/services/dbRankCompanyCapital'
@@ -63,7 +63,7 @@ const previousSeasonUrl = previousSeason
 const nextSeason = await getNextSeason(connection, currentSeason)
 const nextSeasonUrl = nextSeason ? getSeasonalReportUrl(round, nextSeason._id) : undefined
 
-const allCompanies = await getAllArchivedCompanies(connection)
+const allCompanies = await getAllBasicCompanies(connection)
 const allUsers = await getAllArchivedUsers(connection)
 if (!allCompanies || !allUsers) {
   return Astro.redirect(homepage)
@@ -71,32 +71,41 @@ if (!allCompanies || !allUsers) {
 
 const allCompaniesDict = allCompanies.reduce(
   (acc, item) => {
-    acc[item._id] = item.companyName
+    acc[item._id] = {
+      name: item.companyName,
+      isSeal: item.isSeal,
+    }
     return acc
   },
-  {} as Record<string, string>,
+  {} as Record<string, { name: string; isSeal: boolean }>,
 )
 const allUsersDict = allUsers.reduce(
   (acc, item) => {
     acc[item._id] = item.name
+
     return acc
   },
   {} as Record<string, string>,
 )
 
-function appendCompanyName<T extends Record<string, any>>(obj: T) {
-  return Object.assign({}, obj, { companyName: allCompaniesDict[obj.companyId] })
+function appendCompanyData<T extends Record<string, any>>(obj: T) {
+  return Object.assign({}, obj, {
+    companyName: allCompaniesDict[obj.companyId].name,
+    isSeal: allCompaniesDict[obj.companyId].isSeal,
+  })
 }
 
-function appendUserName<T extends Record<string, any>>(obj: T) {
-  return Object.assign({}, obj, { name: allUsersDict[obj.userId] })
+function appendUserData<T extends Record<string, any>>(obj: T) {
+  return Object.assign({}, obj, {
+    name: allUsersDict[obj.userId],
+  })
 }
 
 // company price rank
 const rankCompanyPriceData = (await getRankCompanyPriceBySeasonId(connection, seasonId)) ?? []
 const sortedRankCompanyPriceData: TypeCompanyPriceRank = sortBy(
   rankCompanyPriceData.map((item) => {
-    return Object.assign({}, appendCompanyName(item), {
+    return Object.assign({}, appendCompanyData(item), {
       totalMoney: item.totalDealMoney + item.productProfit,
     })
   }),
@@ -107,7 +116,7 @@ sortedRankCompanyPriceData.reverse()
 // company profit rank
 const rankCompanyProfitData = (await getRankCompanyProfitBySeasonId(connection, seasonId)) ?? []
 const sortedRankCompanyProfitData: TypeCompanyProfitRank = sortBy(
-  rankCompanyProfitData.map(appendCompanyName),
+  rankCompanyProfitData.map(appendCompanyData),
   'priceToEarn',
 )
 sortedRankCompanyProfitData.reverse()
@@ -116,7 +125,7 @@ sortedRankCompanyProfitData.reverse()
 const rankCompanyValueData = (await getRankCompanyValueBySeasonId(connection, seasonId)) ?? []
 const sortedRankCompanyValueData: TypeCompanyValueRank = sortBy(
   rankCompanyValueData.map((item) => {
-    return Object.assign({}, appendCompanyName(item), {
+    return Object.assign({}, appendCompanyData(item), {
       totalValue: item.lastPrice * item.totalRelease,
     })
   }),
@@ -127,7 +136,7 @@ sortedRankCompanyValueData.reverse()
 // company capital rank
 const rankCompanyCapitalData = (await getRankCompanyCapitalBySeasonId(connection, seasonId)) ?? []
 const sortedRankCompanyCapitalData: TypeCompanyCapitalRank = sortBy(
-  rankCompanyCapitalData.map(appendCompanyName),
+  rankCompanyCapitalData.map(appendCompanyData),
   'capital',
 )
 sortedRankCompanyCapitalData.reverse()
@@ -136,7 +145,7 @@ sortedRankCompanyCapitalData.reverse()
 const rankUserWealthData = (await getRankUserWealthBySeasonId(connection, seasonId)) ?? []
 const sortedRankUserWealthData: TypeUserWealthRank = sortBy(
   rankUserWealthData.map((item) => {
-    return Object.assign({}, appendUserName(item), { totalWealth: item.money + item.stocksValue })
+    return Object.assign({}, appendUserData(item), { totalWealth: item.money + item.stocksValue })
   }),
   'totalWealth',
 )

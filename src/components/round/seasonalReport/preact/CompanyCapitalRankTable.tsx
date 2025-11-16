@@ -1,5 +1,5 @@
 import type { TypeCompanyCapitalRank } from '../types'
-import CompanyLink from '@/components/common/preact/CompanyLink'
+import SimpleCompanyLink from '@/components/common/preact/SimpleCompanyLink'
 import { currencyFormat } from '@/utils/helpers'
 
 type Props = {
@@ -31,17 +31,24 @@ export default function CompanyCapitalRankTable({ round, data }: Props) {
         </tr>
       </thead>
       <tbody>
-        {data.map(({ companyId, totalRelease, totalValue, capital }, index) => (
-          <tr key={companyId} class="*:px-1">
-            <td class="text-center text-nowrap">{index + 1}</td>
-            <td class="truncate text-left">
-              <CompanyLink round={round} companyId={companyId} />
-            </td>
-            <td class="text-right text-nowrap">{totalRelease}</td>
-            <td class="text-right text-nowrap">$ {currencyFormat(totalValue)}</td>
-            <td class="text-right text-nowrap">$ {currencyFormat(capital)}</td>
-          </tr>
-        ))}
+        {data.map(
+          ({ companyId, companyName, isSeal, totalRelease, totalValue, capital }, index) => (
+            <tr key={companyId} class="*:px-1">
+              <td class="text-center text-nowrap">{index + 1}</td>
+              <td class="truncate text-left">
+                <SimpleCompanyLink
+                  round={round}
+                  companyId={companyId}
+                  companyName={companyName}
+                  isSeal={isSeal}
+                />
+              </td>
+              <td class="text-right text-nowrap">{totalRelease}</td>
+              <td class="text-right text-nowrap">$ {currencyFormat(totalValue)}</td>
+              <td class="text-right text-nowrap">$ {currencyFormat(capital)}</td>
+            </tr>
+          ),
+        )}
       </tbody>
     </table>
   )

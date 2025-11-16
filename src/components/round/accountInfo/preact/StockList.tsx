@@ -1,9 +1,9 @@
 import type { z } from 'astro/zod'
 import type { stockSchemaExtendWithCompany } from '@/services/dbDirectors'
 import LoadMore from '@/components/common/preact/LoadMore'
+import SimpleCompanyLink from '@/components/common/preact/SimpleCompanyLink'
 import { useDisplayItems } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
-import { getCompanyUrl } from '@/libs/routes'
 import { useStore } from '@nanostores/preact'
 import { totalAmount } from '@/stores/pagination'
 
@@ -36,12 +36,7 @@ export default function StockList({ round, data }: Props) {
             displayItems.map((item) => (
               <tr class="*:px-1" key={item.companyId}>
                 <td class="truncate text-left" data-title="公司名稱">
-                  <a
-                    href={getCompanyUrl(round, item.companyId)}
-                    class={item.isSeal ? 'text-error' : ''}
-                  >
-                    {item.companyName}
-                  </a>
+                  <SimpleCompanyLink {...item} round={round} />
                 </td>
                 <td class="truncate text-right text-nowrap" data-title="持股數">
                   {item.stocks}
