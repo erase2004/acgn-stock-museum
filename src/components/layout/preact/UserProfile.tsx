@@ -222,7 +222,11 @@ export default function UserProfile({ round }: Props) {
               </div>
             )}
             <div title={`現有推薦票：${user.profile.voteTickets}`}>
-              <i class="fa fa-ticket" aria-hidden="true"></i>
+              {isFirstRound ? (
+                <i class="fa fa-money" aria-hidden="true"></i>
+              ) : (
+                <i class="fa fa-ticket" aria-hidden="true"></i>
+              )}
               <span>{currencyFormat(user.profile.voteTickets)}</span>
             </div>
             {stoneTypeList.map((type) => (
