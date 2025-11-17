@@ -22,9 +22,9 @@ export default function ProductListForFirstRound({ data }: Props) {
       {displayItems.length ? (
         displayItems.map((item) => <ProductCard key={item._id} item={item} />)
       ) : (
-        <em class="col-span-full">哦不！本季沒有推出任何產品！</em>
+        <em className="col-span-full">哦不！本季沒有推出任何產品！</em>
       )}
-      <div class="col-span-full">
+      <div className="col-span-full">
         <LoadMore storeKey={STORE_KEY} />
       </div>
     </>
@@ -37,18 +37,18 @@ type CardProps = {
 
 function ProductCard({ item: { _id, rating, type, description, voteCount } }: CardProps) {
   return (
-    <div class="card-border card col-span-full overflow-hidden border-base-content/25 lg:col-span-1">
-      <div class="card-title flex justify-between bg-base-200 px-4 py-2 text-base font-normal">
+    <div className="card-border card col-span-full overflow-hidden border-base-content/25 lg:col-span-1">
+      <div className="card-title flex justify-between bg-base-200 px-4 py-2 text-base font-normal">
         <small>識別碼：{_id}</small>
-        <span class="badge items-baseline badge-soft badge-info">
+        <span className="badge items-baseline badge-soft badge-info">
           {voteCount}
-          <i class="fa fa-money" aria-hidden="true"></i>
+          <i className="fa fa-money" aria-hidden="true"></i>
         </span>
       </div>
-      <div class="card-body p-4">
-        <div class="flex gap-1 text-xl text-nowrap *:last:truncate">
-          <span class="badge badge-neutral">{type}</span>
-          {isRestrictedRating(rating) && <span class="badge badge-error">{rating}</span>}
+      <div className="card-body p-4">
+        <div className="flex gap-1 text-xl text-nowrap *:last:truncate">
+          <span className="badge badge-neutral">{type}</span>
+          {isRestrictedRating(rating) && <span className="badge badge-error">{rating}</span>}
           <ProductLink productId={_id} />
         </div>
         <p>{description}</p>

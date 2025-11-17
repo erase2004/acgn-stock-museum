@@ -16,4 +16,4 @@ const currentRound = await getCurrentRoundFromDB(connection)
 const logs = (await getCompanyLog(connection, companyId, currentRound!.beginDate)) ?? []
 ---
 
-<CompanyLogList client:only="preact" round={round} data={logs} />
+<CompanyLogList client:only="react" round={round} data={logs} />

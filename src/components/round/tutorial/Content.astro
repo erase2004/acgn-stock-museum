@@ -231,7 +231,7 @@ const isFirstRound = round === FIRST_ROUND
         {
           fscMembers.map((member) => (
             <li>
-              <UserLink client:only="preact" round={round} userId={member._id} />
+              <UserLink client:only="react" round={round} userId={member._id} />
             </li>
           ))
         }

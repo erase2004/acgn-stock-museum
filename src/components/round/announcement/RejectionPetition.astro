@@ -17,10 +17,10 @@ const { rejectionPetition: petition } = announcement
   <div class="flex w-full flex-col gap-y-2 md:w-1/2">
     <h4 class="text-xl">連署資訊</h4>
     <div>
-      <PetitionState client:only="preact" {...announcement} />
+      <PetitionState client:only="react" {...announcement} />
     </div>
     <div>
-      截止時間：<ClientDatetime client:only="preact" value={petition!.dueAt} />
+      截止時間：<ClientDatetime client:only="react" value={petition!.dueAt} />
       <br />
       連署門檻：{computeThreshold(petition!.thresholdPercent, petition!.activeUserCount)} 人（活躍玩家
       {petition!.activeUserCount} 人中的 {petition!.thresholdPercent}%） <br />
@@ -34,7 +34,7 @@ const { rejectionPetition: petition } = announcement
         petition!.signers.length > 0 ? (
           petition!.signers.map((userId) => (
             <li class="ml-4">
-              <UserLink client:only="preact" round={round} userId={userId} />
+              <UserLink client:only="react" round={round} userId={userId} />
             </li>
           ))
         ) : (

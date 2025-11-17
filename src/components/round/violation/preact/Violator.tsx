@@ -1,5 +1,6 @@
 import type { violatorSchema } from '@/services/dbViolationCases'
 import type { z } from 'astro/zod'
+import type { JSX } from 'react'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import ProductLink from '@/components/common/preact/ProductLink'
 import UserLink from '@/components/common/preact/UserLink'
@@ -7,7 +8,7 @@ import UserLink from '@/components/common/preact/UserLink'
 type Props = z.infer<typeof violatorSchema> & { round: string }
 
 export default function Violator({ violatorType, violatorId, round }: Props) {
-  let jsx: preact.JSX.Element
+  let jsx: JSX.Element
 
   switch (violatorType) {
     case 'user': {

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'preact/hooks'
+import { useState, useMemo } from 'react'
 
 const TAGS_LIMIT = 3
 
@@ -17,11 +17,11 @@ export default function TagList({ tags }: Props) {
   if (tags.length === 0) return <></>
 
   return (
-    <div class="flex flex-wrap gap-1">
+    <div className="flex flex-wrap gap-1">
       {displayTags.map((tag) => (
         <span
           key={tag}
-          class="badge overflow-hidden badge-sm font-bold text-nowrap badge-neutral"
+          className="badge overflow-hidden badge-sm font-bold text-nowrap badge-neutral"
           title={tag}
         >
           {tag}
@@ -29,7 +29,7 @@ export default function TagList({ tags }: Props) {
       ))}
       {displayTags.length < tags.length && (
         <button
-          class="btn badge badge-sm font-bold text-nowrap badge-primary"
+          className="btn badge badge-sm font-bold text-nowrap badge-primary"
           onClick={() => setShowAll(true)}
         >
           顯示全部標籤

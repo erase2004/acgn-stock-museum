@@ -157,14 +157,14 @@ sortedRankUserWealthData.reverse()
     <h1 class="round-block-title">季度報告</h1>
     <div class="divider"></div>
     <SeasonNavbar
-      client:only="preact"
+      client:only="react"
       currentSeason={currentSeason}
       previousSeasonUrl={previousSeasonUrl}
       nextSeasonUrl={nextSeasonUrl}
     />
     <div class="divider"></div>
     <MainBody
-      client:only="preact"
+      client:only="react"
       round={round}
       rankCompanyCapitalData={sortedRankCompanyCapitalData}
       rankCompanyPriceData={sortedRankCompanyPriceData}

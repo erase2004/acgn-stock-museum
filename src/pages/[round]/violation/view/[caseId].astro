@@ -97,13 +97,13 @@ const description = `案件識別碼：${violation._id}｜內容：${removeMarkd
   <div>
     舉報時間：
     <span class="text-nowrap">
-      <ClientDatetime client:only="preact" value={violation.createdAt} />
+      <ClientDatetime client:only="react" value={violation.createdAt} />
     </span>
   </div>
   <div>
     更新時間：
     <span class="text-nowrap">
-      <ClientDatetime client:only="preact" value={violation.updatedAt} />
+      <ClientDatetime client:only="react" value={violation.updatedAt} />
     </span>
   </div>
   <div data-case-id={violation._id}>
@@ -118,7 +118,7 @@ const description = `案件識別碼：${violation._id}｜內容：${removeMarkd
           violation.violators.length > 0 ? (
             violation.violators.map((violator) => (
               <li>
-                <Violator client:only="preact" {...violator} round={round} />
+                <Violator client:only="react" {...violator} round={round} />
               </li>
             ))
           ) : (
@@ -152,9 +152,7 @@ const description = `案件識別碼：${violation._id}｜內容：${removeMarkd
       <div class="px-4 py-2">
         {
           relatedActionLogs ? (
-            relatedActionLogs.map((log) => (
-              <ActionLog client:only="preact" {...log} round={round} />
-            ))
+            relatedActionLogs.map((log) => <ActionLog client:only="react" {...log} round={round} />)
           ) : (
             <em>沒有任何紀錄！</em>
           )
@@ -165,12 +163,12 @@ const description = `案件識別碼：${violation._id}｜內容：${removeMarkd
       <p>案件相關遊戲紀錄</p>
       <div class="border border-base-content/25 p-6">
         <RelatedLogListContainer
-          client:only="preact"
+          client:only="react"
           storeKey={STORE_KEY}
           round={round}
           data={relatedLogs}
         />
-        <LoadMore client:only="preact" storeKey={STORE_KEY} />
+        <LoadMore client:only="react" storeKey={STORE_KEY} />
       </div>
     </div>
   </div>

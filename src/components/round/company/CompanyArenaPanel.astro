@@ -62,12 +62,12 @@ const isFirstRound = round === FIRST_ROUND
       <div>
         <p>
           <a href={getArenaInfoUrl(round, arenaData._id)}>本次最萌亂鬥大賽</a>起迄時間為：
-          <ClientDatetime client:only="preact" value={arenaData.beginDate} />~
-          <ClientDatetime client:only="preact" value={arenaData.endDate} />
+          <ClientDatetime client:only="react" value={arenaData.beginDate} />~
+          <ClientDatetime client:only="react" value={arenaData.endDate} />
         </p>
         <p>
           報名截止時間為：
-          <ClientDatetime client:only="preact" value={arenaData.joinEndDate} />
+          <ClientDatetime client:only="react" value={arenaData.joinEndDate} />
         </p>
         {typeof joinData !== 'undefined' ? (
           <Fragment>
@@ -95,7 +95,7 @@ const isFirstRound = round === FIRST_ROUND
               ))}
             </div>
             <ArenaStrategyForm
-              client:only="preact"
+              client:only="react"
               round={round}
               manager={companyData?.manager ?? ''}
               fighter={joinData}

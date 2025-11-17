@@ -62,7 +62,7 @@ const logs = (await getArenaLogs(connection, arenaId)) ?? []
   <h1 class="round-block-title">最萌亂鬥大賽</h1>
   <div class="divider"></div>
   <SeasonNavbar
-    client:only="preact"
+    client:only="react"
     currentSeason={currentArena}
     previousSeasonUrl={previousArenaUrl}
     nextSeasonUrl={nextArenaUrl}
@@ -79,13 +79,13 @@ const logs = (await getArenaLogs(connection, arenaId)) ?? []
   }
   <div class="divider"></div>
   <PanelFolder
-    client:only="preact"
+    client:only="react"
     title={isEnded ? '優勝者列表' : '參賽者列表'}
     classes="text-2xl mb-2"
     state={true}
   >
     <FighterList
-      client:only="preact"
+      client:only="react"
       round={round}
       isArenaEnded={isEnded}
       minInvestment={arenaMinInvestedAmount}
@@ -96,8 +96,8 @@ const logs = (await getArenaLogs(connection, arenaId)) ?? []
     isEnded && (
       <Fragment>
         <div class="divider" />
-        <PanelFolder client:only="preact" title={'戰鬥紀錄'} classes="text-2xl" state={false}>
-          <LogList client:only="preact" round={round} fighters={fighters} logs={logs} />
+        <PanelFolder client:only="react" title={'戰鬥紀錄'} classes="text-2xl" state={false}>
+          <LogList client:only="react" round={round} fighters={fighters} logs={logs} />
         </PanelFolder>
       </Fragment>
     )

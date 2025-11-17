@@ -17,7 +17,7 @@ import {
 import { filter, map, maxBy, minBy, range } from 'lodash-es'
 import { useThemeChanged } from '@/libs/hooks'
 import { currencyFormat, setChartStyle } from '@/utils/helpers'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import { theme } from '@/stores/common'
 
 dayjs.locale('zh-tw')
@@ -99,8 +99,8 @@ export default function CandlestickChart({ roundEnd, unitTime, data }: Props) {
   const downColor = style.getPropertyValue('--color-success')
 
   return (
-    <div class="w-full overflow-x-auto">
-      <div class="h-72 w-full min-w-xl">
+    <div className="w-full overflow-x-auto">
+      <div className="h-72 w-full min-w-xl">
         <Chart
           key={$theme}
           type="candlestick"

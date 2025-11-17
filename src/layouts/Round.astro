@@ -40,9 +40,9 @@ const title = getCurrentPageFullTitle(Astro)
       <div class="round-container">
         <div class="round-block"><slot /></div>
       </div>
-      {useUserDict && <LoadUserJson client:only="preact" round={round!} />}
-      <LoadCompanyJson client:only="preact" round={round!} />
-      {useProductDict && <LoadProductJson client:only="preact" round={round!} />}
+      {useUserDict && <LoadUserJson client:only="react" round={round!} />}
+      <LoadCompanyJson client:only="react" round={round!} />
+      {useProductDict && <LoadProductJson client:only="react" round={round!} />}
     </div>
     <RoundDrawerSide />
   </main>

@@ -2,11 +2,11 @@ import type { schema } from '@/services/dbLog'
 import type { z } from 'astro/zod'
 import DisplayLog from '@/components/common/preact/DisplayLog'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { useState, useEffect } from 'preact/hooks'
+import { useState, useEffect } from 'react'
 import { useFilter, useUser } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { intersection, isArray, isString } from 'lodash-es'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import { totalAmount } from '@/stores/pagination'
 
 const STORE_KEY = dataStoreKey.company.log
@@ -70,7 +70,7 @@ export default function CompanyLogList({ round, data }: Props) {
   return (
     <div>
       {user && (
-        <button class="btn mb-1 btn-outline btn-sm btn-info" onClick={toggleFilter}>
+        <button className="btn mb-1 btn-outline btn-sm btn-info" onClick={toggleFilter}>
           {filterOn ? '只檢視自身紀錄' : '檢視所有紀錄'}
         </button>
       )}

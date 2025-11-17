@@ -1,6 +1,6 @@
 import type { ZodTypeAny } from 'astro/zod'
 import type { BasicUser } from '@/services/dbUsers'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import {
   currentAmount,
   currentPage,
@@ -9,7 +9,7 @@ import {
   isInitialized,
   totalAmount,
 } from '@/stores/pagination'
-import { useEffect, useState, useMemo } from 'preact/hooks'
+import { useEffect, useState, useMemo } from 'react'
 import { filter, isArray, isString, pickBy, transform } from 'lodash-es'
 import { useLocalStorage } from 'usehooks-ts'
 

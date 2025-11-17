@@ -24,10 +24,10 @@ type Props = {
 
 export default function ReportTypeToggle({ currentType, setReportType }: Props) {
   return (
-    <div class="flex flex-wrap gap-y-1">
+    <div className="flex flex-wrap gap-y-1">
       {Object.entries(REPORT_TYPE).map(([_, value]) => (
         <button
-          class={`btn mr-1 btn-md ${currentType === value ? 'btn-primary' : 'btn-neutral'}`}
+          className={`btn mr-1 btn-md ${currentType === value ? 'btn-primary' : 'btn-neutral'}`}
           onClick={() => setReportType(value)}
         >
           {typeNameMap[value]}

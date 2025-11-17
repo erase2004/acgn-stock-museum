@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig, envField } from 'astro/config';
 
 import favicons from 'astro-favicons';
-import preact from '@astrojs/preact';
+import react from '@astrojs/react'
 import partytown from '@astrojs/partytown';
 import sitemap from '@astrojs/sitemap'
 import { defaultWebsiteName, siteUrl } from './src/configs/sites';
@@ -62,9 +62,7 @@ export default defineConfig({
         html: true,
       },
     }),
-    preact({
-      compat: true
-    }),
+    react(),
     partytown({
       config: {
         forward: ['dataLayer.push', 'gtag']

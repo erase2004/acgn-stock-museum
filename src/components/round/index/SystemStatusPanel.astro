@@ -87,23 +87,23 @@ const isFirstRound = round === FIRST_ROUND
 <div class="flex flex-wrap *:last-of-type:md:ml-auto">
   <StatusItem title="當前賽季起訖時間">
     <span class="whitespace-nowrap">
-      <ClientDatetime client:only="preact" value={currentRound.beginDate} />
+      <ClientDatetime client:only="react" value={currentRound.beginDate} />
     </span>
     <span class="whitespace-nowrap">
-      ~ <ClientDatetime client:only="preact" value={currentRound.endDate} />
+      ~ <ClientDatetime client:only="react" value={currentRound.endDate} />
     </span>
   </StatusItem>
   <StatusItem title="商業季度起訖時間">
     <span class="whitespace-nowrap">
-      <ClientDatetime client:only="preact" value={latestSeason.beginDate} />
+      <ClientDatetime client:only="react" value={latestSeason.beginDate} />
     </span>
     <span class="whitespace-nowrap">
-      ~ <ClientDatetime client:only="preact" value={latestSeason.endDate} />
+      ~ <ClientDatetime client:only="react" value={latestSeason.endDate} />
     </span>
   </StatusItem>
   <StatusItem title="員工薪資修改期限">
     <span class="whitespace-nowrap">
-      <ClientDatetime client:only="preact" value={updateSalaryDeadline} />
+      <ClientDatetime client:only="react" value={updateSalaryDeadline} />
     </span>
   </StatusItem>
 
@@ -111,13 +111,13 @@ const isFirstRound = round === FIRST_ROUND
     isFirstRound ? (
       <StatusItem title="員工分紅修改期限">
         <span class="whitespace-nowrap">
-          <ClientDatetime client:only="preact" value={updateBonusDeadline} />
+          <ClientDatetime client:only="react" value={updateBonusDeadline} />
         </span>
       </StatusItem>
     ) : (
       <StatusItem title="營利分配修改期限">
         <span class="whitespace-nowrap">
-          <ClientDatetime client:only="preact" value={updateProfitDistributionDeadline} />
+          <ClientDatetime client:only="react" value={updateProfitDistributionDeadline} />
         </span>
       </StatusItem>
     )
@@ -128,10 +128,10 @@ const isFirstRound = round === FIRST_ROUND
     statusClass={taskIsReady(stockPriceUpdateBegin, stockPriceUpdateEnd)}
   >
     <span class="whitespace-nowrap">
-      <ClientDatetime client:only="preact" value={stockPriceUpdateBegin} />
+      <ClientDatetime client:only="react" value={stockPriceUpdateBegin} />
     </span>
     <span class="whitespace-nowrap">
-      ~ <ClientDatetime client:only="preact" value={stockPriceUpdateEnd} />
+      ~ <ClientDatetime client:only="react" value={stockPriceUpdateEnd} />
     </span>
   </StatusItem>
   <StatusItem
@@ -139,10 +139,10 @@ const isFirstRound = round === FIRST_ROUND
     statusClass={taskIsReady(highPriceReleaseBegin, highPriceReleaseEnd)}
   >
     <span class="whitespace-nowrap">
-      <ClientDatetime client:only="preact" value={highPriceReleaseBegin} />
+      <ClientDatetime client:only="react" value={highPriceReleaseBegin} />
     </span>
     <span class="whitespace-nowrap">
-      ~ <ClientDatetime client:only="preact" value={highPriceReleaseEnd} />
+      ~ <ClientDatetime client:only="react" value={highPriceReleaseEnd} />
     </span>
   </StatusItem>
   <StatusItem
@@ -150,10 +150,10 @@ const isFirstRound = round === FIRST_ROUND
     statusClass={taskIsReady(noDealReleaseBegin, noDealReleaseEnd)}
   >
     <span class="whitespace-nowrap">
-      <ClientDatetime client:only="preact" value={noDealReleaseBegin} />
+      <ClientDatetime client:only="react" value={noDealReleaseBegin} />
     </span>
     <span class="whitespace-nowrap">
-      ~ <ClientDatetime client:only="preact" value={noDealReleaseEnd} />
+      ~ <ClientDatetime client:only="react" value={noDealReleaseEnd} />
     </span>
   </StatusItem>
   <StatusItem title="高價公司價格下限">

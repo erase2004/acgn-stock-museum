@@ -18,26 +18,28 @@ export default function SeasonNavbar({
   nextSeasonUrl,
 }: Props) {
   return (
-    <div class="flex items-center justify-between text-center">
+    <div className="flex items-center justify-between text-center">
       {previousSeasonUrl ? (
         <a href={previousSeasonUrl}>
-          <span class={buttonClasses}>&laquo;</span>
+          <span className={buttonClasses}>&laquo;</span>
         </a>
       ) : (
-        <span class={`${buttonClasses} btn-disabled`}>&laquo;</span>
+        <span className={`${buttonClasses} btn-disabled`}>&laquo;</span>
       )}
       <div>
-        <span class="inline-block text-nowrap">
+        <span className="inline-block text-nowrap">
           {formatDateTimeText(currentSeason.beginDate)}～
         </span>
-        <span class="inline-block text-nowrap">{formatDateTimeText(currentSeason.endDate)}</span>
+        <span className="inline-block text-nowrap">
+          {formatDateTimeText(currentSeason.endDate)}
+        </span>
       </div>
       {nextSeasonUrl ? (
         <a href={nextSeasonUrl}>
-          <span class={buttonClasses}>&raquo;</span>
+          <span className={buttonClasses}>&raquo;</span>
         </a>
       ) : (
-        <span class={`${buttonClasses} btn-disabled`}>&raquo;</span>
+        <span className={`${buttonClasses} btn-disabled`}>&raquo;</span>
       )}
     </div>
   )

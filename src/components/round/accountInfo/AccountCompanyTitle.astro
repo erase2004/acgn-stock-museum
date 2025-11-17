@@ -111,19 +111,19 @@ const titleList = isFirstRound
           />
           <div class="tab-content max-h-60 overflow-y-auto border-neutral-content p-4">
             {value === TITLE_MAP.chairman && (
-              <ChairmanTitleList client:only="preact" round={round} data={chairmanTitles} />
+              <ChairmanTitleList client:only="react" round={round} data={chairmanTitles} />
             )}
             {value === TITLE_MAP.manager && (
-              <ManagerTitleList client:only="preact" round={round} data={managerTitles} />
+              <ManagerTitleList client:only="react" round={round} data={managerTitles} />
             )}
             {value === TITLE_MAP.founder && (
-              <FounderTitleList client:only="preact" round={round} data={founderTitles} />
+              <FounderTitleList client:only="react" round={round} data={founderTitles} />
             )}
             {value === TITLE_MAP.employee && (
-              <EmployeeTitleList client:only="preact" round={round} data={employeeTitles} />
+              <EmployeeTitleList client:only="react" round={round} data={employeeTitles} />
             )}
             {value === TITLE_MAP.vip && (
-              <VipTitleList client:only="preact" round={round} data={vipTitles} />
+              <VipTitleList client:only="react" round={round} data={vipTitles} />
             )}
           </div>
         </Fragment>

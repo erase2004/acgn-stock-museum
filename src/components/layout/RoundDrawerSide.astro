@@ -45,7 +45,7 @@ const isLegacyRound = legacyRounds.includes(round)
           <NavLink pageName="other" externalUrl={feedbackUrl}>問題回報</NavLink>
           <NavLink pageName={PAGE.MAIN}>歷史博館物首頁</NavLink>
         </MobileNavLinkGroup>
-        <MobileUserFavoriteList client:only="preact" round={round} />
+        <MobileUserFavoriteList client:only="react" round={round} />
       </ul>
     </div>
   </div>

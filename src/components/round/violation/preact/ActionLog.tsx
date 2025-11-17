@@ -1,6 +1,7 @@
 import type { schema as shemaActionLog } from '@/services/dbViolationCaseActionLogs'
 import type { stateMap, violatorSchema } from '@/services/dbViolationCases'
 import type { z } from 'astro/zod'
+import type { JSX } from 'react'
 import UserLink from '@/components/common/preact/UserLink'
 import ActionLogReasonBlock from './ActionLogReasonBlock'
 import Violator from './Violator'
@@ -23,7 +24,7 @@ function stateTransitionActionText(state: keyof typeof stateMap) {
 type Props = z.infer<typeof shemaActionLog> & { round: string }
 
 export default function ActionLog({ round, executedAt, executor, action, data }: Props) {
-  let content: preact.JSX.Element
+  let content: JSX.Element
 
   switch (action) {
     case 'setState': {
@@ -153,8 +154,8 @@ export default function ActionLog({ round, executedAt, executor, action, data }:
   }
 
   return (
-    <div class="py-2">
-      <strong>{formatDateTimeText(executedAt)}</strong> -<div class="px-3">{content}</div>
+    <div className="py-2">
+      <strong>{formatDateTimeText(executedAt)}</strong> -<div className="px-3">{content}</div>
     </div>
   )
 }

@@ -14,4 +14,4 @@ const connection = getConnection(round)
 const stockInfo = (await getAccountOwnStocks(connection, userId)) ?? []
 ---
 
-<StockList client:only="preact" round={round} data={stockInfo} />
+<StockList client:only="react" round={round} data={stockInfo} />

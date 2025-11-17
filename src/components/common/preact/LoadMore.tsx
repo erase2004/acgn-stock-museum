@@ -5,9 +5,9 @@ import {
   currentAmount,
   totalAmount,
 } from '@/stores/pagination'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import { useIntersectionObserver } from 'usehooks-ts'
-import { useEffect } from 'preact/hooks'
+import { useEffect } from 'react'
 import { currencyFormat } from '@/utils/helpers'
 
 type Props = {
@@ -35,12 +35,12 @@ export default function LoadMore({ storeKey }: Props) {
   }, [isIntersecting])
 
   return (
-    <div ref={ref} class="flex flex-row justify-center gap-x-2 py-4">
+    <div ref={ref} className="flex flex-row justify-center gap-x-2 py-4">
       <span>
         載入更多資料中 ({currencyFormat($currentAmount[storeKey])} /{' '}
         {currencyFormat($totalAmount[storeKey])})
       </span>
-      <span class="loading loading-lg loading-dots"></span>
+      <span className="loading loading-lg loading-dots"></span>
     </div>
   )
 }

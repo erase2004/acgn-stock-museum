@@ -46,8 +46,8 @@ const isFirstRound = round === FIRST_ROUND
 
 {
   isFirstRound ? (
-    <LikedProductList client:only="preact" round={round} data={likedProductInfo} />
+    <LikedProductList client:only="react" round={round} data={likedProductInfo} />
   ) : (
-    <ProductList client:only="preact" round={round} data={productInfo} />
+    <ProductList client:only="react" round={round} data={productInfo} />
   )
 }

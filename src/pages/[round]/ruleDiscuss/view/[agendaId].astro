@@ -68,10 +68,10 @@ const description = `${removeMarkdown(agenda.description)}`
   <h1 class="round-block-title">{agenda.title}</h1>
   <div class="divider"></div>
   <h2 class="text-3xl">
-    提案人：<UserLink client:only="preact" round={round} userId={agenda.proposer} />
+    提案人：<UserLink client:only="react" round={round} userId={agenda.proposer} />
   </h2>
   <p class="text-xl">
-    議程建立委員：<UserLink client:only="preact" round={round} userId={agenda.creator} />
+    議程建立委員：<UserLink client:only="react" round={round} userId={agenda.creator} />
   </p>
   {!isLegacyRound && <p>活躍玩家人數：{agenda.activeUserCount} 人</p>}
   <div class="divider"></div>

@@ -39,7 +39,7 @@ const displayClass = hasRole(user, UserRole.SUPER_ADMIN.name)
       <div>
         <div class="mb-1 flex flex-col gap-y-2">
           <p class="truncate text-3xl">
-            <UserLink client:only="preact" round={round} userId={_id} />
+            <UserLink client:only="react" round={round} userId={_id} />
           </p>
           <span>
             {_id}

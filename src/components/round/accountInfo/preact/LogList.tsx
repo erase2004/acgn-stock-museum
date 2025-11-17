@@ -4,9 +4,9 @@ import { z } from 'astro/zod'
 import { useFilter } from '@/utils/hooks'
 import { logTypeGroupMap, type schema } from '@/services/dbLog'
 import { flatten, isArray, without } from 'lodash-es'
-import { useEffect, useRef } from 'preact/hooks'
+import { useEffect, useRef } from 'react'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import { totalAmount } from '@/stores/pagination'
 
 const PAGE_SIZE = dataNumberPerPage.account.log
@@ -88,34 +88,34 @@ export default function LogList({ round, data }: Props) {
 
   return (
     <>
-      <div class="flex flex-col gap-y-1">
-        <div class="flex items-center gap-1">
+      <div className="flex flex-col gap-y-1">
+        <div className="flex items-center gap-1">
           顯示分類：
-          <button class="btn btn-outline btn-sm" onClick={selectAll}>
+          <button className="btn btn-outline btn-sm" onClick={selectAll}>
             全部選擇
           </button>
-          <button class="btn btn-outline btn-sm" onClick={unselectAll}>
+          <button className="btn btn-outline btn-sm" onClick={unselectAll}>
             全部清除
           </button>
         </div>
-        <div class="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1">
           {Object.entries(logTypeGroupMap).map(([key, config]) =>
             isSelected(key, filterObject) ? (
               <button
                 key={key}
-                class="btn btn-sm btn-info"
+                className="btn btn-sm btn-info"
                 onClick={() => onOptionUnselected(key as keyof typeof logTypeGroupMap)}
               >
-                <i class="fa fa-check-square-o"></i>
+                <i className="fa fa-check-square-o"></i>
                 {config.displayName}
               </button>
             ) : (
               <button
                 key={key}
-                class="btn btn-outline btn-sm btn-info"
+                className="btn btn-outline btn-sm btn-info"
                 onClick={() => onOptionSelected(key as keyof typeof logTypeGroupMap)}
               >
-                <i class="fa fa-square-o"></i>
+                <i className="fa fa-square-o"></i>
                 {config.displayName}
               </button>
             ),

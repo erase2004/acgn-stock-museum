@@ -44,7 +44,7 @@ const nextSeasonEmployees = employees.filter((i) => i.employed === false)
   <p>下季度員工薪資：${currencyFormat(nextSeasonSalary)}</p>
 </div>
 <EmployeeList
-  client:only="preact"
+  client:only="react"
   type="current"
   round={round}
   storeKey={dataStoreKey.company.employee.current}
@@ -53,7 +53,7 @@ const nextSeasonEmployees = employees.filter((i) => i.employed === false)
 />
 
 <EmployeeList
-  client:only="preact"
+  client:only="react"
   type="next"
   round={round}
   storeKey={dataStoreKey.company.employee.next}

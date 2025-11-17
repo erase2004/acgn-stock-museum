@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'react'
 import { useLocalStorage } from 'usehooks-ts'
 
 export default function AlertDialog() {
@@ -49,19 +49,19 @@ export default function AlertDialog() {
   }, [setting])
 
   return (
-    <dialog class="modal" open={open}>
-      <div class="modal-box">
-        <p class="py-4 text-xl text-error">即將開啟外部連結，請確認</p>
-        <label class="label">
+    <dialog className="modal" open={open}>
+      <div className="modal-box">
+        <p className="py-4 text-xl text-error">即將開啟外部連結，請確認</p>
+        <label className="label">
           不再顯示類似警告
-          <input type="checkbox" class="checkbox checkbox-sm" ref={checkboxRef} />
+          <input type="checkbox" className="checkbox checkbox-sm" ref={checkboxRef} />
         </label>
-        <div class="modal-action">
+        <div className="modal-action">
           <form method="dialog">
-            <button class="btn mr-2 btn-outline" onClick={cancel}>
+            <button className="btn mr-2 btn-outline" onClick={cancel}>
               取消
             </button>
-            <button class="btn btn-primary" onClick={confirm}>
+            <button className="btn btn-primary" onClick={confirm}>
               確認
             </button>
           </form>

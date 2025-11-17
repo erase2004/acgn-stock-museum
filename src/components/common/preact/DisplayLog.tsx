@@ -1,6 +1,7 @@
 import UserLink from '@/components/common/preact/UserLink'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import ProductLink from '@/components/common/preact/ProductLink'
+import type { JSX } from 'react'
 import { z } from 'astro/zod'
 import { escape, isEmpty } from 'lodash-es'
 import { schema } from '@/services/dbLog'
@@ -14,13 +15,20 @@ import { beforeTaxSeperatedRounds, FIRST_ROUND, legacyRounds } from '@/configs/s
 type Log = z.infer<typeof schema>
 type Props = Log & { round: string }
 
-export default function DisplayLog({ round, logType, userId, companyId, data, createdAt }: Props) {
+export default function DisplayLog({
+  round,
+  logType,
+  userId,
+  companyId,
+  data = {},
+  createdAt,
+}: Props) {
   const companyJsx = companyId ? <CompanyLink round={round} companyId={companyId} /> : null
   const usersJsx = Array.isArray(userId)
     ? userId.map((id) => <UserLink round={round} userId={id} />)
     : []
 
-  let contentJsx: preact.JSX.Element | string
+  let contentJsx: JSX.Element | string
 
   switch (logType) {
     case '驗證通過': {
@@ -81,7 +89,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '公司復活': {
-      let extraInfo: preact.JSX.Element | string
+      let extraInfo: JSX.Element | string
       if (data.manager === SpecialUser.NONE) {
         extraInfo = '但無人就任公司經理。'
       } else {
@@ -283,7 +291,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '就任經理': {
-      let extraInfo: preact.JSX.Element = <></>
+      let extraInfo: JSX.Element = <></>
 
       if (Array.isArray(userId)) {
         if (!userId[1] || userId[1] === SpecialUser.NONE) {
@@ -523,7 +531,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '舉報違規': {
-      let extraInfo: preact.JSX.Element = <></>
+      let extraInfo: JSX.Element = <></>
 
       if (Array.isArray(userId)) {
         if (companyId) {
@@ -559,7 +567,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '金管通告': {
-      let targetJsx: preact.JSX.Element = <></>
+      let targetJsx: JSX.Element = <></>
       const [sourceUser, ...targetUsers] = usersJsx
 
       if (companyId) {
@@ -771,7 +779,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '產品下架': {
-      let extraInfo: preact.JSX.Element = <></>
+      let extraInfo: JSX.Element = <></>
       if (data.profit) {
         extraInfo = (
           <>
@@ -919,7 +927,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
     }
 
     case '營運送禮': {
-      let targetJsx: preact.JSX.Element | string | (preact.JSX.Element | string)[] = <></>
+      let targetJsx: JSX.Element | string | (JSX.Element | string)[] = <></>
       let itemJsx: string = ''
 
       switch (data.userType) {
@@ -979,7 +987,7 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
 
   return (
     <>
-      <time class="mr-2 text-primary">({formatDateTimeText(createdAt)})</time>
+      <time className="mr-2 text-primary">({formatDateTimeText(createdAt)})</time>
       {contentJsx}
     </>
   )
@@ -988,8 +996,8 @@ export default function DisplayLog({ round, logType, userId, companyId, data, cr
 function placeOrderInfo(
   orderType: '買入' | '賣出',
   { price, amount }: any,
-  usersJsx: preact.JSX.Element[],
-  companyJsx: preact.JSX.Element | null,
+  usersJsx: JSX.Element[],
+  companyJsx: JSX.Element | null,
 ) {
   const title = orderType === '買入' ? '購買' : '販賣'
   return (
@@ -1000,7 +1008,7 @@ function placeOrderInfo(
   )
 }
 
-function orderInfo({ price, orderType, amount }: any, companyJsx: preact.JSX.Element | null) {
+function orderInfo({ price, orderType, amount }: any, companyJsx: JSX.Element | null) {
   return (
     <>
       以每股${currencyFormat(price)}的單價{orderType}
@@ -1028,7 +1036,7 @@ function stopOrResumePrvilegeInfo(
   type: 'stop' | 'resume',
   privilege: string,
   { reason, violationCaseId }: any,
-  usersJsx: preact.JSX.Element[],
+  usersJsx: JSX.Element[],
 ) {
   const isLegacyRound = legacyRounds.includes(round)
 

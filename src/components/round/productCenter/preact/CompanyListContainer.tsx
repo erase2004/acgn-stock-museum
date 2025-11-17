@@ -4,7 +4,7 @@ import ProductLink from '@/components/common/preact/ProductLink'
 import LoadMore from '@/components/common/preact/LoadMore'
 import { isRestrictedRating, useProductCenter } from '@/utils/product'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import { totalAmount } from '@/stores/pagination'
 
 const STORE_KEY = dataStoreKey.productCenter.company
@@ -25,9 +25,9 @@ export default function CompanyListContainer({ data }: Props) {
   return (
     <>
       <p>總共{$totalAmount[STORE_KEY]}項產品</p>
-      <div class="sticky-control mb-2 flex gap-x-2 py-4 md:hidden">
+      <div className="sticky-control mb-2 flex gap-x-2 py-4 md:hidden">
         <button
-          class={`btn-default btn btn-outline btn-sm ${getSortButtonClass('type')}`}
+          className={`btn-default btn btn-outline btn-sm ${getSortButtonClass('type')}`}
           onClick={() => {
             handleSortChange('type')
           }}
@@ -36,7 +36,7 @@ export default function CompanyListContainer({ data }: Props) {
           {getSortIcon('type')}
         </button>
         <button
-          class={`btn-default btn btn-outline btn-sm ${getSortButtonClass('rating')}`}
+          className={`btn-default btn btn-outline btn-sm ${getSortButtonClass('rating')}`}
           onClick={() => {
             handleSortChange('rating')
           }}
@@ -45,7 +45,7 @@ export default function CompanyListContainer({ data }: Props) {
           {getSortIcon('rating')}
         </button>
         <button
-          class={`btn-default btn btn-outline btn-sm ${getSortButtonClass('voteCount')}`}
+          className={`btn-default btn btn-outline btn-sm ${getSortButtonClass('voteCount')}`}
           onClick={() => {
             handleSortChange('voteCount')
           }}
@@ -54,12 +54,12 @@ export default function CompanyListContainer({ data }: Props) {
           {getSortIcon('voteCount')}
         </button>
       </div>
-      <table class="table-base custom-responsive-table-md table-pin-rows table">
+      <table className="table-base custom-responsive-table-md table-pin-rows table">
         <thead>
           <tr>
-            <th class="text-center">產品</th>
+            <th className="text-center">產品</th>
             <th
-              class="w-24 cursor-pointer px-0 text-center"
+              className="w-24 cursor-pointer px-0 text-center"
               onClick={() => {
                 handleSortChange('type')
               }}
@@ -68,7 +68,7 @@ export default function CompanyListContainer({ data }: Props) {
               {getSortIcon('type')}
             </th>
             <th
-              class="w-24 cursor-pointer px-0 text-center"
+              className="w-24 cursor-pointer px-0 text-center"
               onClick={() => {
                 handleSortChange('rating')
               }}
@@ -77,7 +77,7 @@ export default function CompanyListContainer({ data }: Props) {
               {getSortIcon('rating')}
             </th>
             <th
-              class="w-24 cursor-pointer px-0 text-center"
+              className="w-24 cursor-pointer px-0 text-center"
               onClick={() => {
                 handleSortChange('voteCount')
               }}
@@ -91,39 +91,41 @@ export default function CompanyListContainer({ data }: Props) {
           {displayItems.length > 0 ? (
             displayItems.map((item) => (
               <tr key={item._id}>
-                <td class="text-left" data-title="產品">
-                  <div class="max-h-12 overflow-y-auto break-all">
+                <td className="text-left" data-title="產品">
+                  <div className="max-h-12 overflow-y-auto break-all">
                     <ProductLink productId={item._id} />
                   </div>
-                  <div class="max-h-14 overflow-y-auto text-sm break-all">{item.description}</div>
+                  <div className="max-h-14 overflow-y-auto text-sm break-all">
+                    {item.description}
+                  </div>
                 </td>
-                <td class="text-center text-nowrap" data-title="類別">
+                <td className="text-center text-nowrap" data-title="類別">
                   {item.type}
                 </td>
                 {isRestrictedRating(item.rating) ? (
                   <td
-                    class="text-center text-nowrap text-error before:text-base-content"
+                    className="text-center text-nowrap text-error before:text-base-content"
                     data-title="分級"
                   >
                     {item.rating}
                   </td>
                 ) : (
-                  <td class="text-center text-nowrap" data-title="分級">
+                  <td className="text-center text-nowrap" data-title="分級">
                     &nbsp;
                   </td>
                 )}
 
-                <td class="text-center text-nowrap" data-title="得票數">
-                  <span class="badge items-baseline badge-soft text-base badge-info">
+                <td className="text-center text-nowrap" data-title="得票數">
+                  <span className="badge items-baseline badge-soft text-base badge-info">
                     {item.voteCount}
-                    <i class="fa fa-ticket" aria-hidden="true"></i>
+                    <i className="fa fa-ticket" aria-hidden="true"></i>
                   </span>
                 </td>
               </tr>
             ))
           ) : (
-            <tr class="default-content">
-              <td colspan={4}>這家公司尚未推出任何產品！</td>
+            <tr className="default-content">
+              <td colSpan={4}>這家公司尚未推出任何產品！</td>
             </tr>
           )}
         </tbody>

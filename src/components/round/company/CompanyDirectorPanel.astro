@@ -58,14 +58,14 @@ const candidates = (function () {
 ---
 
 <DirectorList
-  client:only="preact"
+  client:only="react"
   round={round}
   data={directors}
   totalRelease={company!.totalRelease}
 />
 <div class="divider -mx-2 my-0 md:-mx-4"></div>
 <ManagerElectionInfo
-  client:only="preact"
+  client:only="react"
   round={round}
   totalRelease={company!.totalRelease}
   data={candidates}

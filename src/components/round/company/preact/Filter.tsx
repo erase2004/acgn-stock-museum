@@ -1,4 +1,4 @@
-import type { TargetedEvent } from 'preact'
+import type { SyntheticEvent } from 'react'
 import {
   type ListMode,
   type ListItem,
@@ -6,8 +6,8 @@ import {
   LIST_STORE_KEY,
   setItems,
 } from '@/stores/company'
-import { useStore } from '@nanostores/preact'
-import { useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import { useStore } from '@nanostores/react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ownStocks } from '@/stores/account'
 import { useFilter, useUser } from '@/utils/hooks'
 import { buildSearchRegExp } from '@/utils/helpers'
@@ -102,7 +102,7 @@ export default function Filter({ data }: Props) {
     }
   }, [user])
 
-  function changeListOption(e: TargetedEvent<HTMLSelectElement>) {
+  function changeListOption(e: SyntheticEvent<HTMLSelectElement>) {
     const option = e.currentTarget.value as ListOption
 
     switch (option) {
@@ -124,12 +124,12 @@ export default function Filter({ data }: Props) {
     }
   }
 
-  function changeSortOption(e: TargetedEvent<HTMLSelectElement>) {
+  function changeSortOption(e: SyntheticEvent<HTMLSelectElement>) {
     const option = e.currentTarget.value as SortOption
     setSortOption(option)
   }
 
-  function changeSearchMode(e: TargetedEvent<HTMLSelectElement>) {
+  function changeSearchMode(e: SyntheticEvent<HTMLSelectElement>) {
     const mode = e.currentTarget.value as SeachMode
     setSearchMode(mode)
   }
@@ -139,12 +139,12 @@ export default function Filter({ data }: Props) {
     else setShowClear(false)
   }
 
-  function handleInputChange(e: TargetedEvent<HTMLInputElement>) {
+  function handleInputChange(e: SyntheticEvent<HTMLInputElement>) {
     const value = e.currentTarget.value
     updateShowClear(value)
   }
 
-  function search(e: TargetedEvent<HTMLFormElement>) {
+  function search(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
 
     if (!searchRef.current) return
@@ -160,15 +160,18 @@ export default function Filter({ data }: Props) {
   }
 
   return (
-    <div class="flex flex-wrap gap-1">
+    <div className="flex flex-wrap gap-1">
       <button
-        class="btn-default btn"
+        className="btn-default btn"
         onClick={() => toggleViewMode($listViewMode)}
         aria-label="選擇資料呈現模式"
       >
-        <i class={`fa ${$listViewMode === 'card' ? 'fa-th' : 'fa-th-list'}`} aria-hidden="true"></i>
+        <i
+          className={`fa ${$listViewMode === 'card' ? 'fa-th' : 'fa-th-list'}`}
+          aria-hidden="true"
+        ></i>
       </button>
-      <select class="select w-30" ref={listOptionRef} onChange={changeListOption}>
+      <select className="select w-30" ref={listOptionRef} onChange={changeListOption}>
         <option value="">全部顯示</option>
         {user && (
           <>
@@ -177,22 +180,25 @@ export default function Filter({ data }: Props) {
           </>
         )}
       </select>
-      <select class="select w-40" value={sortOption} onChange={changeSortOption}>
+      <select className="select w-40" value={sortOption} onChange={changeSortOption}>
         <option value="lastPrice">依股價排序</option>
         <option value="totalValue">依總市值排序</option>
         <option value="capital">依資本額排序</option>
         <option value="createdAt">依上市日期排序</option>
       </select>
-      <form class="join-vertical join w-full grow sm:join-horizontal md:w-auto" onSubmit={search}>
+      <form
+        className="join-vertical join w-full grow sm:join-horizontal md:w-auto"
+        onSubmit={search}
+      >
         <input
-          class="input join-item w-full sm:w-60"
+          className="input join-item w-full sm:w-60"
           type="text"
           placeholder="請輸入關鍵字"
           ref={searchRef}
           onChange={handleInputChange}
         />
         <select
-          class="select join-item w-full sm:w-30"
+          className="select join-item w-full sm:w-30"
           value={searchMode}
           onChange={changeSearchMode}
         >
@@ -202,12 +208,12 @@ export default function Filter({ data }: Props) {
           <option value="fuzzy">模糊比對</option>
         </select>
         {showClear && (
-          <button type="reset" class="btn join-item" aria-label="清除" onClick={clear}>
-            <i class="fa fa-times"></i>
+          <button type="reset" className="btn join-item" aria-label="清除" onClick={clear}>
+            <i className="fa fa-times"></i>
           </button>
         )}
-        <button class="btn join-item btn-primary" type="submit">
-          <i class="fa fa-search" aria-hidden="true"></i> 搜索
+        <button className="btn join-item btn-primary" type="submit">
+          <i className="fa fa-search" aria-hidden="true"></i> 搜索
         </button>
       </form>
     </div>

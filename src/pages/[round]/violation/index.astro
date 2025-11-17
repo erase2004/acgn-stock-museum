@@ -57,7 +57,7 @@ const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
   <h1 class="round-block-title">違規案件列表</h1>
   <div class="divider"></div>
   <Reminder />
-  <Filter client:only="preact" data={data} storeKey={STORE_KEY} />
-  <ListContainer client:only="preact" round={round} storeKey={STORE_KEY} />
-  <LoadMore client:only="preact" storeKey={STORE_KEY} />
+  <Filter client:only="react" data={data} storeKey={STORE_KEY} />
+  <ListContainer client:only="react" round={round} storeKey={STORE_KEY} />
+  <LoadMore client:only="" storeKey={STORE_KEY} />
 </RoundLayout>

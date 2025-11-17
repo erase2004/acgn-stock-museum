@@ -15,7 +15,7 @@ export default function SimpleCompanyLink({ round, companyId, companyName, isSea
   }
 
   return (
-    <a href={getCompanyUrl(round, companyId)} class={isSeal ? 'text-error' : ''}>
+    <a href={getCompanyUrl(round, companyId)} className={isSeal ? 'text-error' : ''}>
       {companyName || defaultText}
     </a>
   )

@@ -15,7 +15,7 @@ const isLegacyRound = legacyRounds.includes(round)
 <nav
   class="navbar z-20 grid grid-cols-[minmax(0,1fr)_40px] bg-base-300 **:not-[.ignore-inherit]:text-inherit max-md:min-h-0 md:grid-cols-[minmax(0,1fr)_75%]"
 >
-  <UserProfile client:only="preact" round={round} />
+  <UserProfile client:only="react" round={round} />
   <ul class="menu menu-horizontal hidden w-auto flex-nowrap text-base md:flex">
     <NavLink pageName={PAGE.MAIN} isRoundBounded={true} />
     {!isLegacyRound && <NavLink pageName={PAGE.ANNOUNCEMENT_LIST} isRoundBounded={true} />}
@@ -25,7 +25,7 @@ const isLegacyRound = legacyRounds.includes(round)
       <NavLink pageName={PAGE.PRODUCT_CENTER_BY_SEASON} isRoundBounded={true} />
       <NavLink pageName={PAGE.ARENA_INFO} isRoundBounded={true} />
     </NavLinkGroup>
-    <UserFavoriteList client:only="preact" round={round} />
+    <UserFavoriteList client:only="react" round={round} />
     <NavLinkGroup text="其他資訊">
       <NavLink pageName={PAGE.TUTORIAL} isRoundBounded={true} />
       <NavLink pageName={PAGE.SEASONAL_REPORT} isRoundBounded={true} />

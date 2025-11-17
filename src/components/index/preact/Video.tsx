@@ -1,5 +1,5 @@
 import type { ExtendedVideoBaseData } from '../types'
-import { Fragment, useState, type FunctionComponent } from 'preact/compat'
+import { Fragment, useState, type FunctionComponent } from 'react'
 import PreactLoading from './Loading'
 import videoPoster from '@/assets/media/video-poster.jpg'
 
@@ -17,8 +17,8 @@ const PreactVideo: FunctionComponent<Props> = (props) => {
     <Fragment>
       <video
         className="preact-video"
-        style={`background-color: ${data.color}`}
-        autoplay
+        style={{ backgroundColor: data.color }}
+        autoPlay
         muted
         loop
         width={data.width}

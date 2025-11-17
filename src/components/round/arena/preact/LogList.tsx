@@ -2,15 +2,15 @@ import type { z } from 'astro/zod'
 import type { schema as schemaFighter } from '@/services/dbArenaFighters'
 import type { schema as schemaLog } from '@/services/dbArenaLog'
 import type { Dictionary } from 'lodash'
-import type { TargetedEvent } from 'preact'
+import type { SyntheticEvent } from 'react'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { useMemo, useRef, useState } from 'preact/hooks'
+import { useMemo, useRef, useState } from 'react'
 import { isArray, isString, map, zipObject } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
 import { useFilter } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import { totalAmount } from '@/stores/pagination'
 
 const STORE_KEY = dataStoreKey.arena.log
@@ -45,7 +45,7 @@ function displaySp(log: Log, fighterDict: FighterDict) {
   return (
     <>
       (SP:{log.attackerSp}
-      <span class="text-error">-{attacker.spCost}</span>)
+      <span className="text-error">-{attacker.spCost}</span>)
     </>
   )
 }
@@ -113,12 +113,12 @@ export default function LogList({ round, fighters, logs }: Props) {
     else setShowClear(false)
   }
 
-  function handleInputChange(e: TargetedEvent<HTMLInputElement>) {
+  function handleInputChange(e: SyntheticEvent<HTMLInputElement>) {
     const value = e.currentTarget.value
     updateShowClear(value)
   }
 
-  function onSubmit(e: TargetedEvent<HTMLFormElement>) {
+  function onSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setFilterValue('companyId', inputRef.current?.value ?? '')
   }
@@ -134,7 +134,7 @@ export default function LogList({ round, fighters, logs }: Props) {
     const defender = <CompanyLink round={round} companyId={getDefender(log)} />
 
     return (
-      <div key={log._id} class="break-all">
+      <div key={log._id} className="break-all">
         【回合{log.round}】{attacker}
         {displaySp(log, fighterDict)}的{displayAttackManaer(log, fighterDict)}
         {log.damage ? (
@@ -157,9 +157,9 @@ export default function LogList({ round, fighters, logs }: Props) {
 
   return (
     <div>
-      <form class="sticky-control join py-2" onSubmit={onSubmit}>
-        <label class="input input-sm join-item">
-          <span class="label">篩選參賽者</span>
+      <form className="sticky-control join py-2" onSubmit={onSubmit}>
+        <label className="input input-sm join-item">
+          <span className="label">篩選參賽者</span>
           <input
             type="text"
             placeholder="參賽者識別碼"
@@ -168,16 +168,16 @@ export default function LogList({ round, fighters, logs }: Props) {
           />
         </label>
         {showClear && (
-          <button type="reset" class="btn join-item btn-sm" aria-label="清除" onClick={clear}>
-            <i class="fa fa-times"></i>
+          <button type="reset" className="btn join-item btn-sm" aria-label="清除" onClick={clear}>
+            <i className="fa fa-times"></i>
           </button>
         )}
 
-        <button type="submit" class="btn join-item btn-sm btn-primary" aria-label="搜尋">
-          <i class="fa fa-search"></i>
+        <button type="submit" className="btn join-item btn-sm btn-primary" aria-label="搜尋">
+          <i className="fa fa-search"></i>
         </button>
       </form>
-      <p class="mb-2">總共{$totalAmount[STORE_KEY]}筆紀錄</p>
+      <p className="mb-2">總共{$totalAmount[STORE_KEY]}筆紀錄</p>
       <div>{filteredItems.map(formatLog)}</div>
       <LoadMore storeKey={STORE_KEY} />
     </div>

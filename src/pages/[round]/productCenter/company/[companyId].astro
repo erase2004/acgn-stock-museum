@@ -61,14 +61,14 @@ const title = getCurrentPageFullTitle(Astro, company.companyName)
   <OpenGraph slot="head-seo" title={title} description={roundDefaultDescription} />
   <h1 class="round-block-title">產品中心</h1>
   <h2 class="my-2 text-3xl">
-    <CompanyLink client:only="preact" round={round} companyId={companyId} />
+    <CompanyLink client:only="react" round={round} companyId={companyId} />
   </h2>
   <div class="divider"></div>
   {
     isFirstRound ? (
-      <CompanyListContainerForFirstRound client:only="preact" data={products} />
+      <CompanyListContainerForFirstRound client:only="react" data={products} />
     ) : (
-      <CompanyListContainer client:only="preact" data={products} />
+      <CompanyListContainer client:only="react" data={products} />
     )
   }
 </RoundLayout>

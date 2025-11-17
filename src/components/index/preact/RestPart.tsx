@@ -1,5 +1,5 @@
 import type { ExtendedData } from '../types'
-import { Fragment, useEffect, useState, type FunctionComponent } from 'preact/compat'
+import { Fragment, useEffect, useState, type FunctionComponent } from 'react'
 import PreactPeriod from './Period'
 import { useIntersectionObserver } from 'usehooks-ts'
 

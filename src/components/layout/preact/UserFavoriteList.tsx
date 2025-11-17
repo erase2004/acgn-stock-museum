@@ -14,13 +14,13 @@ export default function UserFavoriteList({ round }: Props) {
 
   return (
     <div>
-      <li class="dropdown dropdown-start">
-        <div class="menu-dropdown-toggle whitespace-nowrap" tabindex={0} role="button">
+      <li className="dropdown dropdown-start">
+        <div className="menu-dropdown-toggle whitespace-nowrap" tabIndex={0} role="button">
           我的最愛
         </div>
-        <ul class="dropdown-content menu ml-0 max-h-[50dvh] flex-nowrap overflow-y-auto bg-base-300 text-base">
+        <ul className="dropdown-content menu ml-0 max-h-[50dvh] flex-nowrap overflow-y-auto bg-base-300 text-base">
           {favorite.map((companyId) => (
-            <li key={companyId} class="*:text-nowrap">
+            <li key={companyId} className="*:text-nowrap">
               <CompanyLink round={round} companyId={companyId} />
             </li>
           ))}

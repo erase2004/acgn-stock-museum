@@ -1,6 +1,6 @@
 import type { z } from 'astro/zod'
 import type { schema as schemaProduct } from '@/services/dbProducts'
-import { useMemo, useState } from 'preact/hooks'
+import { useMemo, useState } from 'react'
 import { orderBy } from 'lodash-es'
 import { useDisplayItems } from './hooks'
 
@@ -55,9 +55,9 @@ export function useProductCenter(
   function getSortIcon(key: keyof SortOrder) {
     if (typeof sortOrder[key] === 'number') {
       if (sortOrder[key]) {
-        return <i class="fa fa-sort-amount-asc ml-1" aria-hidden="true"></i>
+        return <i className="fa fa-sort-amount-asc ml-1" aria-hidden="true"></i>
       } else {
-        return <i class="fa fa-sort-amount-desc ml-1" aria-hidden="true"></i>
+        return <i className="fa fa-sort-amount-desc ml-1" aria-hidden="true"></i>
       }
     }
     return <></>

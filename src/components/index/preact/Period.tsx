@@ -1,6 +1,6 @@
-import type { FunctionComponent } from 'preact/compat'
+import type { FunctionComponent } from 'react'
 import type { ExtendedData } from '../types'
-import { Fragment } from 'preact/compat'
+import { Fragment } from 'react'
 import PreactItemWrapper from './ItemWrapper'
 
 type Props = {

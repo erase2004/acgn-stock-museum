@@ -28,7 +28,7 @@ const shouldShowVoteList = yesCount > 0 || noCount > 0
     <h4 class="text-xl">投票資訊</h4>
     <div set:html={state} />
     <div>
-      截止時間：<ClientDatetime client:only="preact" value={poll!.dueAt} /><br />
+      截止時間：<ClientDatetime client:only="react" value={poll!.dueAt} /><br />
       投票門檻：{threshold} 人（活躍玩家 {poll!.activeUserCount} 人中的 {poll!.thresholdPercent}%）
     </div>
   </div>
@@ -62,7 +62,7 @@ const shouldShowVoteList = yesCount > 0 || noCount > 0
             {poll!.yesVotes.length > 0 ? (
               poll!.yesVotes.map((userId) => (
                 <li class="ml-4">
-                  <UserLink client:only="preact" round={round} userId={userId} />
+                  <UserLink client:only="react" round={round} userId={userId} />
                 </li>
               ))
             ) : (
@@ -76,7 +76,7 @@ const shouldShowVoteList = yesCount > 0 || noCount > 0
             {poll!.noVotes.length > 0 ? (
               poll!.noVotes.map((userId) => (
                 <li class="ml-4">
-                  <UserLink client:only="preact" round={round} userId={userId} />
+                  <UserLink client:only="react" round={round} userId={userId} />
                 </li>
               ))
             ) : (

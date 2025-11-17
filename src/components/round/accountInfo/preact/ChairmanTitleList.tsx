@@ -22,16 +22,16 @@ export default function ChairmanTitleList({ round, data }: Props) {
     <>
       {displayItems.length > 0
         ? displayItems.map((item) => (
-            <div class="flex flex-nowrap text-primary" key={item._id}>
-              <span class="text-nowrap">是「</span>
-              <span class="inline-block max-w-[calc(100%-11rem)] truncate">
+            <div className="flex flex-nowrap text-primary" key={item._id}>
+              <span className="text-nowrap">是「</span>
+              <span className="inline-block max-w-[calc(100%-11rem)] truncate">
                 <CompanyLink round={round} companyId={item._id} />
               </span>
-              <span class="text-nowrap">」公司的「</span>
-              <span class="inline-block max-w-[calc(100%-11rem)] truncate">
+              <span className="text-nowrap">」公司的「</span>
+              <span className="inline-block max-w-[calc(100%-11rem)] truncate">
                 {item.chairmanTitle}
               </span>
-              <span class="text-nowrap">」</span>
+              <span className="text-nowrap">」</span>
             </div>
           ))
         : '查無資料！'}

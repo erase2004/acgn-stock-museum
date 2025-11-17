@@ -1,8 +1,8 @@
-import type { TargetedEvent } from 'preact'
+import type { SyntheticEvent } from 'react'
 import { z } from 'astro/zod'
 import { announcementCategoryMap, listItemSchema } from '@/services/dbAnnouncements'
 import { setItems, type Item } from '@/stores/announcement'
-import { useEffect } from 'preact/hooks'
+import { useEffect } from 'react'
 import { categoryDisplayName } from '@/utils/announcement'
 import { useFilter, useUser } from '@/utils/hooks'
 import { isArray, isString } from 'lodash-es'
@@ -55,7 +55,7 @@ export default function Filter({ storeKey, data }: Props) {
     true,
   )
 
-  function onCategoryChange(event: TargetedEvent<HTMLSelectElement>) {
+  function onCategoryChange(event: SyntheticEvent<HTMLSelectElement>) {
     const value = event.currentTarget.value
     setFilterValue('category', value)
   }
@@ -72,9 +72,9 @@ export default function Filter({ storeKey, data }: Props) {
   }, [user])
 
   return (
-    <div class="sticky-control flex flex-wrap gap-2 py-4">
-      <label class="select w-56 select-sm">
-        <span class="label">顯示分類</span>
+    <div className="sticky-control flex flex-wrap gap-2 py-4">
+      <label className="select w-56 select-sm">
+        <span className="label">顯示分類</span>
         <select onChange={onCategoryChange}>
           <option value="">全部分類</option>
           {categoryList.map((category) => (
@@ -85,10 +85,10 @@ export default function Filter({ storeKey, data }: Props) {
         </select>
       </label>
       {user && (
-        <label class="btn px-2 btn-outline btn-sm btn-primary">
+        <label className="btn px-2 btn-outline btn-sm btn-primary">
           <input
             type="checkbox"
-            class="checkbox checkbox-sm checkbox-primary"
+            className="checkbox checkbox-sm checkbox-primary"
             checked={filterObject['voided']}
             onChange={(e) => {
               const checked = e.currentTarget.checked

@@ -54,7 +54,7 @@ function getExpireDate(begin: Date) {
               ]}
             >
               <td class="truncate text-left text-nowrap" data-title="購買者">
-                <UserLink client:only="preact" round={round} userId={item.userId} />
+                <UserLink client:only="react" round={round} userId={item.userId} />
               </td>
               <td class="text-left" data-title="廣告內容" title={item.message}>
                 <div class="max-md:max-h-36 max-md:overflow-y-auto max-md:break-all md:truncate">
@@ -71,7 +71,7 @@ function getExpireDate(begin: Date) {
                 $ {currencyFormat(item.paid)}
               </td>
               <td class="text-truncate text-center text-nowrap" data-title="終止日期">
-                <ClientDatetime client:only="preact" value={getExpireDate(item.createdAt)} />
+                <ClientDatetime client:only="react" value={getExpireDate(item.createdAt)} />
               </td>
             </tr>
           ))

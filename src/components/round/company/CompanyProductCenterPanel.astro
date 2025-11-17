@@ -70,7 +70,7 @@ const isFirstRound = round === FIRST_ROUND
       {
         !isFirstRound && (
           <UserProductQuotaInfo
-            client:only="preact"
+            client:only="react"
             companyId={companyId}
             capital={company!.capital}
           />
@@ -80,10 +80,10 @@ const isFirstRound = round === FIRST_ROUND
     <div class="grid max-h-96 grid-cols-1 gap-x-6 gap-y-4 overflow-y-auto lg:grid-cols-2">
       {
         isFirstRound ? (
-          <ProductListForFirstRound client:only="preact" data={marketingProducts} />
+          <ProductListForFirstRound client:only="react" data={marketingProducts} />
         ) : (
           <ProductList
-            client:only="preact"
+            client:only="react"
             data={marketingProducts}
             round={round}
             manager={company!.manager}

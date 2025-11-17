@@ -1,12 +1,12 @@
 import UserLink from '@/components/common/preact/UserLink'
 import type { z } from 'astro/zod'
-import type { TargetedEvent } from 'preact'
+import type { SyntheticEvent } from 'react'
 import { levelConfig, type schema } from '@/services/dbVips'
 import { useFilter, useUser } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { isArray, isString } from 'lodash-es'
 import LoadMore from '@/components/common/preact/LoadMore'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import { totalAmount } from '@/stores/pagination'
 
 const displayVipLevelOptions = levelConfig
@@ -59,16 +59,16 @@ export default function VipList({ round, thresholds, data }: Props) {
     false,
   )
 
-  function changeLevel(e: TargetedEvent<HTMLSelectElement>) {
+  function changeLevel(e: SyntheticEvent<HTMLSelectElement>) {
     const level = e.currentTarget.value
     setFilterValue('level', level)
   }
 
   return (
-    <div class="grid grid-cols-12 gap-y-4 md:gap-x-8">
-      <div class="col-span-12 md:col-span-8 lg:col-span-9">
-        <label class="select mb-2 w-40 select-sm">
-          <span class="label">顯示等級</span>
+    <div className="grid grid-cols-12 gap-y-4 md:gap-x-8">
+      <div className="col-span-12 md:col-span-8 lg:col-span-9">
+        <label className="select mb-2 w-40 select-sm">
+          <span className="label">顯示等級</span>
           <select onChange={changeLevel}>
             {displayVipLevelOptions.map(({ value, text }) => (
               <option key={value} value={value}>
@@ -77,46 +77,48 @@ export default function VipList({ round, thresholds, data }: Props) {
             ))}
           </select>
         </label>
-        <p class="sm:ml-4 sm:inline-block">
+        <p className="sm:ml-4 sm:inline-block">
           總共{$totalAmount[STORE_KEY]}位
           {filterObject['level'] && ` ${getLevelText(filterObject['level'])}`}
         </p>
-        <div class="company-panel-table -mx-2 max-h-72 *:px-4 md:-mx-4">
-          <div class="sticky-control header">
-            <div class="col-span-6">使用者帳號</div>
-            <div class="col-span-3">VIP 等級</div>
-            <div class="col-span-3">分數</div>
+        <div className="company-panel-table -mx-2 max-h-72 *:px-4 md:-mx-4">
+          <div className="sticky-control header">
+            <div className="col-span-6">使用者帳號</div>
+            <div className="col-span-3">VIP 等級</div>
+            <div className="col-span-3">分數</div>
           </div>
           {filteredItems.length > 0 ? (
             filteredItems.map((item) => (
               <div
                 key={item.userId}
-                class={`grid grid-cols-12 ${item.level === 5 ? 'vip-level-5' : ''}`}
+                className={`grid grid-cols-12 ${item.level === 5 ? 'vip-level-5' : ''}`}
               >
-                <p class="col-span-5 md:hidden">使用者帳號</p>
-                <div class="col-span-7 truncate md:col-span-6">
+                <p className="col-span-5 md:hidden">使用者帳號</p>
+                <div className="col-span-7 truncate md:col-span-6">
                   <UserLink round={round} userId={item.userId} />
                 </div>
-                <p class="col-span-5 md:hidden">VIP 等級</p>
-                <div class="col-span-7 text-left md:col-span-3 md:text-center">
+                <p className="col-span-5 md:hidden">VIP 等級</p>
+                <div className="col-span-7 text-left md:col-span-3 md:text-center">
                   {getLevelText(item.level)}
                 </div>
-                <p class="col-span-5 md:hidden">分數</p>
-                <div class="col-span-7 text-left md:col-span-3 md:text-center">{item.score}</div>
+                <p className="col-span-5 md:hidden">分數</p>
+                <div className="col-span-7 text-left md:col-span-3 md:text-center">
+                  {item.score}
+                </div>
               </div>
             ))
           ) : (
-            <div class="text-center">
+            <div className="text-center">
               <em>查無資料！</em>
             </div>
           )}
           <LoadMore storeKey={STORE_KEY} />
         </div>
       </div>
-      <div class="col-span-12 md:col-span-4 lg:col-span-3">
-        <p class="mb-1 text-lg">分級門檻一覽</p>
-        <div class="bg-base-content/25">
-          <table class="table border-separate border-spacing-[1px] table-sm text-center **:border-none **:text-base **:[th,td]:bg-base-100 **:[th,td]:p-1">
+      <div className="col-span-12 md:col-span-4 lg:col-span-3">
+        <p className="mb-1 text-lg">分級門檻一覽</p>
+        <div className="bg-base-content/25">
+          <table className="table border-separate border-spacing-[1px] table-sm text-center **:border-none **:text-base **:[th,td]:bg-base-100 **:[th,td]:p-1">
             <thead>
               <tr>
                 <th>VIP 等級</th>
@@ -133,17 +135,18 @@ export default function VipList({ round, thresholds, data }: Props) {
             </tbody>
           </table>
         </div>
-        <div class="divider my-1"></div>
-        <p class="mb-1 text-lg">我的 VIP 資訊</p>
+        <div className="divider my-1"></div>
+        <p className="mb-1 text-lg">我的 VIP 資訊</p>
         {typeof userVipInfo !== 'undefined' ? (
-          <div class="flec-col flex">
+          <div className="flec-col flex">
             <p>
-              VIP 等級：<span class="text-nowrap text-info">{getLevelText(userVipInfo.level)}</span>
+              VIP 等級：
+              <span className="text-nowrap text-info">{getLevelText(userVipInfo.level)}</span>
             </p>
-            <div class="divider mx-1 divider-horizontal"></div>
+            <div className="divider mx-1 divider-horizontal"></div>
             <p>
               分數：
-              <span class={`text-nowrap ${getVipScoreClass(thresholds, userVipInfo)}`}>
+              <span className={`text-nowrap ${getVipScoreClass(thresholds, userVipInfo)}`}>
                 {userVipInfo.score}
               </span>
             </p>

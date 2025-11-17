@@ -1,5 +1,5 @@
-import type { Component } from 'preact'
-import { useState } from 'preact/hooks'
+import type { Component } from 'react'
+import { useState } from 'react'
 
 type Props = {
   title: string
@@ -14,9 +14,9 @@ export default function PanelFolder({ title, classes, state = false, children }:
 
   return (
     <>
-      <div class={`cursor-pointer ${classes}`} onClick={() => setIsOpen(!isOpen)}>
+      <div className={`cursor-pointer ${classes}`} onClick={() => setIsOpen(!isOpen)}>
         {title}
-        <i class={`fa ml-2 ${iconClass}`} aria-hidden="true"></i>
+        <i className={`fa ml-2 ${iconClass}`} aria-hidden="true"></i>
       </div>
       {isOpen && children}
     </>

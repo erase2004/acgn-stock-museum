@@ -20,9 +20,9 @@ export default function ListContainer({ storeKey, round, data }: Props) {
   if (!data.length) return <em>沒有資料</em>
 
   return (
-    <ul class="relative pl-0">
+    <ul className="relative pl-0">
       {displayItems.map((items) => (
-        <li key={items._id} class="list-none">
+        <li key={items._id} className="list-none">
           <DisplayLog round={round} {...items} />
         </li>
       ))}

@@ -32,7 +32,7 @@ const hasData = data.length > 0
                 <a href={getRuleAgendaUrl(round, agenda._id)}>{agenda.title}</a>
               </td>
               <td class="text-center" data-title="結束日期">
-                <ClientDatetime client:only="preact" value={agenda.endedAt} />
+                <ClientDatetime client:only="react" value={agenda.endedAt} />
               </td>
               <td class="px-0 text-center" data-title="相關討論">
                 <a

@@ -21,40 +21,41 @@ export default function ArenaStrategyForm({ round, manager, fighter, attackSequn
 
   return (
     <>
-      <div class="divider my-2"></div>
-      <div class="flex flex-col gap-y-4">
-        <p class="text-xl">這一屆大賽的策略：</p>
+      <div className="divider my-2"></div>
+      <div className="flex flex-col gap-y-4">
+        <p className="text-xl">這一屆大賽的策略：</p>
         <div>
-          <p class="text-nowrap">
-            設定的特攻消耗數值(1~10)：<span class="bg-base-300 px-4 py-1">{fighter['spCost']}</span>
+          <p className="text-nowrap">
+            設定的特攻消耗數值(1~10)：
+            <span className="bg-base-300 px-4 py-1">{fighter['spCost']}</span>
           </p>
-          <p class="text-warning">特攻消耗數值越高越容易使出特殊攻擊，但也會越快耗盡SP。</p>
-          <p class="text-info">{spForecast(fighter, isFirstRound)}</p>
+          <p className="text-warning">特攻消耗數值越高越容易使出特殊攻擊，但也會越快耗盡SP。</p>
+          <p className="text-info">{spForecast(fighter, isFirstRound)}</p>
         </div>
-        <div class="flex flex-col max-lg:gap-y-1 lg:flex-row lg:gap-x-8">
-          <div class="flex w-full flex-col gap-y-1 overflow-x-hidden lg:w-1/2">
+        <div className="flex flex-col max-lg:gap-y-1 lg:flex-row lg:gap-x-8">
+          <div className="flex w-full flex-col gap-y-1 overflow-x-hidden lg:w-1/2">
             <p>設定的普通攻擊招式名：</p>
             {fighter['normalManner'].map((manner, index) => (
-              <p key={index} class="overflow-x-auto bg-base-300 px-4 py-1 text-nowrap">
+              <p key={index} className="overflow-x-auto bg-base-300 px-4 py-1 text-nowrap">
                 {manner}
               </p>
             ))}
           </div>
-          <div class="flex w-full flex-col gap-y-1 overflow-x-hidden lg:w-1/2">
+          <div className="flex w-full flex-col gap-y-1 overflow-x-hidden lg:w-1/2">
             <p>設定的特殊攻擊招式名：</p>
             {fighter['specialManner'].map((manner, index) => (
-              <p key={index} class="overflow-x-auto bg-base-300 px-4 py-1 text-nowrap">
+              <p key={index} className="overflow-x-auto bg-base-300 px-4 py-1 text-nowrap">
                 {manner}
               </p>
             ))}
           </div>
         </div>
-        <div class="flex w-full flex-col gap-y-1 lg:w-1/2">
+        <div className="flex w-full flex-col gap-y-1 lg:w-1/2">
           <p>設定的優先攻擊順序：</p>
-          <div class="max-h-60 overflow-y-auto border border-base-content/25 bg-base-300 p-2">
-            <div class="flex flex-col gap-y-1">
+          <div className="max-h-60 overflow-y-auto border border-base-content/25 bg-base-300 p-2">
+            <div className="flex flex-col gap-y-1">
               {attackSequnce.map((companyId) => (
-                <p key={companyId} class="truncate border-base-content/25 not-last:border-b">
+                <p key={companyId} className="truncate border-base-content/25 not-last:border-b">
                   <CompanyLink round={round} companyId={companyId} />
                 </p>
               ))}

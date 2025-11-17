@@ -13,12 +13,12 @@ export default function MobileUserFavoriteList({ round }: Props) {
   if (!favorite.length) return <></>
 
   return (
-    <div class="collapse-arrow collapse">
+    <div className="collapse-arrow collapse">
       <input type="checkbox" name="drawer-collpase" />
-      <div class="collapse-title px-[calc(0.25rem*3)] py-[calc(0.25rem*1.5)]">我的最愛</div>
-      <ul class="menu collapse-content ml-0 max-w-[75vw] flex-nowrap overflow-x-hidden bg-base-300">
+      <div className="collapse-title px-[calc(0.25rem*3)] py-[calc(0.25rem*1.5)]">我的最愛</div>
+      <ul className="menu collapse-content ml-0 max-w-[75vw] flex-nowrap overflow-x-hidden bg-base-300">
         {favorite.map((companyId) => (
-          <li key={companyId} class="*:inline-block *:w-full *:truncate *:text-nowrap">
+          <li key={companyId} className="*:inline-block *:w-full *:truncate *:text-nowrap">
             <CompanyLink round={round} companyId={companyId} />
           </li>
         ))}

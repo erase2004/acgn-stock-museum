@@ -68,8 +68,8 @@ const description = removeMarkdown(announcement.content)
   </h1>
   <h2 class="my-2 text-3xl break-all">主旨：{announcement.subject}</h2>
   <p class="my-2 text-wrap">
-    於 <ClientDatetime client:only="preact" value={announcement.createdAt} /> 由 <UserLink
-      client:only="preact"
+    於 <ClientDatetime client:only="react" value={announcement.createdAt} /> 由 <UserLink
+      client:only="react"
       round={round}
       userId={announcement.creator}
     /> 發佈
@@ -78,8 +78,8 @@ const description = removeMarkdown(announcement.content)
     announcement.voided && (
       <p class="my-2 text-warning">
         <i class="fa fa-warning" />
-        已於 <ClientDatetime client:only="preact" value={announcement.voidedAt} /> 由{' '}
-        <UserLink client:only="preact" round={round} userId={announcement.voidedBy} />
+        已於 <ClientDatetime client:only="react" value={announcement.voidedAt} /> 由{' '}
+        <UserLink client:only="react" round={round} userId={announcement.voidedBy} />
         以「{announcement.voidedReason}」的理由作廢！
       </p>
     )

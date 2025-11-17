@@ -36,13 +36,13 @@ const company = (await getCompanyFilterByCustomSchema(connection, companyId, sch
     </p>
   )
 }
-<TagList client:only="preact" tags={company.tags} />
+<TagList client:only="react" tags={company.tags} />
 <div class="divider"></div>
 <h2 class="mb-2 text-3xl break-all opacity-75">
-  {company.chairmanTitle}：<UserLink client:only="preact" round={round} userId={company.chairman} />
+  {company.chairmanTitle}：<UserLink client:only="react" round={round} userId={company.chairman} />
 </h2>
 <h3 class="text-2xl break-all">
-  經理人：<UserLink client:only="preact" round={round} userId={company.manager} />
+  經理人：<UserLink client:only="react" round={round} userId={company.manager} />
 </h3>
 <div class="divider"></div>
 <div class="flex flex-col flex-nowrap gap-8 md:flex-row">

@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'preact/compat'
+import type { FunctionComponent } from 'react'
 import type { ExtendedData } from '../types'
 import PreactVideo from './Video'
 import PreactImage from './Image'
@@ -22,7 +22,7 @@ const PreactItemWrapper: FunctionComponent<Props> = (props) => {
       rel="noopener"
       title={data.companyName}
     >
-      <span class="item-title">{data.companyName}</span>
+      <span className="item-title">{data.companyName}</span>
       {isVideo(data) ? <PreactVideo data={data} /> : <PreactImage data={data} />}
     </a>
   )

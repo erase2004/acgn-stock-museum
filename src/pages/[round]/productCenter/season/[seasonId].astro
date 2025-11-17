@@ -54,11 +54,11 @@ const products = (await getProductsBySeason(connection, seasonId)) ?? []
   <h1 class="round-block-title">產品中心</h1>
   <div class="divider"></div>
   <SeasonNavbar
-    client:only="preact"
+    client:only="react"
     currentSeason={currentSeason}
     previousSeasonUrl={previousSeasonUrl}
     nextSeasonUrl={nextSeasonUrl}
   />
   <div class="divider"></div>
-  <SeasonListContainer client:only="preact" round={round} data={products} />
+  <SeasonListContainer client:only="react" round={round} data={products} />
 </RoundLayout>

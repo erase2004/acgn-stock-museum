@@ -1,5 +1,5 @@
 import type { ExtendedImageBaseData } from '../types'
-import { useState, Fragment, type FunctionComponent, useEffect, useRef } from 'preact/compat'
+import { useState, Fragment, type FunctionComponent, useEffect, useRef } from 'react'
 import PreactLoading from './Loading'
 
 type Props = {
@@ -30,7 +30,7 @@ const PreactImage: FunctionComponent<Props> = (props) => {
   return (
     <Fragment>
       <picture>
-        <source srcset={webp.srcSet.attribute} type="image/webp" sizes="98vw" />
+        <source srcSet={webp.srcSet.attribute} type="image/webp" sizes="98vw" />
         <img
           ref={imgRef}
           src={jpeg.src}
@@ -38,7 +38,7 @@ const PreactImage: FunctionComponent<Props> = (props) => {
           sizes="98vw"
           alt={data.companyName}
           className="preact-image h-auto w-full"
-          style={`aspect-ratio: ${data.width} / ${data.height}; background-color: ${data.color};`}
+          style={{ aspectRatio: data.width / data.height, backgroundColor: data.color }}
           loading={'lazy'}
           fetchPriority={'auto'}
           decoding={'async'}

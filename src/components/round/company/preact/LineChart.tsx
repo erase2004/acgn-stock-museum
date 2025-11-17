@@ -18,7 +18,7 @@ import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm'
 import { Chart } from 'react-chartjs-2'
 import { useThemeChanged } from '@/libs/hooks'
 import { currencyFormat, setChartStyle } from '@/utils/helpers'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import { theme } from '@/stores/common'
 
 dayjs.locale('zh-tw')
@@ -49,8 +49,8 @@ export default function LineChart({ data, min, max }: Props) {
   const color = style.getPropertyValue('--color-info')
 
   return (
-    <div class="w-full overflow-x-auto">
-      <div class="h-80 w-full min-w-xl">
+    <div className="w-full overflow-x-auto">
+      <div className="h-80 w-full min-w-xl">
         <Chart
           key={$theme}
           type="line"

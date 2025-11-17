@@ -165,11 +165,11 @@ const EPRatio = getCompanyEPRatio(isFirstRound, item)
   <div class="col-span-6">
     <p>創立時間</p>
     <p class="text-center text-wrap">
-      <ClientDatetime client:only="preact" value={item.createdAt} />
+      <ClientDatetime client:only="react" value={item.createdAt} />
     </p>
   </div>
   <div class="col-span-6">
     <p>創立人</p>
-    <p><UserLink client:only="preact" round={round} userId={item.founder} /></p>
+    <p><UserLink client:only="react" round={round} userId={item.founder} /></p>
   </div>
 </div>

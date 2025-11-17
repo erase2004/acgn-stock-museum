@@ -5,7 +5,8 @@ import type {
   TypeCompanyValueRank,
   TypeUserWealthRank,
 } from '../types'
-import { useState } from 'preact/hooks'
+import type { JSX } from 'react'
+import { useState } from 'react'
 import ReportTypeToggle, { REPORT_TYPE, typeNameMap } from './ReportTypeToggle'
 import CompanyPriceRankTable from './CompanyPriceRankTable'
 import CompanyProfitRankTable from './CompanyProfitRankTable'
@@ -48,7 +49,7 @@ export default function MainBody({
   const reportTitle = typeNameMap[reportType]
   const modeText = reportMode === REPORT_MODE.GRAPH ? '圖表模式' : '表格模式'
 
-  let tableJsx: preact.JSX.Element = <></>
+  let tableJsx: JSX.Element = <></>
   switch (reportType) {
     case REPORT_TYPE.PRICE: {
       tableJsx = <CompanyPriceRankTable round={round} data={rankCompanyPriceData} />
@@ -76,7 +77,7 @@ export default function MainBody({
     }
   }
 
-  let graphJsx: preact.JSX.Element = <></>
+  let graphJsx: JSX.Element = <></>
   switch (reportType) {
     case REPORT_TYPE.PRICE: {
       graphJsx = <CompanyPriceRankGraph data={rankCompanyPriceData} />
@@ -110,16 +111,18 @@ export default function MainBody({
 
   return (
     <>
-      <div class="flex flex-wrap gap-y-1">
+      <div className="flex flex-wrap gap-y-1">
         <ReportTypeToggle currentType={reportType} setReportType={setReportType} />
-        <button onClick={handleClickOnModeButton} class="btn ml-auto btn-outline">
+        <button onClick={handleClickOnModeButton} className="btn ml-auto btn-outline">
           {modeText}
         </button>
       </div>
-      <div class="divider"></div>
-      <h2 class="text-3xl">{reportTitle}</h2>
-      <div class="w-full overflow-x-auto">
-        <div class="w-full min-w-2xl">{reportMode === REPORT_MODE.GRAPH ? graphJsx : tableJsx}</div>
+      <div className="divider"></div>
+      <h2 className="text-3xl">{reportTitle}</h2>
+      <div className="w-full overflow-x-auto">
+        <div className="w-full min-w-2xl">
+          {reportMode === REPORT_MODE.GRAPH ? graphJsx : tableJsx}
+        </div>
       </div>
     </>
   )

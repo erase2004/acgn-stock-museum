@@ -1,4 +1,4 @@
-import type { FunctionComponent } from 'preact/compat'
+import type { FunctionComponent } from 'react'
 
 const PreactLoading: FunctionComponent = () => {
   return (

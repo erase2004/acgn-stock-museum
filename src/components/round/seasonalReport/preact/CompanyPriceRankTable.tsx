@@ -9,27 +9,27 @@ type Props = {
 
 export default function CompanyPriceRankTable({ round, data }: Props) {
   return (
-    <table class="table-base table">
+    <table className="table-base table">
       <thead>
         <tr>
-          <th class="w-20 text-center text-nowrap" title="排名">
+          <th className="w-20 text-center text-nowrap" title="排名">
             排名
           </th>
-          <th class="text-center text-nowrap" title="公司名稱">
+          <th className="text-center text-nowrap" title="公司名稱">
             公司名稱
           </th>
-          <th class="max-w-32 text-center text-nowrap" title="季成交量">
+          <th className="max-w-32 text-center text-nowrap" title="季成交量">
             季成交量
           </th>
-          <th class="max-w-32 text-center text-nowrap" title="季成交額">
+          <th className="max-w-32 text-center text-nowrap" title="季成交額">
             季成交額
           </th>
-          <th class="max-w-32 text-center text-nowrap" title="產品營利">
+          <th className="max-w-32 text-center text-nowrap" title="產品營利">
             產品營利
           </th>
-          <th class="max-w-32 text-center text-nowrap" title="季金流額">
+          <th className="max-w-32 text-center text-nowrap" title="季金流額">
             季金流額
-            <i class="fa fa-sort-amount-desc" aria-hidden="true"></i>
+            <i className="fa fa-sort-amount-desc" aria-hidden="true"></i>
           </th>
         </tr>
       </thead>
@@ -47,9 +47,9 @@ export default function CompanyPriceRankTable({ round, data }: Props) {
             },
             index,
           ) => (
-            <tr key={companyId} class="*:px-1">
-              <td class="text-center text-nowrap">{index + 1}</td>
-              <td class="truncate text-left">
+            <tr key={companyId} className="*:px-1">
+              <td className="text-center text-nowrap">{index + 1}</td>
+              <td className="truncate text-left">
                 <SimpleCompanyLink
                   round={round}
                   companyId={companyId}
@@ -57,10 +57,10 @@ export default function CompanyPriceRankTable({ round, data }: Props) {
                   isSeal={isSeal}
                 />
               </td>
-              <td class="text-right text-nowrap">{currencyFormat(totalDealAmount)}</td>
-              <td class="text-right text-nowrap">$ {currencyFormat(totalDealMoney)}</td>
-              <td class="text-right text-nowrap">$ {currencyFormat(productProfit)}</td>
-              <td class="text-right text-nowrap">$ {currencyFormat(totalMoney)}</td>
+              <td className="text-right text-nowrap">{currencyFormat(totalDealAmount)}</td>
+              <td className="text-right text-nowrap">$ {currencyFormat(totalDealMoney)}</td>
+              <td className="text-right text-nowrap">$ {currencyFormat(productProfit)}</td>
+              <td className="text-right text-nowrap">$ {currencyFormat(totalMoney)}</td>
             </tr>
           ),
         )}

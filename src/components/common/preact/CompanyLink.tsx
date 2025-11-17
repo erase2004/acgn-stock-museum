@@ -1,7 +1,7 @@
 import { getCompanyUrl } from '@/libs/routes'
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useState } from 'react'
 import { companyArchiveDict } from '@/stores/common'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 
 const defaultText = '???'
 

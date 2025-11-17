@@ -3,7 +3,7 @@ import { z } from 'astro/zod'
 import { stockSchemaExtendWithCompany } from '@/services/dbDirectors'
 import { useDisplayItems } from '@/utils/hooks'
 import { dataNumberPerPage } from '@/configs/general'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import { totalAmount } from '@/stores/pagination'
 
 const PAGE_SIZE = dataNumberPerPage.fscStock
@@ -24,7 +24,7 @@ export default function ListContainer({ storeKey, round, data }: Props) {
   if (!data.length) {
     tbodyContent = (
       <tr>
-        <td class="text-center" colspan={2}>
+        <td className="text-center" colSpan={2}>
           查無資料！
         </td>
       </tr>
@@ -35,21 +35,21 @@ export default function ListContainer({ storeKey, round, data }: Props) {
         <td>
           <SimpleCompanyLink {...item} round={round} />
         </td>
-        <td class="text-right">{item.stocks} 股</td>
+        <td className="text-right">{item.stocks} 股</td>
       </tr>
     ))
   }
 
   return (
-    <div class="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-3xl">
       <p>總共{$totalAmount[storeKey]}筆</p>
-      <table class="table-pin-rows table-base table">
+      <table className="table-pin-rows table-base table">
         <thead>
           <tr>
-            <th class="text-center" title="公司名稱">
+            <th className="text-center" title="公司名稱">
               公司名稱
             </th>
-            <th class="w-1/3 text-center" title="持有股數">
+            <th className="w-1/3 text-center" title="持有股數">
               持有股數
             </th>
           </tr>

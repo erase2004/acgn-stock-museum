@@ -74,10 +74,10 @@ const isFirstRound = round === FIRST_ROUND
       帳號驗證方式：{showValidateType(user)}
     </p>
     <p>
-      帳號啟動日期：<ClientDatetime client:only="preact" value={user.createdAt} />
+      帳號啟動日期：<ClientDatetime client:only="react" value={user.createdAt} />
     </p>
     <p>
-      上次登入時間：<ClientDatetime client:only="preact" value={user.status?.lastLogin?.date} />
+      上次登入時間：<ClientDatetime client:only="react" value={user.status?.lastLogin?.date} />
     </p>
     <p>
       上次登入IP：{user.status?.lastLogin?.ipAddr}

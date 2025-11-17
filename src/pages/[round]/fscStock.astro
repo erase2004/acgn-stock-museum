@@ -34,6 +34,6 @@ const fscStocks =
 <RoundLayout>
   <h1 class="round-block-title">金管會持股</h1>
   <div class="divider"></div>
-  <ListContainer client:only="preact" round={round} data={fscStocks} storeKey={STORE_KEY} />
-  <LoadMore client:only="preact" storeKey={STORE_KEY} />
+  <ListContainer client:only="react" round={round} data={fscStocks} storeKey={STORE_KEY} />
+  <LoadMore client:only="react" storeKey={STORE_KEY} />
 </RoundLayout>

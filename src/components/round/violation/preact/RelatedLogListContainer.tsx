@@ -15,12 +15,12 @@ type Props = {
 export default function RelatedLogListContainer({ storeKey, round, data }: Props) {
   const displayItems = useDisplayItems(data, storeKey, PAGE_SIZE)
 
-  if (!data.length) return <em class="mx-4">沒有任何紀錄！</em>
+  if (!data.length) return <em className="mx-4">沒有任何紀錄！</em>
 
   return (
-    <ul class="relative pl-0">
+    <ul className="relative pl-0">
       {displayItems.map((item) => (
-        <li key={item._id} class="list-none break-all">
+        <li key={item._id} className="list-none break-all">
           <DisplayLog round={round} {...item} />
         </li>
       ))}

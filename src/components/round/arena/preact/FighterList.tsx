@@ -8,13 +8,13 @@ import {
   getAttributeNumber,
   fighterAttributes,
 } from '@/services/dbArenaFighters'
-import { useMemo, useState } from 'preact/hooks'
+import { useMemo, useState } from 'react'
 import { orderBy } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { useDisplayItems } from '@/utils/hooks'
 import { FIRST_ROUND } from '@/configs/sites'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import { totalAmount } from '@/stores/pagination'
 
 type OrderKey = (typeof arenaFighterSortableFields)[number]
@@ -78,9 +78,9 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
   function getSortIcon(key: keyof SortOrder) {
     if (typeof sortOrder[key] === 'number') {
       if (sortOrder[key]) {
-        return <i class="fa fa-sort-amount-asc ml-1" aria-hidden="true"></i>
+        return <i className="fa fa-sort-amount-asc ml-1" aria-hidden="true"></i>
       } else {
-        return <i class="fa fa-sort-amount-desc ml-1" aria-hidden="true"></i>
+        return <i className="fa fa-sort-amount-desc ml-1" aria-hidden="true"></i>
       }
     }
     return <></>
@@ -95,13 +95,13 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
   }
 
   return (
-    <div class="max-h-dvh overflow-y-auto">
+    <div className="max-h-dvh overflow-y-auto">
       <p>總共{$totalAmount[STORE_KEY]}位參賽者</p>
-      <div class="sticky-control mb-2 flex flex-wrap gap-2 py-4 md:hidden">
+      <div className="sticky-control mb-2 flex flex-wrap gap-2 py-4 md:hidden">
         {arenaFighterSortableFields.map((field) => (
           <button
             key={field}
-            class={`btn-default btn btn-outline btn-sm ${getSortButtonClass(field)}`}
+            className={`btn-default btn btn-outline btn-sm ${getSortButtonClass(field)}`}
             onClick={() => {
               handleSortChange(field)
             }}
@@ -111,15 +111,15 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
           </button>
         ))}
       </div>
-      <table class="table-base custom-responsive-table-md table-pin-rows table">
+      <table className="table-base custom-responsive-table-md table-pin-rows table">
         <thead>
-          <tr class="*:px-1 *:last:w-1/8">
-            <th class="w-1/4 truncate text-center">參賽選手</th>
-            <th class="w-1/4 truncate text-center">決策者</th>
+          <tr className="*:px-1 *:last:w-1/8">
+            <th className="w-1/4 truncate text-center">參賽選手</th>
+            <th className="w-1/4 truncate text-center">決策者</th>
             {arenaFighterSortableFields.map((field) => (
               <th
                 key={field}
-                class="cursor-pointer truncate text-center"
+                className="cursor-pointer truncate text-center"
                 title={fieldNameMap[field]}
                 onClick={() => handleSortChange(field)}
               >
@@ -132,24 +132,24 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
         <tbody>
           {displayItems.length > 0 ? (
             displayItems.map((item) => (
-              <tr key={item.companyId} class="*:px-0">
-                <td class="truncate text-left" data-title="參賽選手">
+              <tr key={item.companyId} className="*:px-0">
+                <td className="truncate text-left" data-title="參賽選手">
                   <CompanyLink round={round} companyId={item.companyId} />
                 </td>
-                <td class="truncate text-left text-nowrap" data-title="決策者">
+                <td className="truncate text-left text-nowrap" data-title="決策者">
                   <UserLink round={round} userId={item.manager} />
                 </td>
                 {fighterAttributes.map((field) => (
-                  <td key={field} class="truncate text-center" data-title={fieldNameMap[field]}>
+                  <td key={field} className="truncate text-center" data-title={fieldNameMap[field]}>
                     {getAttributeNumber(field, item[field], isFirstRound)}
                   </td>
                 ))}
-                <td class="truncate text-center" data-title="名次">
+                <td className="truncate text-center" data-title="名次">
                   {item.rank}
                 </td>
                 <td data-title="總投資額">
                   <div
-                    class={`truncate text-right ${totalInvestedAmountClass(item.totalInvestedAmount)}`}
+                    className={`truncate text-right ${totalInvestedAmountClass(item.totalInvestedAmount)}`}
                   >
                     {currencyFormat(item.totalInvestedAmount)}
                   </div>
@@ -157,8 +157,8 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
               </tr>
             ))
           ) : (
-            <tr class="default-content">
-              <td class="truncate" colspan={9}>
+            <tr className="default-content">
+              <td className="truncate" colSpan={9}>
                 <em>沒有任何報名者！</em>
               </td>
             </tr>

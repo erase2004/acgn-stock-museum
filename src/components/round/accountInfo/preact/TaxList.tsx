@@ -19,59 +19,59 @@ export default function TaxList({ round, data }: Props) {
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
 
   return (
-    <div class="overflow-y-auto">
-      <table class="table-base custom-responsive-table-md table-pin-rows table">
+    <div className="overflow-y-auto">
+      <table className="table-base custom-responsive-table-md table-pin-rows table">
         <thead>
-          <tr class="*:px-1">
-            <th class="w-40 text-center text-nowrap">繳稅期限</th>
+          <tr className="*:px-1">
+            <th className="w-40 text-center text-nowrap">繳稅期限</th>
             {beforeTaxSeperatedRounds.includes(round) ? (
-              <th class="text-center text-nowrap">財稅額</th>
+              <th className="text-center text-nowrap">財稅額</th>
             ) : (
               <>
-                <th class="text-center text-nowrap">股票資產稅</th>
-                <th class="text-center text-nowrap">現金資產稅</th>
+                <th className="text-center text-nowrap">股票資產稅</th>
+                <th className="text-center text-nowrap">現金資產稅</th>
               </>
             )}
-            <th class="text-center text-nowrap">殭屍稅</th>
-            <th class="text-center text-nowrap">逾期罰金</th>
-            <th class="text-center text-nowrap">已繳納</th>
+            <th className="text-center text-nowrap">殭屍稅</th>
+            <th className="text-center text-nowrap">逾期罰金</th>
+            <th className="text-center text-nowrap">已繳納</th>
           </tr>
         </thead>
         <tbody>
           {displayItems.length > 0 ? (
             displayItems.map((item) => (
-              <tr class="*:px-1" key={item._id}>
-                <td class="text-center text-wrap" data-title="繳稅期限">
+              <tr className="*:px-1" key={item._id}>
+                <td className="text-center text-wrap" data-title="繳稅期限">
                   {formatDateTimeText(item.expireDate)}
                 </td>
                 {beforeTaxSeperatedRounds.includes(round) ? (
-                  <td class="text-right text-wrap" data-title="財稅額">
+                  <td className="text-right text-wrap" data-title="財稅額">
                     $ {currencyFormat(item.tax)}
                   </td>
                 ) : (
                   <>
-                    <td class="text-right text-wrap" data-title="股票資產稅">
+                    <td className="text-right text-wrap" data-title="股票資產稅">
                       $ {currencyFormat(item.stockTax)}
                     </td>
-                    <td class="text-right text-wrap" data-title="現金資產稅">
+                    <td className="text-right text-wrap" data-title="現金資產稅">
                       $ {currencyFormat(item.moneyTax)}
                     </td>
                   </>
                 )}
-                <td class="text-right text-wrap" data-title="殭屍稅">
+                <td className="text-right text-wrap" data-title="殭屍稅">
                   $ {currencyFormat(item.zombieTax)}
                 </td>
-                <td class="text-right text-wrap" data-title="逾期罰金">
+                <td className="text-right text-wrap" data-title="逾期罰金">
                   $ {currencyFormat(item.fine)}
                 </td>
-                <td class="text-right text-wrap" data-title="已繳納">
+                <td className="text-right text-wrap" data-title="已繳納">
                   $ {currencyFormat(item.paid)}
                 </td>
               </tr>
             ))
           ) : (
-            <tr class="default-content">
-              <td class="truncate" colspan={6}>
+            <tr className="default-content">
+              <td className="truncate" colSpan={6}>
                 目前沒有需要繳納的稅金！
               </td>
             </tr>

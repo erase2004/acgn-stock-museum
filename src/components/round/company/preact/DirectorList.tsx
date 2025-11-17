@@ -5,7 +5,7 @@ import type { z } from 'astro/zod'
 import { useDisplayItems } from '@/utils/hooks'
 import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
 import { getStockPercentage } from '@/utils/company'
-import { useStore } from '@nanostores/preact'
+import { useStore } from '@nanostores/react'
 import { totalAmount } from '@/stores/pagination'
 
 const STORE_KEY = dataStoreKey.company.director
@@ -23,35 +23,35 @@ export default function DirectorList({ round, totalRelease, data }: Props) {
   const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
 
   return (
-    <div class="company-panel-table max-h-72 border-t *:px-4 md:*:gap-x-4">
+    <div className="company-panel-table max-h-72 border-t *:px-4 md:*:gap-x-4">
       <p>總共{$totalAmount[STORE_KEY]}位股東</p>
-      <div class="sticky-control header">
-        <div class="col-span-3">使用者帳號</div>
-        <div class="col-span-1">股份數</div>
-        <div class="col-span-1">比例</div>
-        <div class="col-span-7">留言</div>
+      <div className="sticky-control header">
+        <div className="col-span-3">使用者帳號</div>
+        <div className="col-span-1">股份數</div>
+        <div className="col-span-1">比例</div>
+        <div className="col-span-7">留言</div>
       </div>
       {displayItems.length > 0 ? (
         displayItems.map((item) => (
-          <div key={item.userId} class="grid grid-cols-12">
-            <p class="col-span-4 text-nowrap md:hidden">使用者帳號</p>
-            <div class="col-span-8 truncate md:col-span-3">
+          <div key={item.userId} className="grid grid-cols-12">
+            <p className="col-span-4 text-nowrap md:hidden">使用者帳號</p>
+            <div className="col-span-8 truncate md:col-span-3">
               <UserLink round={round} userId={item.userId} />
             </div>
-            <p class="col-span-4 md:hidden">股份數</p>
-            <div class="col-span-8 truncate text-right md:col-span-1" title={`${item.stocks}`}>
+            <p className="col-span-4 md:hidden">股份數</p>
+            <div className="col-span-8 truncate text-right md:col-span-1" title={`${item.stocks}`}>
               {item.stocks}
             </div>
-            <p class="col-span-4 md:hidden">比例</p>
-            <div class="col-span-8 text-right md:col-span-1">
+            <p className="col-span-4 md:hidden">比例</p>
+            <div className="col-span-8 text-right md:col-span-1">
               {getStockPercentage(item.stocks, totalRelease)}%
             </div>
-            <p class="col-span-4 md:hidden">留言</p>
-            <div class="col-span-8 break-all md:col-span-7">{item.message || '無'}</div>
+            <p className="col-span-4 md:hidden">留言</p>
+            <div className="col-span-8 break-all md:col-span-7">{item.message || '無'}</div>
           </div>
         ))
       ) : (
-        <p class="text-center">沒有任何董事！</p>
+        <p className="text-center">沒有任何董事！</p>
       )}
       <LoadMore storeKey={STORE_KEY} />
     </div>
