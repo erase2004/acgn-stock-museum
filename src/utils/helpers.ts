@@ -204,3 +204,15 @@ export function isLatestRound(round: string) {
 export function decimalToPercentage(n: number) {
   return Math.round(n * 100)
 }
+
+export function isGreaterThanMd(windowWidth: number) {
+  return windowWidth >= 768
+}
+
+export function isGreaterThanLg(windowWidth: number) {
+  return windowWidth >= 1024
+}
+
+export function isGreaterThanXl(windowWidth: number) {
+  return windowWidth >= 1200
+}

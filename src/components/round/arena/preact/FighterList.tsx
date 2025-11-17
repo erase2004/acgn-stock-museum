@@ -1,21 +1,17 @@
 import type { z } from 'astro/zod'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import UserLink from '@/components/common/preact/UserLink'
-import LoadMore from '@/components/common/preact/LoadMore'
 import {
   schema as schemaFighter,
   arenaFighterSortableFields,
   getAttributeNumber,
   fighterAttributes,
 } from '@/services/dbArenaFighters'
-import { useMemo, useState } from 'react'
+import { TableVirtuoso } from 'react-virtuoso'
+import { Fragment, useMemo, useState } from 'react'
 import { orderBy } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
-import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
-import { useDisplayItems } from '@/utils/hooks'
 import { FIRST_ROUND } from '@/configs/sites'
-import { useStore } from '@nanostores/react'
-import { totalAmount } from '@/stores/pagination'
 
 type OrderKey = (typeof arenaFighterSortableFields)[number]
 type SortOrder<T = 1 | 0> = Partial<Record<OrderKey, T>>
@@ -30,9 +26,6 @@ const fieldNameMap: Record<OrderKey, string> = {
   totalInvestedAmount: '總投資額',
 }
 
-const PAGE_SIZE = dataNumberPerPage.arena.fighter
-const STORE_KEY = dataStoreKey.arena.fighter
-
 type Props = {
   round: string
   isArenaEnded: boolean
@@ -42,7 +35,9 @@ type Props = {
 
 export default function FighterList({ round, isArenaEnded, minInvestment, data }: Props) {
   const isFirstRound = round === FIRST_ROUND
-  const $totalAmount = useStore(totalAmount)
+
+  const [height, setHeight] = useState(0)
+
   const [sortOrder, setSortOrder] = useState<SortOrder>(isArenaEnded ? { rank: 1 } : { agi: 0 })
 
   const sortedItems = useMemo(() => {
@@ -60,8 +55,6 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
       ? orderBy(data, [key, 'createdAt'], [order, order === 'desc' ? 'asc' : 'desc'])
       : orderBy(data, [key], [order])
   }, [data, sortOrder])
-
-  const displayItems = useDisplayItems(sortedItems, STORE_KEY, PAGE_SIZE)
 
   function handleSortChange(key: keyof SortOrder) {
     if (typeof sortOrder[key] === 'number') {
@@ -95,9 +88,9 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
   }
 
   return (
-    <div className="max-h-dvh overflow-y-auto">
-      <p>總共{$totalAmount[STORE_KEY]}位參賽者</p>
-      <div className="sticky-control mb-2 flex flex-wrap gap-2 py-4 md:hidden">
+    <>
+      <p>總共{data.length}位參賽者</p>
+      <div className="sticky-control flex flex-wrap gap-2 py-4 md:hidden">
         {arenaFighterSortableFields.map((field) => (
           <button
             key={field}
@@ -111,15 +104,42 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
           </button>
         ))}
       </div>
-      <table className="table-base custom-responsive-table-md table-pin-rows table">
-        <thead>
-          <tr className="*:px-1 *:last:w-1/8">
-            <th className="w-1/4 truncate text-center">參賽選手</th>
-            <th className="w-1/4 truncate text-center">決策者</th>
+      <TableVirtuoso
+        className="max-h max-h-dvh min-h-10 md:min-h-20"
+        style={{ height }}
+        totalListHeightChanged={(h) => setHeight(h)}
+        data={sortedItems}
+        components={{
+          Table({ children, ...props }) {
+            return (
+              <table {...props} className="table-base custom-responsive-table-md table">
+                {children}
+              </table>
+            )
+          },
+          EmptyPlaceholder() {
+            return (
+              <tbody>
+                <tr className="default-content">
+                  <td className="truncate" colSpan={9}>
+                    <em>沒有任何報名者！</em>
+                  </td>
+                </tr>
+              </tbody>
+            )
+          },
+          TableRow(props) {
+            return <tr {...props} className="*:truncate *:px-0" />
+          },
+        }}
+        fixedHeaderContent={() => (
+          <tr className="bg-base-100 *:px-1 *:last:w-1/8">
+            <th className="w-1/4 text-center">參賽選手</th>
+            <th className="w-1/4 text-center">決策者</th>
             {arenaFighterSortableFields.map((field) => (
               <th
                 key={field}
-                className="cursor-pointer truncate text-center"
+                className="cursor-pointer text-center whitespace-normal"
                 title={fieldNameMap[field]}
                 onClick={() => handleSortChange(field)}
               >
@@ -128,44 +148,31 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
               </th>
             ))}
           </tr>
-        </thead>
-        <tbody>
-          {displayItems.length > 0 ? (
-            displayItems.map((item) => (
-              <tr key={item.companyId} className="*:px-0">
-                <td className="truncate text-left" data-title="參賽選手">
-                  <CompanyLink round={round} companyId={item.companyId} />
-                </td>
-                <td className="truncate text-left text-nowrap" data-title="決策者">
-                  <UserLink round={round} userId={item.manager} />
-                </td>
-                {fighterAttributes.map((field) => (
-                  <td key={field} className="truncate text-center" data-title={fieldNameMap[field]}>
-                    {getAttributeNumber(field, item[field], isFirstRound)}
-                  </td>
-                ))}
-                <td className="truncate text-center" data-title="名次">
-                  {item.rank}
-                </td>
-                <td data-title="總投資額">
-                  <div
-                    className={`truncate text-right ${totalInvestedAmountClass(item.totalInvestedAmount)}`}
-                  >
-                    {currencyFormat(item.totalInvestedAmount)}
-                  </div>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr className="default-content">
-              <td className="truncate" colSpan={9}>
-                <em>沒有任何報名者！</em>
+        )}
+        itemContent={(_, item) => (
+          <Fragment key={item.companyId}>
+            <td className="text-left" data-title="參賽選手">
+              <CompanyLink round={round} companyId={item.companyId} />
+            </td>
+            <td className="text-left text-nowrap" data-title="決策者">
+              <UserLink round={round} userId={item.manager} />
+            </td>
+            {fighterAttributes.map((field) => (
+              <td key={field} className="text-center" data-title={fieldNameMap[field]}>
+                {getAttributeNumber(field, item[field], isFirstRound)}
               </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      <LoadMore storeKey={STORE_KEY} />
-    </div>
+            ))}
+            <td className="text-center" data-title="名次">
+              {item.rank}
+            </td>
+            <td data-title="總投資額">
+              <div className={`text-right ${totalInvestedAmountClass(item.totalInvestedAmount)}`}>
+                {currencyFormat(item.totalInvestedAmount)}
+              </div>
+            </td>
+          </Fragment>
+        )}
+      />
+    </>
   )
 }

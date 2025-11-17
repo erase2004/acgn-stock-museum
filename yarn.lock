@@ -7205,6 +7205,11 @@ react-refresh@^0.17.0:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.17.0.tgz#b7e579c3657f23d04eccbe4ad2e58a8ed51e7e53"
   integrity sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==
 
+react-virtuoso@^4.14.1:
+  version "4.14.1"
+  resolved "https://registry.yarnpkg.com/react-virtuoso/-/react-virtuoso-4.14.1.tgz#78a5e796a3f9ec501499f01962ec6fc7eed77d8d"
+  integrity sha512-NRUF1ak8lY+Tvc6WN9cce59gU+lilzVtOozP+pm9J7iHshLGGjsiAB4rB2qlBPHjFbcXOQpT+7womNHGDUql8w==
+
 react@^19.2.0:
   version "19.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-19.2.0.tgz#d33dd1721698f4376ae57a54098cb47fc75d93a5"
@@ -8687,6 +8692,11 @@ vfile@^6.0.0, vfile@^6.0.3:
   dependencies:
     "@types/unist" "^3.0.0"
     vfile-message "^4.0.0"
+
+virtua@^0.47.0:
+  version "0.47.0"
+  resolved "https://registry.yarnpkg.com/virtua/-/virtua-0.47.0.tgz#71b0797b8628f1125f60955293b83b1ed1629083"
+  integrity sha512-ihUpsZKbw+lqG9ET1zXHOHVV9nSLszLSE8Z2m3kWJKey9HCd7OG3QKK3quJZs1/jRJgMpYBffi3pYP0X0jxAzA==
 
 vite@^6.3.6:
   version "6.3.6"

@@ -1,15 +1,12 @@
 import DisplayLog from '@/components/common/preact/DisplayLog'
-import LoadMore from '@/components/common/preact/LoadMore'
+import { Virtuoso } from 'react-virtuoso'
 import { z } from 'astro/zod'
 import { useFilter } from '@/utils/hooks'
 import { logTypeGroupMap, type schema } from '@/services/dbLog'
 import { flatten, isArray, without } from 'lodash-es'
-import { useEffect, useRef } from 'react'
-import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
-import { useStore } from '@nanostores/react'
-import { totalAmount } from '@/stores/pagination'
+import { useEffect, useRef, useState } from 'react'
+import { dataStoreKey } from '@/configs/general'
 
-const PAGE_SIZE = dataNumberPerPage.account.log
 const STORE_KEY = dataStoreKey.account.log
 
 type Data = z.infer<typeof schema>
@@ -24,12 +21,12 @@ function isSelected(key: string, filter: Record<string, string | string[]>) {
 }
 
 export default function LogList({ round, data }: Props) {
+  const [height, setHeight] = useState(0)
+
   const isInitialized = useRef(false)
 
-  const $totalAmount = useStore(totalAmount)
   const { setFilterValue, filterObject, filteredItems } = useFilter(
     STORE_KEY,
-    PAGE_SIZE,
     data,
     {
       filterFn(item, filters) {
@@ -103,7 +100,7 @@ export default function LogList({ round, data }: Props) {
             isSelected(key, filterObject) ? (
               <button
                 key={key}
-                className="btn btn-sm btn-info"
+                className="btn btn-xs btn-info md:btn-sm"
                 onClick={() => onOptionUnselected(key as keyof typeof logTypeGroupMap)}
               >
                 <i className="fa fa-check-square-o"></i>
@@ -122,15 +119,19 @@ export default function LogList({ round, data }: Props) {
           )}
         </div>
       </div>
-      <div className="overflow-y-auto">
-        <p>總共{$totalAmount[STORE_KEY]}筆紀錄</p>
-        {filteredItems.map((item) => (
-          <p>
+      <p>總共{filteredItems.length}筆紀錄</p>
+      <Virtuoso
+        style={{
+          height,
+        }}
+        totalListHeightChanged={(h) => setHeight(h)}
+        data={filteredItems}
+        itemContent={(_, item) => (
+          <p key={item._id}>
             <DisplayLog {...item} key={item._id} round={round} />
           </p>
-        ))}
-        <LoadMore storeKey={STORE_KEY} />
-      </div>
+        )}
+      />
     </>
   )
 }

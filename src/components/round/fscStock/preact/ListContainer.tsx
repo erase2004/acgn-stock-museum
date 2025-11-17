@@ -1,51 +1,45 @@
 import SimpleCompanyLink from '@/components/common/preact/SimpleCompanyLink'
+import { Fragment } from 'react'
+import { TableVirtuoso } from 'react-virtuoso'
 import { z } from 'astro/zod'
 import { stockSchemaExtendWithCompany } from '@/services/dbDirectors'
-import { useDisplayItems } from '@/utils/hooks'
-import { dataNumberPerPage } from '@/configs/general'
-import { useStore } from '@nanostores/react'
-import { totalAmount } from '@/stores/pagination'
-
-const PAGE_SIZE = dataNumberPerPage.fscStock
 
 type Stock = z.infer<typeof stockSchemaExtendWithCompany>
 type Props = {
-  storeKey: string
   round: string
   data: Stock[]
 }
 
-export default function ListContainer({ storeKey, round, data }: Props) {
-  const $totalAmount = useStore(totalAmount)
-  const displayItems = useDisplayItems(data, storeKey, PAGE_SIZE)
-
-  let tbodyContent
-
-  if (!data.length) {
-    tbodyContent = (
-      <tr>
-        <td className="text-center" colSpan={2}>
-          查無資料！
-        </td>
-      </tr>
-    )
-  } else {
-    tbodyContent = displayItems.map((item) => (
-      <tr key={item.companyId}>
-        <td>
-          <SimpleCompanyLink {...item} round={round} />
-        </td>
-        <td className="text-right">{item.stocks} 股</td>
-      </tr>
-    ))
-  }
-
+export default function ListContainer({ round, data }: Props) {
   return (
     <div className="mx-auto max-w-3xl">
-      <p>總共{$totalAmount[storeKey]}筆</p>
-      <table className="table-pin-rows table-base table">
-        <thead>
-          <tr>
+      <p>總共{data.length}筆</p>
+      <TableVirtuoso
+        useWindowScroll
+        className="min-h-20"
+        data={data}
+        components={{
+          Table({ children, ...props }) {
+            return (
+              <table {...props} className="table-base table">
+                {children}
+              </table>
+            )
+          },
+          EmptyPlaceholder() {
+            return (
+              <tbody>
+                <tr>
+                  <td className="text-center" colSpan={2}>
+                    查無資料！
+                  </td>
+                </tr>
+              </tbody>
+            )
+          },
+        }}
+        fixedHeaderContent={() => (
+          <tr className="bg-base-100">
             <th className="text-center" title="公司名稱">
               公司名稱
             </th>
@@ -53,9 +47,16 @@ export default function ListContainer({ storeKey, round, data }: Props) {
               持有股數
             </th>
           </tr>
-        </thead>
-        <tbody>{tbodyContent}</tbody>
-      </table>
+        )}
+        itemContent={(_, item) => (
+          <Fragment key={item.companyId}>
+            <td>
+              <SimpleCompanyLink {...item} round={round} />
+            </td>
+            <td className="text-right">{item.stocks} 股</td>
+          </Fragment>
+        )}
+      />
     </div>
   )
 }

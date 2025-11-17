@@ -1,16 +1,13 @@
 import type { schema } from '@/services/dbLog'
 import type { z } from 'astro/zod'
 import DisplayLog from '@/components/common/preact/DisplayLog'
-import LoadMore from '@/components/common/preact/LoadMore'
+import { Virtuoso } from 'react-virtuoso'
 import { useState, useEffect } from 'react'
 import { useFilter, useUser } from '@/utils/hooks'
-import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { dataStoreKey } from '@/configs/general'
 import { intersection, isArray, isString } from 'lodash-es'
-import { useStore } from '@nanostores/react'
-import { totalAmount } from '@/stores/pagination'
 
 const STORE_KEY = dataStoreKey.company.log
-const PAGE_SIZE = dataNumberPerPage.company.log
 
 type Log = z.infer<typeof schema>
 type Props = {
@@ -22,10 +19,8 @@ export default function CompanyLogList({ round, data }: Props) {
   const [filterOn, setFilterOn] = useState(false)
   const { user } = useUser()
 
-  const $totalAmount = useStore(totalAmount)
   const { filteredItems, setFilterValue } = useFilter(
     STORE_KEY,
-    PAGE_SIZE,
     data,
     {
       filterFn(item, filters) {
@@ -74,19 +69,22 @@ export default function CompanyLogList({ round, data }: Props) {
           {filterOn ? '只檢視自身紀錄' : '檢視所有紀錄'}
         </button>
       )}
-      <p>總共{$totalAmount[STORE_KEY]}筆紀錄</p>
-      {filteredItems.length > 0 ? (
-        <>
-          {filteredItems.map((item) => (
-            <p key={item._id}>
-              <DisplayLog {...item} round={round} />
-            </p>
-          ))}
-          <LoadMore storeKey={STORE_KEY} />
-        </>
-      ) : (
-        '查無資料'
-      )}
+      {filteredItems.length > 0 && <p>總共{filteredItems.length}筆紀錄</p>}
+      <Virtuoso
+        useWindowScroll
+        data={filteredItems}
+        className="min-h-8"
+        components={{
+          EmptyPlaceholder() {
+            return '查無紀錄'
+          },
+        }}
+        itemContent={(_, item) => (
+          <p key={item._id}>
+            <DisplayLog {...item} round={round} />
+          </p>
+        )}
+      />
     </div>
   )
 }

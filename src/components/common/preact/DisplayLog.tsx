@@ -25,7 +25,7 @@ export default function DisplayLog({
 }: Props) {
   const companyJsx = companyId ? <CompanyLink round={round} companyId={companyId} /> : null
   const usersJsx = Array.isArray(userId)
-    ? userId.map((id) => <UserLink round={round} userId={id} />)
+    ? userId.map((id, index) => <UserLink key={`${id}-${index}`} round={round} userId={id} />)
     : []
 
   let contentJsx: JSX.Element | string

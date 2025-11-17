@@ -14,7 +14,6 @@ import ViolationCaseInfo from '@/components/common/ViolationCaseInfo.astro'
 import CompanyLogInfo from './CompanyLogInfo.astro'
 import { getCurrentRound } from '@/libs/routes'
 import { dataStoreKey } from '@/configs/general'
-import { dataNumberPerPage } from '@/configs/general'
 import { FIRST_ROUND, legacyRounds } from '@/configs/sites'
 
 type Props = {
@@ -105,13 +104,12 @@ const isFirstRound = round === FIRST_ROUND
   {/* 違規案件列表 */}
   {
     !isLegacyRound && (
-      <div>
+      <div class="max-h-96">
         <PanelFolder client:only="react" title="違規案件列表" state={false} classes="text-2xl">
           <ViolationCaseInfo
             type="companyViolated"
             targetId={companyId}
             storeKey={dataStoreKey.company.violation}
-            pageSize={dataNumberPerPage.company.violation}
           />
         </PanelFolder>
       </div>

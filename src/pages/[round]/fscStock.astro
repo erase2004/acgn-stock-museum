@@ -2,12 +2,10 @@
 import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import ListContainer from '@/components/round/fscStock/preact/ListContainer'
-import LoadMore from '@/components/common/preact/LoadMore'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
 import { getAccountOwnStocks } from '@/services/dbDirectors'
 import { SpecialUser } from '@/services/dbUsers'
-import { dataStoreKey } from '@/configs/general'
 import { rounds } from '@/configs/sites'
 
 export const getStaticPaths = (() => {
@@ -17,8 +15,6 @@ export const getStaticPaths = (() => {
     },
   }))
 }) satisfies GetStaticPaths
-
-const STORE_KEY = dataStoreKey.fscStock
 
 const userId = SpecialUser.FSC
 
@@ -34,6 +30,5 @@ const fscStocks =
 <RoundLayout>
   <h1 class="round-block-title">金管會持股</h1>
   <div class="divider"></div>
-  <ListContainer client:only="react" round={round} data={fscStocks} storeKey={STORE_KEY} />
-  <LoadMore client:only="react" storeKey={STORE_KEY} />
+  <ListContainer client:only="react" round={round} data={fscStocks} />
 </RoundLayout>

@@ -70,7 +70,7 @@ function getExpireDate(begin: Date) {
               <td class="truncate text-center text-nowrap" data-title="費用">
                 $ {currencyFormat(item.paid)}
               </td>
-              <td class="text-truncate text-center text-nowrap" data-title="終止日期">
+              <td class="text-truncate text-center md:text-nowrap" data-title="終止日期">
                 <ClientDatetime client:only="react" value={getExpireDate(item.createdAt)} />
               </td>
             </tr>

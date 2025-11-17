@@ -12,7 +12,6 @@ import { ownStocks } from '@/stores/account'
 import { useFilter, useUser } from '@/utils/hooks'
 import { buildSearchRegExp } from '@/utils/helpers'
 import { isArray, isString, orderBy } from 'lodash-es'
-import { dataNumberPerPage } from '@/configs/general'
 
 type Props = {
   data: ListItem[]
@@ -21,8 +20,6 @@ type Props = {
 type ListOption = '' | 'favorite' | 'own'
 type SortOption = 'lastPrice' | 'totalValue' | 'capital' | 'createdAt'
 type SeachMode = 'exact' | 'fuzzy'
-
-const PAGE_SIZE = dataNumberPerPage.companies
 
 function toggleViewMode(mode: ListMode) {
   if (mode === 'card') listViewMode.set('table')
@@ -58,7 +55,6 @@ export default function Filter({ data }: Props) {
 
   const { filteredItems, setFilterValue } = useFilter(
     LIST_STORE_KEY,
-    PAGE_SIZE,
     sortedItems,
     {
       filterFn(item, filters) {
@@ -202,9 +198,7 @@ export default function Filter({ data }: Props) {
           value={searchMode}
           onChange={changeSearchMode}
         >
-          <option value="exact" selected>
-            完全比對
-          </option>
+          <option value="exact">完全比對</option>
           <option value="fuzzy">模糊比對</option>
         </select>
         {showClear && (

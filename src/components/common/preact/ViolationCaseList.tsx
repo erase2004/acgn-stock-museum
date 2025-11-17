@@ -1,5 +1,6 @@
 import type { SyntheticEvent } from 'react'
-import LoadMore from '@/components/common/preact/LoadMore'
+import { Fragment, useState } from 'react'
+import { TableVirtuoso } from 'react-virtuoso'
 import { categoryMap, stateMap, simpleSchema } from '@/services/dbViolationCases'
 import { z } from 'astro/zod'
 import { useFilter } from '@/utils/hooks'
@@ -13,14 +14,14 @@ type Case = z.infer<typeof simpleSchema>
 type Props = {
   round: string
   storeKey: string
-  pageSize: number
   data: Case[]
 }
 
-export default function ViolationCaseList({ round, storeKey, pageSize, data }: Props) {
+export default function ViolationCaseList({ round, storeKey, data }: Props) {
+  const [height, setHeight] = useState(0)
+
   const { setFilterValue, filteredItems, filterObject } = useFilter(
     storeKey,
-    pageSize,
     data,
     {
       filterFn(item, filters) {
@@ -68,10 +69,10 @@ export default function ViolationCaseList({ round, storeKey, pageSize, data }: P
       <div className="flex flex-col flex-wrap gap-2 py-2 *:w-full md:flex-row md:*:w-44">
         <label className="select select-sm">
           <span className="label">案件分類</span>
-          <select onChange={onCategoryChange}>
+          <select onChange={onCategoryChange} value={filterObject['category'] || ''}>
             <option value="">全部分類</option>
             {categoryList.map((category) => (
-              <option value={category} selected={filterObject['category'] === category}>
+              <option key={category} value={category}>
                 {categoryDisplayName(category)}
               </option>
             ))}
@@ -79,62 +80,75 @@ export default function ViolationCaseList({ round, storeKey, pageSize, data }: P
         </label>
         <label className="select select-sm">
           <span className="label">案件狀態</span>
-          <select onChange={onStateChange}>
+          <select onChange={onStateChange} value={filterObject['state'] || ''}>
             <option value="">全部狀態</option>
             {stateList.map((state) => (
-              <option value={state} selected={filterObject['state'] === state}>
+              <option key={state} value={state}>
                 {stateDisplayName(state)}
               </option>
             ))}
           </select>
         </label>
       </div>
-      <div className="overflow-y-auto">
-        <table className="table-base custom-responsive-table-md table-pin-rows table">
-          <thead>
-            <tr className="*:px-1">
-              <th className="w-50 text-center text-nowrap">舉報時間</th>
-              <th className="text-center text-nowrap">案件狀態</th>
-              <th className="text-center text-nowrap">違規類型</th>
-              <th className="w-24 text-center text-nowrap">查看</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredItems.length > 0 ? (
-              filteredItems.map((item) => (
-                <tr className="*:px-1" key={item._id}>
-                  <td className="text-nowrap md:text-center" data-title="舉報時間">
-                    {formatDateTimeText(item.createdAt)}
-                  </td>
-                  <td className="text-nowrap md:text-center" data-title="案件狀態">
-                    <span className={`badge ${stateBadgeClass(item.state)}`}>
-                      {stateDisplayName(item.state)}
-                    </span>
-                  </td>
-                  <td className="text-nowrap md:text-center" data-title="違規類型">
-                    {categoryDisplayName(item.category)}
-                  </td>
-                  <td className="text-nowrap md:text-center" data-title="查看">
-                    <a
-                      className="btn btn-sm btn-primary"
-                      href={getViolationCaseUrl(round, item._id)}
-                    >
-                      查看
-                    </a>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr className="default-content">
-                <td className="truncate" colSpan={4}>
-                  查無資料！
-                </td>
+      <TableVirtuoso
+        className="min-h-10 md:min-h-20"
+        style={{ height }}
+        totalListHeightChanged={(h) => setHeight(h)}
+        data={filteredItems}
+        components={{
+          Table({ children, ...props }) {
+            return (
+              <table {...props} className="table-base custom-responsive-table-md table">
+                {children}
+              </table>
+            )
+          },
+          TableRow({ children, ...props }) {
+            return (
+              <tr {...props} className="*:px-1">
+                {children}
               </tr>
-            )}
-          </tbody>
-        </table>
-        <LoadMore storeKey={storeKey} />
-      </div>
+            )
+          },
+          EmptyPlaceholder() {
+            return (
+              <tbody>
+                <tr className="default-content">
+                  <td colSpan={4}>查無資料！</td>
+                </tr>
+              </tbody>
+            )
+          },
+        }}
+        fixedHeaderContent={() => (
+          <tr className="bg-base-100 *:px-1">
+            <th className="w-50 text-center text-nowrap">舉報時間</th>
+            <th className="text-center text-nowrap">案件狀態</th>
+            <th className="text-center text-nowrap">違規類型</th>
+            <th className="w-24 text-center text-nowrap">查看</th>
+          </tr>
+        )}
+        itemContent={(_, item) => (
+          <Fragment key={item._id}>
+            <td className="text-nowrap md:text-center" data-title="舉報時間">
+              {formatDateTimeText(item.createdAt)}
+            </td>
+            <td className="text-nowrap md:text-center" data-title="案件狀態">
+              <span className={`badge ${stateBadgeClass(item.state)}`}>
+                {stateDisplayName(item.state)}
+              </span>
+            </td>
+            <td className="text-nowrap md:text-center" data-title="違規類型">
+              {categoryDisplayName(item.category)}
+            </td>
+            <td className="text-nowrap md:text-center" data-title="查看">
+              <a className="btn btn-sm btn-primary" href={getViolationCaseUrl(round, item._id)}>
+                查看
+              </a>
+            </td>
+          </Fragment>
+        )}
+      />
     </>
   )
 }

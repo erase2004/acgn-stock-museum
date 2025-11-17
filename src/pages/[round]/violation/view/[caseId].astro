@@ -4,7 +4,6 @@ import RoundLayout from '@/layouts/Round.astro'
 import Violator from '@/components/round/violation/preact/Violator'
 import ActionLog from '@/components/round/violation/preact/ActionLog'
 import RelatedLogListContainer from '@/components/round/violation/preact/RelatedLogListContainer'
-import LoadMore from '@/components/common/preact/LoadMore'
 import ClientDatetime from '@/components/common/preact/ClientDatetime'
 import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { getConnection } from '@/libs/databases'
@@ -19,7 +18,6 @@ import {
   getCurrentPageFullTitle,
 } from '@/libs/routes'
 import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/violation'
-import { dataStoreKey } from '@/configs/general'
 import { markdownToHtml, removeMarkdown, isLatestRound } from '@/utils/helpers'
 import { legacyRounds, rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
@@ -51,8 +49,6 @@ export const getStaticPaths = (async () => {
     results.filter((result) => result.status === 'fulfilled').map((result) => result.value),
   )
 }) satisfies GetStaticPaths
-
-const STORE_KEY = dataStoreKey.violationRelatedLog
 
 const { caseId = '' } = Astro.params
 
@@ -162,13 +158,7 @@ const description = `案件識別碼：${violation._id}｜內容：${removeMarkd
     <div class="violation-case-detail-block">
       <p>案件相關遊戲紀錄</p>
       <div class="border border-base-content/25 p-6">
-        <RelatedLogListContainer
-          client:only="react"
-          storeKey={STORE_KEY}
-          round={round}
-          data={relatedLogs}
-        />
-        <LoadMore client:only="react" storeKey={STORE_KEY} />
+        <RelatedLogListContainer client:only="react" round={round} data={relatedLogs} />
       </div>
     </div>
   </div>

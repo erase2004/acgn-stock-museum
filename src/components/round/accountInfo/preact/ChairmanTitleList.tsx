@@ -1,9 +1,8 @@
 import type { schema as schemaCompany } from '@/services/dbCompanies'
 import type { z } from 'astro/zod'
 import CompanyLink from '@/components/common/preact/CompanyLink'
-import LoadMore from '@/components/common/preact/LoadMore'
-import { useDisplayItems } from '@/utils/hooks'
-import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { Virtuoso } from 'react-virtuoso'
+import { useState } from 'react'
 
 type Company = z.infer<typeof schemaCompany>
 
@@ -12,30 +11,35 @@ type Props = {
   data: Pick<Company, '_id' | 'chairmanTitle'>[]
 }
 
-const PAGE_SIZE = dataNumberPerPage.account.chariman
-const STORE_KEY = dataStoreKey.account.chairman
-
 export default function ChairmanTitleList({ round, data }: Props) {
-  const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
+  const [height, setHeight] = useState(0)
 
   return (
     <>
-      {displayItems.length > 0
-        ? displayItems.map((item) => (
-            <div className="flex flex-nowrap text-primary" key={item._id}>
-              <span className="text-nowrap">是「</span>
-              <span className="inline-block max-w-[calc(100%-11rem)] truncate">
-                <CompanyLink round={round} companyId={item._id} />
-              </span>
-              <span className="text-nowrap">」公司的「</span>
-              <span className="inline-block max-w-[calc(100%-11rem)] truncate">
-                {item.chairmanTitle}
-              </span>
-              <span className="text-nowrap">」</span>
-            </div>
-          ))
-        : '查無資料！'}
-      <LoadMore storeKey={STORE_KEY} />
+      <Virtuoso
+        className="min-h-8"
+        style={{ height }}
+        totalListHeightChanged={(h) => setHeight(h)}
+        data={data}
+        components={{
+          EmptyPlaceholder() {
+            return '查無資料！'
+          },
+        }}
+        itemContent={(_, item) => (
+          <div className="flex flex-nowrap text-primary" key={item._id}>
+            <span className="text-nowrap">是「</span>
+            <span className="inline-block max-w-[calc(100%-11rem)] truncate">
+              <CompanyLink round={round} companyId={item._id} />
+            </span>
+            <span className="text-nowrap">」公司的「</span>
+            <span className="inline-block max-w-[calc(100%-11rem)] truncate">
+              {item.chairmanTitle}
+            </span>
+            <span className="text-nowrap">」</span>
+          </div>
+        )}
+      />
     </>
   )
 }

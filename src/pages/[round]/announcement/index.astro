@@ -3,7 +3,6 @@ import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import Filter from '@/components/round/announcement/preact/Filter'
 import ListContainer from '@/components/round/announcement/preact/ListContainer'
-import LoadMore from '@/components/common/preact/LoadMore'
 import { getAnnouncementUrl, getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAnnouncements } from '@/services/dbAnnouncements'
@@ -46,5 +45,4 @@ const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
   <div class="divider"></div>
   <Filter client:only="react" data={announcements} storeKey={STORE_KEY} />
   <ListContainer client:only="react" round={round} />
-  <LoadMore client:only="react" storeKey={STORE_KEY} />
 </RoundLayout>

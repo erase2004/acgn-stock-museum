@@ -15,7 +15,7 @@ import { getConnection } from '@/libs/databases'
 import { getCurrentPageFullTitle, getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
 import { getAllBasicUsers, getDBUsers, schema as schemaUser } from '@/services/dbUsers'
 import { handlePromiseParser } from '@/utils/helpers'
-import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { dataStoreKey } from '@/configs/general'
 import { FIRST_ROUND, legacyRounds, rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
 
@@ -106,7 +106,6 @@ const description = user.about.description ?? ''
               type="userViolated"
               targetId={userId}
               storeKey={dataStoreKey.account.violation}
-              pageSize={dataNumberPerPage.account.violation}
             />
           </PanelFolder>
         </div>

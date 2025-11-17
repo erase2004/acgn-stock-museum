@@ -7,9 +7,6 @@ import { stateDisplayName, categoryDisplayName } from '@/utils/violation'
 import { useFilter } from '@/utils/hooks'
 import { itemId } from '@/services/schema'
 import { setItems } from '@/stores/violation'
-import { dataNumberPerPage } from '@/configs/general'
-
-const PAGE_SIZE = dataNumberPerPage.violations
 
 type Data = z.infer<typeof listItemSchema>
 
@@ -24,13 +21,12 @@ export default function Filter({ storeKey, data }: Props) {
 
   const { setFilterValue, filteredItems, filterObject } = useFilter(
     storeKey,
-    PAGE_SIZE,
     data,
     {
       schema: listItemSchema
         .pick({ category: true, state: true })
         .extend({ violators: itemId })
-        .optional(),
+        .partial(),
       filterFn(item, filters) {
         {
           // category
@@ -49,7 +45,7 @@ export default function Filter({ storeKey, data }: Props) {
           const value = item[key]
 
           if (isArray(target)) return false
-          if (isString(target) && value === target) return false
+          if (isString(target) && value !== target) return false
         }
 
         {
@@ -122,13 +118,13 @@ export default function Filter({ storeKey, data }: Props) {
   }, [filterObject['violators']])
 
   return (
-    <div className="sticky-control flex flex-wrap gap-2 py-4">
+    <div className="sticky-control flex flex-wrap items-center gap-2 py-4">
       <label className="select w-44 select-sm">
         <span className="label">案件分類</span>
-        <select onChange={onCategoryChange}>
+        <select onChange={onCategoryChange} value={filterObject['category'] || ''}>
           <option value="">全部分類</option>
           {categoryList.map((category) => (
-            <option value={category} selected={filterObject['category'] === category}>
+            <option key={category} value={category}>
               {categoryDisplayName(category)}
             </option>
           ))}
@@ -136,10 +132,10 @@ export default function Filter({ storeKey, data }: Props) {
       </label>
       <label className="select w-44 select-sm">
         <span className="label">案件狀態</span>
-        <select onChange={onStateChange}>
+        <select onChange={onStateChange} value={filterObject['state'] || ''}>
           <option value="">全部狀態</option>
           {stateList.map((state) => (
-            <option value={state} selected={filterObject['state'] === state}>
+            <option key={state} value={state}>
               {stateDisplayName(state)}
             </option>
           ))}
@@ -164,6 +160,7 @@ export default function Filter({ storeKey, data }: Props) {
           <i className="fa fa-search"></i>
         </button>
       </form>
+      <p className="w-full">總共{filteredItems.length}筆</p>
     </div>
   )
 }

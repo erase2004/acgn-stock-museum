@@ -4,17 +4,14 @@ import type { schema as schemaLog } from '@/services/dbArenaLog'
 import type { Dictionary } from 'lodash'
 import type { SyntheticEvent } from 'react'
 import CompanyLink from '@/components/common/preact/CompanyLink'
-import LoadMore from '@/components/common/preact/LoadMore'
-import { useMemo, useRef, useState } from 'react'
+import { Virtuoso } from 'react-virtuoso'
+import { Fragment, useMemo, useRef, useState } from 'react'
 import { isArray, isString, map, zipObject } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
 import { useFilter } from '@/utils/hooks'
-import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
-import { useStore } from '@nanostores/react'
-import { totalAmount } from '@/stores/pagination'
+import { dataStoreKey } from '@/configs/general'
 
 const STORE_KEY = dataStoreKey.arena.log
-const PAGE_SIZE = dataNumberPerPage.arena.log
 
 type Fighter = z.infer<typeof schemaFighter>
 type FighterDict = Dictionary<Fighter>
@@ -82,10 +79,8 @@ export default function LogList({ round, fighters, logs }: Props) {
     return zipObject(map(fighters, 'companyId'), fighters)
   }, [fighters])
 
-  const $totalAmount = useStore(totalAmount)
   const { setFilterValue, filteredItems } = useFilter(
     STORE_KEY,
-    PAGE_SIZE,
     logs,
     {
       filterFn(item, filters) {
@@ -177,9 +172,12 @@ export default function LogList({ round, fighters, logs }: Props) {
           <i className="fa fa-search"></i>
         </button>
       </form>
-      <p className="mb-2">總共{$totalAmount[STORE_KEY]}筆紀錄</p>
-      <div>{filteredItems.map(formatLog)}</div>
-      <LoadMore storeKey={STORE_KEY} />
+      <p className="mb-2">總共{filteredItems.length}筆紀錄</p>
+      <Virtuoso
+        useWindowScroll
+        data={filteredItems}
+        itemContent={(_, item) => <Fragment key={item._id}>{formatLog(item)}</Fragment>}
+      />
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import UserLink from '@/components/common/preact/UserLink'
 import type { BasicUser } from '@/services/dbUsers'
+import { VirtuosoGrid } from 'react-virtuoso'
+import { Fragment } from 'react'
 import { fallbackImageUrl } from '@/configs/general'
 import { formatDateTimeText } from '@/libs/timeFormat'
 import { ownStocks } from '@/stores/account'
@@ -9,38 +11,47 @@ import { currencyFormat } from '@/utils/helpers'
 import { useUser } from '@/utils/hooks'
 import { useStore } from '@nanostores/react'
 import { priceDisplayClass, getStockPercentage } from '@/utils/company'
-import { totalAmount } from '@/stores/pagination'
 
 type Props = {
   round: string
-  storeKey: string
 }
 
-export default function ListContainer({ round, storeKey }: Props) {
+export default function ListContainer({ round }: Props) {
   const { user } = useUser()
   const $listViewMode = useStore(listViewMode)
   const $items = useStore(items)
   const $ownStocks = useStore(ownStocks)
-  const $totalAmount = useStore(totalAmount)
-
-  if ($listViewMode === 'card') {
-    return (
-      <div className="grid grid-cols-1 justify-items-center gap-y-6 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6">
-        <p className="col-span-full">總共{$totalAmount[storeKey]}家公司</p>
-        {$items.map((item) => (
-          <Card key={item._id} round={round} item={item} user={user} ownStocks={$ownStocks} />
-        ))}
-      </div>
-    )
-  }
 
   return (
-    <div className="flex flex-col gap-y-6">
-      <p>總共{$totalAmount[storeKey]}家公司</p>
-      {$items.map((item) => (
-        <Row key={item._id} round={round} item={item} user={user} ownStocks={$ownStocks} />
-      ))}
-    </div>
+    <>
+      <p className={$listViewMode === 'card' ? 'text-center' : ''}>總共{$items.length}家公司</p>
+      <VirtuosoGrid
+        useWindowScroll
+        className="mt-2"
+        data={$items}
+        listClassName={
+          $listViewMode === 'card'
+            ? 'grid grid-cols-1 justify-items-center gap-y-6 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6'
+            : 'flex flex-col gap-y-6'
+        }
+        components={{
+          Item({ children }) {
+            return <Fragment>{children}</Fragment>
+          },
+        }}
+        itemContent={(_, item) => {
+          if ($listViewMode === 'card') {
+            return (
+              <Card key={item._id} round={round} item={item} user={user} ownStocks={$ownStocks} />
+            )
+          } else {
+            return (
+              <Row key={item._id} round={round} item={item} user={user} ownStocks={$ownStocks} />
+            )
+          }
+        }}
+      />
+    </>
   )
 }
 
@@ -176,7 +187,7 @@ type RowProps = {
 }
 function Row({ round, item, user, ownStocks }: RowProps) {
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col sm:flex-row">
       <img
         className="size-28 shrink-0 object-cover"
         src={item.pictureSmall || fallbackImageUrl}

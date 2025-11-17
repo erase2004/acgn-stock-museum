@@ -2,7 +2,6 @@ import type { z } from 'astro/zod'
 import type { schema as schemaProduct } from '@/services/dbProducts'
 import { useMemo, useState } from 'react'
 import { orderBy } from 'lodash-es'
-import { useDisplayItems } from './hooks'
 
 type SortOrder<T = 1 | 0> = {
   type?: T
@@ -17,8 +16,6 @@ export function isRestrictedRating(rating: string) {
 
 export function useProductCenter(
   data: z.infer<typeof schemaProduct>[],
-  pageSize: number,
-  storeKey: string,
   defaultOrder: SortOrder = { voteCount: 0 },
 ) {
   const [sortOrder, setSortOrder] = useState<SortOrder>(defaultOrder)
@@ -37,8 +34,6 @@ export function useProductCenter(
 
     return orderBy(data, keys, orders)
   }, [data, sortOrder])
-
-  const displayItems = useDisplayItems(sortedData, storeKey, pageSize)
 
   function handleSortChange(key: keyof SortOrder) {
     if (typeof sortOrder[key] === 'number') {
@@ -68,7 +63,7 @@ export function useProductCenter(
   }
 
   return {
-    displayItems,
+    displayItems: sortedData,
     handleSortChange,
     getSortIcon,
     getSortButtonClass,

@@ -1,9 +1,8 @@
 import type { schema as schemaVip } from '@/services/dbVips'
 import type { z } from 'astro/zod'
 import CompanyTitle from './CompanyTitle'
-import LoadMore from '@/components/common/preact/LoadMore'
-import { useDisplayItems } from '@/utils/hooks'
-import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { Virtuoso } from 'react-virtuoso'
+import { useState } from 'react'
 
 type VIP = z.infer<typeof schemaVip>
 
@@ -12,25 +11,30 @@ type Props = {
   data: Pick<VIP, 'companyId' | 'level'>[]
 }
 
-const PAGE_SIZE = dataNumberPerPage.account.vip
-const STORE_KEY = dataStoreKey.account.vip
-
 export default function VipTitleList({ round, data }: Props) {
-  const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
+  const [height, setHeight] = useState(0)
 
   return (
     <>
-      {displayItems.length > 0
-        ? displayItems.map((item) => (
-            <CompanyTitle
-              key={item.companyId}
-              round={round}
-              companyId={item.companyId}
-              title={`Level ${item.level} VIP`}
-            />
-          ))
-        : '查無資料！'}
-      <LoadMore storeKey={STORE_KEY} />
+      <Virtuoso
+        className="min-h-8"
+        style={{ height }}
+        totalListHeightChanged={(h) => setHeight(h)}
+        data={data}
+        components={{
+          EmptyPlaceholder() {
+            return '查無資料！'
+          },
+        }}
+        itemContent={(_, item) => (
+          <CompanyTitle
+            key={item.companyId}
+            round={round}
+            companyId={item.companyId}
+            title={`Level ${item.level} VIP`}
+          />
+        )}
+      />
     </>
   )
 }

@@ -1,8 +1,8 @@
 import type { z } from 'astro/zod'
+import CompanyLink from '@/components/common/preact/CompanyLink'
 import { arenaMaximumRound } from '@/configs/general'
 import { getAttributeNumber, type schema } from '@/services/dbArenaFighters'
 import { useUser } from '@/utils/hooks'
-import CompanyLink from '@/components/common/preact/CompanyLink'
 import { FIRST_ROUND } from '@/configs/sites'
 
 type Fighter = z.infer<typeof schema>

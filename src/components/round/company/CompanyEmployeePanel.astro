@@ -5,8 +5,7 @@ import { getConnection } from '@/libs/databases'
 import { getDBEmployees, schema as schemaEmployee } from '@/services/dbEmployees'
 import { getCompanyFilterByCustomSchema, schema as schemaCompany } from '@/services/dbCompanies'
 import { currencyFormat, handlePromiseParser } from '@/utils/helpers'
-import { dataStoreKey, defaultCompanySalaryPerDay } from '@/configs/general'
-import { dataNumberPerPage } from '@/configs/general'
+import { defaultCompanySalaryPerDay } from '@/configs/general'
 
 type Props = {
   round: string
@@ -43,20 +42,6 @@ const nextSeasonEmployees = employees.filter((i) => i.employed === false)
   <div class="divider mx-0 divider-horizontal"></div>
   <p>下季度員工薪資：${currencyFormat(nextSeasonSalary)}</p>
 </div>
-<EmployeeList
-  client:only="react"
-  type="current"
-  round={round}
-  storeKey={dataStoreKey.company.employee.current}
-  pageSize={dataNumberPerPage.company.employee.current}
-  data={currentSeasonEmployees}
-/>
+<EmployeeList client:only="react" type="current" round={round} data={currentSeasonEmployees} />
 
-<EmployeeList
-  client:only="react"
-  type="next"
-  round={round}
-  storeKey={dataStoreKey.company.employee.next}
-  pageSize={dataNumberPerPage.company.employee.next}
-  data={nextSeasonEmployees}
-/>
+<EmployeeList client:only="react" type="next" round={round} data={nextSeasonEmployees} />

@@ -23,14 +23,12 @@ type FilterConfig<T extends Record<string, any>> = {
 
 export function useFilter<T extends Record<string, any>, U extends FilterConfig<T>>(
   storeKey: string,
-  pageSize: number,
   data: T[],
   filterConfig: U,
   shouldSyncUrl?: boolean,
 ) {
-  const $currentPage = useStore(currentPage)
   const $isDataLoading = useStore(isDataLoading)
-  const [filteredItems, setFilteredItems] = useState(data.slice(0, pageSize))
+  const [filteredItems, setFilteredItems] = useState(data)
   const [isInitialized, setIsInitialized] = useState(false)
   const [filterObject, setFilterObject] = useState<Filterobject<keyof T>>({})
 
@@ -64,7 +62,7 @@ export function useFilter<T extends Record<string, any>, U extends FilterConfig<
     window.history.replaceState(null, '', url.toString())
   }
 
-  function search(reset: boolean = false) {
+  function search() {
     if ($isDataLoading[storeKey]) return
     isDataLoading.setKey(storeKey, true)
 
@@ -74,18 +72,6 @@ export function useFilter<T extends Record<string, any>, U extends FilterConfig<
 
     newList = filter(newList, (item) => filterFn(item, filters))
 
-    const _totalAmount = newList.length
-    totalAmount.setKey(storeKey, _totalAmount)
-
-    if (reset) {
-      newList = newList.slice(0, pageSize)
-      currentPage.setKey(storeKey, 1)
-    } else {
-      newList = newList.slice(0, pageSize * $currentPage[storeKey])
-    }
-
-    currentAmount.setKey(storeKey, newList.length)
-    hasMore.setKey(storeKey, newList.length < _totalAmount)
     isDataLoading.setKey(storeKey, false)
     setFilteredItems(newList)
   }
@@ -109,16 +95,8 @@ export function useFilter<T extends Record<string, any>, U extends FilterConfig<
     if (!isInitialized) return
 
     if (shouldSyncUrl) updateURL()
-    search(true)
-  }, [filterObject, isInitialized, data])
-
-  useEffect(() => {
-    if (!isInitialized) return
-    if ($isDataLoading[storeKey]) return
-    if ($currentPage[storeKey] === 1) return
-
     search()
-  }, [$currentPage[storeKey]])
+  }, [filterObject, isInitialized, data])
 
   function setFilterValue(key: keyof T, value: any) {
     // 使用 callback 的形式，來處理內部與外部初始化操作的資料更新

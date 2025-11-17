@@ -1,15 +1,9 @@
-import LoadMore from '@/components/common/preact/LoadMore'
-import UserLink from '@/components/common/preact/UserLink'
 import type { schema } from '@/services/dbDirectors'
 import type { z } from 'astro/zod'
-import { useDisplayItems } from '@/utils/hooks'
-import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import UserLink from '@/components/common/preact/UserLink'
+import { Fragment, useState } from 'react'
+import { TableVirtuoso } from 'react-virtuoso'
 import { getStockPercentage } from '@/utils/company'
-import { useStore } from '@nanostores/react'
-import { totalAmount } from '@/stores/pagination'
-
-const STORE_KEY = dataStoreKey.company.director
-const PAGE_SIZE = dataNumberPerPage.company.director
 
 type Director = z.infer<typeof schema>
 type Props = {
@@ -19,41 +13,76 @@ type Props = {
 }
 
 export default function DirectorList({ round, totalRelease, data }: Props) {
-  const $totalAmount = useStore(totalAmount)
-  const displayItems = useDisplayItems(data, STORE_KEY, PAGE_SIZE)
+  const [height, setHeight] = useState(0)
 
   return (
-    <div className="company-panel-table max-h-72 border-t *:px-4 md:*:gap-x-4">
-      <p>總共{$totalAmount[STORE_KEY]}位股東</p>
-      <div className="sticky-control header">
-        <div className="col-span-3">使用者帳號</div>
-        <div className="col-span-1">股份數</div>
-        <div className="col-span-1">比例</div>
-        <div className="col-span-7">留言</div>
-      </div>
-      {displayItems.length > 0 ? (
-        displayItems.map((item) => (
-          <div key={item.userId} className="grid grid-cols-12">
+    <>
+      <TableVirtuoso
+        className="company-panel-table max-h-72 min-h-8 border-t md:min-h-16"
+        style={{ height }}
+        totalListHeightChanged={(h) => setHeight(h)}
+        data={data}
+        components={{
+          Table({ children, ...props }) {
+            return <div {...props}>{children}</div>
+          },
+          TableHead({ children, ...props }) {
+            return (
+              <div {...props} className="head">
+                {children}
+              </div>
+            )
+          },
+          TableBody({ children, ...props }) {
+            return <div {...props}>{children}</div>
+          },
+          TableRow({ children, ...props }) {
+            return (
+              <div {...props} className="row">
+                {children}
+              </div>
+            )
+          },
+          FillerRow({ height }) {
+            return <div style={{ height }}></div>
+          },
+          EmptyPlaceholder() {
+            return <em className="block text-center">沒有任何董事！</em>
+          },
+        }}
+        fixedHeaderContent={() => (
+          <>
+            <div className="col-span-3">使用者帳號</div>
+            <div className="col-span-2 lg:col-span-1">股份數</div>
+            <div className="col-span-2 lg:col-span-1">比例</div>
+            <div className="col-span-5 lg:col-span-7">留言</div>
+          </>
+        )}
+        itemContent={(_, item) => (
+          <Fragment key={item.userId}>
             <p className="col-span-4 text-nowrap md:hidden">使用者帳號</p>
             <div className="col-span-8 truncate md:col-span-3">
               <UserLink round={round} userId={item.userId} />
             </div>
             <p className="col-span-4 md:hidden">股份數</p>
-            <div className="col-span-8 truncate text-right md:col-span-1" title={`${item.stocks}`}>
+            <div
+              className="col-span-8 truncate text-right md:col-span-2 lg:col-span-1"
+              title={`${item.stocks}`}
+            >
               {item.stocks}
             </div>
             <p className="col-span-4 md:hidden">比例</p>
-            <div className="col-span-8 text-right md:col-span-1">
+            <div className="col-span-8 text-right md:col-span-2 lg:col-span-1">
               {getStockPercentage(item.stocks, totalRelease)}%
             </div>
             <p className="col-span-4 md:hidden">留言</p>
-            <div className="col-span-8 break-all md:col-span-7">{item.message || '無'}</div>
-          </div>
-        ))
-      ) : (
-        <p className="text-center">沒有任何董事！</p>
-      )}
-      <LoadMore storeKey={STORE_KEY} />
-    </div>
+            <div className="col-span-8 break-all md:col-span-5 lg:col-span-7">
+              {item.message || '無'}
+            </div>
+          </Fragment>
+        )}
+      />
+      {data.length > 0 && <p>總共{data.length}位股東</p>}
+    </>
   )
 }

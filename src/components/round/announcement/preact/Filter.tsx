@@ -6,9 +6,6 @@ import { useEffect } from 'react'
 import { categoryDisplayName } from '@/utils/announcement'
 import { useFilter, useUser } from '@/utils/hooks'
 import { isArray, isString } from 'lodash-es'
-import { dataNumberPerPage } from '@/configs/general'
-
-const PAGE_SIZE = dataNumberPerPage.announcements
 
 type Props = {
   storeKey: string
@@ -21,13 +18,12 @@ export default function Filter({ storeKey, data }: Props) {
   const categoryList = Object.keys(announcementCategoryMap)
   const { setFilterValue, filterObject, filteredItems } = useFilter(
     storeKey,
-    PAGE_SIZE,
     data,
     {
       schema: listItemSchema
         .pick({ category: true })
         .extend({ voided: z.coerce.boolean() })
-        .optional(),
+        .partial(),
       filterFn(item, filters) {
         {
           // category
@@ -75,10 +71,10 @@ export default function Filter({ storeKey, data }: Props) {
     <div className="sticky-control flex flex-wrap gap-2 py-4">
       <label className="select w-56 select-sm">
         <span className="label">顯示分類</span>
-        <select onChange={onCategoryChange}>
+        <select onChange={onCategoryChange} value={filterObject['category'] || ''}>
           <option value="">全部分類</option>
           {categoryList.map((category) => (
-            <option value={category} selected={filterObject['category'] === category}>
+            <option key={category} value={category}>
               {categoryDisplayName(category)}
             </option>
           ))}

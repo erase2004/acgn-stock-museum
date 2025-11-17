@@ -343,10 +343,18 @@
   }
 
   .company-panel-table {
-    @apply -mx-2 overflow-y-auto border-base-content/25 *:border-dashed *:border-inherit max-md:*:not-last:border-b md:-mx-4;
+    @apply -mx-2 border-base-content/25 **:border-base-content/25 md:-mx-4;
 
-    .header {
-      @apply hidden grid-cols-12 text-center text-nowrap md:grid;
+    .head {
+      @apply hidden grid-cols-12 gap-x-2 bg-base-100 text-center text-nowrap md:grid md:gap-x-4 md:px-4;
+    }
+
+    .row {
+      @apply relative grid grid-cols-12 gap-x-2 p-2 max-md:gap-y-0.5 md:gap-x-4 md:px-4 md:py-0.5;
+
+      &:not(:last-child) {
+        @apply max-md:border-b max-md:border-dashed;
+      }
     }
   }
 

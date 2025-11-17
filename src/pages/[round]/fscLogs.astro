@@ -2,13 +2,11 @@
 import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import ListContainer from '@/components/round/fscLog/preact/ListContainer'
-import LoadMore from '@/components/common/preact/LoadMore'
 import Reminder from '@/components/common/Reminder.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
 import { fscLogTypeList, getDBLog, schema as schemaLog } from '@/services/dbLog'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
-import { dataStoreKey } from '@/configs/general'
 import { legacyRounds, rounds } from '@/configs/sites'
 import { z } from 'astro/zod'
 import { handlePromiseParser, isLatestRound } from '@/utils/helpers'
@@ -20,8 +18,6 @@ export const getStaticPaths = (() => {
     },
   }))
 }) satisfies GetStaticPaths
-
-const STORE_KEY = dataStoreKey.fscLogs
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
@@ -68,5 +64,4 @@ const isLegacyRound = legacyRounds.includes(round)
   <Reminder />
   <p class="my-2">總共{fscLogs.length}筆紀錄</p>
   <ListContainer client:only="react" round={round} data={fscLogs} />
-  <LoadMore client:only="react" storeKey={STORE_KEY} />
 </RoundLayout>

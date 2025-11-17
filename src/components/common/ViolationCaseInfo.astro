@@ -16,9 +16,8 @@ type Props = {
   type: 'userViolated' | 'companyViolated'
   targetId: string
   storeKey: string
-  pageSize: number
 }
-const { type, targetId, storeKey, pageSize } = Astro.props
+const { type, targetId, storeKey } = Astro.props
 
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
@@ -43,10 +42,4 @@ if (type === 'userViolated') {
 ---
 
 <Reminder />
-<ViolationCaseList
-  client:only="react"
-  round={round}
-  storeKey={storeKey}
-  pageSize={pageSize}
-  data={data}
-/>
+<ViolationCaseList client:only="react" round={round} storeKey={storeKey} data={data} />

@@ -1,13 +1,12 @@
-import UserLink from '@/components/common/preact/UserLink'
 import type { z } from 'astro/zod'
 import type { SyntheticEvent } from 'react'
+import UserLink from '@/components/common/preact/UserLink'
+import { Fragment, useState } from 'react'
+import { TableVirtuoso } from 'react-virtuoso'
 import { levelConfig, type schema } from '@/services/dbVips'
 import { useFilter, useUser } from '@/utils/hooks'
-import { dataNumberPerPage, dataStoreKey } from '@/configs/general'
+import { dataStoreKey } from '@/configs/general'
 import { isArray, isString } from 'lodash-es'
-import LoadMore from '@/components/common/preact/LoadMore'
-import { useStore } from '@nanostores/react'
-import { totalAmount } from '@/stores/pagination'
 
 const displayVipLevelOptions = levelConfig
   .slice(1)
@@ -19,7 +18,6 @@ const displayVipLevelOptions = levelConfig
 displayVipLevelOptions.unshift({ value: '', text: '全部' })
 
 const STORE_KEY = dataStoreKey.company.vip
-const PAGE_SIZE = dataNumberPerPage.company.vip
 
 type Threshold = {
   level: number
@@ -36,10 +34,10 @@ export default function VipList({ round, thresholds, data }: Props) {
   const { user } = useUser()
   const userVipInfo = user ? data.find((i) => i.userId === user._id) : undefined
 
-  const $totalAmount = useStore(totalAmount)
+  const [height, setHeight] = useState(0)
+
   const { filteredItems, filterObject, setFilterValue } = useFilter(
     STORE_KEY,
-    PAGE_SIZE,
     data,
     {
       filterFn(item, filters) {
@@ -65,7 +63,7 @@ export default function VipList({ round, thresholds, data }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-12 gap-y-4 md:gap-x-8">
+    <div className="grid grid-cols-12 gap-y-4">
       <div className="col-span-12 md:col-span-8 lg:col-span-9">
         <label className="select mb-2 w-40 select-sm">
           <span className="label">顯示等級</span>
@@ -78,45 +76,67 @@ export default function VipList({ round, thresholds, data }: Props) {
           </select>
         </label>
         <p className="sm:ml-4 sm:inline-block">
-          總共{$totalAmount[STORE_KEY]}位
+          總共{filteredItems.length}位
           {filterObject['level'] && ` ${getLevelText(filterObject['level'])}`}
         </p>
-        <div className="company-panel-table -mx-2 max-h-72 *:px-4 md:-mx-4">
-          <div className="sticky-control header">
-            <div className="col-span-6">使用者帳號</div>
-            <div className="col-span-3">VIP 等級</div>
-            <div className="col-span-3">分數</div>
-          </div>
-          {filteredItems.length > 0 ? (
-            filteredItems.map((item) => (
-              <div
-                key={item.userId}
-                className={`grid grid-cols-12 ${item.level === 5 ? 'vip-level-5' : ''}`}
-              >
-                <p className="col-span-5 md:hidden">使用者帳號</p>
-                <div className="col-span-7 truncate md:col-span-6">
-                  <UserLink round={round} userId={item.userId} />
+        <TableVirtuoso
+          className="company-panel-table max-h-72 min-h-8 md:min-h-16"
+          style={{ height }}
+          totalListHeightChanged={(h) => setHeight(h)}
+          data={filteredItems}
+          components={{
+            Table({ children, ...props }) {
+              return <div {...props}>{children}</div>
+            },
+            TableHead({ children, ...props }) {
+              return (
+                <div {...props} className="head">
+                  {children}
                 </div>
-                <p className="col-span-5 md:hidden">VIP 等級</p>
-                <div className="col-span-7 text-left md:col-span-3 md:text-center">
-                  {getLevelText(item.level)}
+              )
+            },
+            TableBody({ children, ...props }) {
+              return <div {...props}>{children}</div>
+            },
+            TableRow({ children, item, ...props }) {
+              return (
+                <div {...props} className={`row ${item.level === 5 ? 'vip-level-5' : ''}`}>
+                  {children}
                 </div>
-                <p className="col-span-5 md:hidden">分數</p>
-                <div className="col-span-7 text-left md:col-span-3 md:text-center">
-                  {item.score}
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="text-center">
-              <em>查無資料！</em>
-            </div>
+              )
+            },
+            FillerRow({ height }) {
+              return <div style={{ height }}></div>
+            },
+            EmptyPlaceholder() {
+              return <em className="block text-center">查無資料！</em>
+            },
+          }}
+          fixedHeaderContent={() => (
+            <>
+              <div className="col-span-6">使用者帳號</div>
+              <div className="col-span-3">VIP 等級</div>
+              <div className="col-span-3">分數</div>
+            </>
           )}
-          <LoadMore storeKey={STORE_KEY} />
-        </div>
+          itemContent={(_, item) => (
+            <Fragment key={item.userId}>
+              <p className="col-span-5 md:hidden">使用者帳號</p>
+              <div className="col-span-7 truncate md:col-span-6">
+                <UserLink round={round} userId={item.userId} />
+              </div>
+              <p className="col-span-5 md:hidden">VIP 等級</p>
+              <div className="col-span-7 text-left md:col-span-3 md:text-center">
+                {getLevelText(item.level)}
+              </div>
+              <p className="col-span-5 md:hidden">分數</p>
+              <div className="col-span-7 text-left md:col-span-3 md:text-center">{item.score}</div>
+            </Fragment>
+          )}
+        />
       </div>
-      <div className="col-span-12 md:col-span-4 lg:col-span-3">
-        <p className="mb-1 text-lg">分級門檻一覽</p>
+      <div className="col-span-12 md:col-span-4 md:ml-8 lg:col-span-3">
+        <p className="mb-1 text-center text-lg">分級門檻一覽</p>
         <div className="bg-base-content/25">
           <table className="table border-separate border-spacing-[1px] table-sm text-center **:border-none **:text-base **:[th,td]:bg-base-100 **:[th,td]:p-1">
             <thead>
