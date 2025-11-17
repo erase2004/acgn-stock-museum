@@ -35,14 +35,13 @@ const employeeMap = await (async function () {
     (await handlePromiseParser(
       z.promise(schema.array()).parse(
         dbEmployees
-          .find(
-            {
-              employed: true,
-              resigned: false,
-            },
-            // @ts-expect-error: companyId field exists
-            { companyId: 1 },
-          )
+          .find({
+            employed: true,
+            resigned: false,
+          })
+          .project({
+            companyId: 1,
+          })
           .toArray(),
       ),
     )) ?? []

@@ -25,14 +25,11 @@ export async function getAllArchivedUsers(db: Db) {
   return handlePromiseParser(
     z.promise(schema.pick({ _id: true, name: true }).array()).parse(
       dbUserArchive
-        .find(
-          {},
-          {
-            // @ts-expect-error: _id is valid field
-            _id: true,
-            name: true,
-          },
-        )
+        .find({})
+        .project({
+          _id: 1,
+          name: 1,
+        })
         .toArray(),
     ),
   )
