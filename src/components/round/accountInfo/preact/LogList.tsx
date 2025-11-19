@@ -121,9 +121,8 @@ export default function LogList({ round, data }: Props) {
       </div>
       <p>總共{filteredItems.length}筆紀錄</p>
       <Virtuoso
-        style={{
-          height,
-        }}
+        className="min-h-8"
+        style={{ height }}
         totalListHeightChanged={(h) => setHeight(h)}
         data={filteredItems}
         itemContent={(_, item) => (
