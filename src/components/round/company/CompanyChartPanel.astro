@@ -31,4 +31,6 @@ const priceData =
   })()) ?? []
 ---
 
-<ChartsOverview client:only="react" roundEnd={roundEnd} data={priceData} />
+<div class="panel-content">
+  <ChartsOverview client:only="react" roundEnd={roundEnd} data={priceData} />
+</div>

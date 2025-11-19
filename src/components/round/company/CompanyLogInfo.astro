@@ -16,4 +16,6 @@ const currentRound = await getCurrentRoundFromDB(connection)
 const logs = (await getCompanyLog(connection, companyId, currentRound!.beginDate)) ?? []
 ---
 
-<CompanyLogList client:only="react" round={round} data={logs} />
+<div class="panel-content">
+  <CompanyLogList client:only="react" round={round} data={logs} />
+</div>

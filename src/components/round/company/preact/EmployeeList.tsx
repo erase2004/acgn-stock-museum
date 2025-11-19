@@ -32,7 +32,7 @@ export default function EmployeeList({ type, round, data }: Props) {
 
   return (
     <div className="-mx-2 border-t border-base-content/25 px-2 md:-mx-4 md:px-4">
-      <p className="mb-1 text-xl">
+      <p className="my-1 text-xl">
         {label}
         <span className="ml-4 text-base">-總共{data.length}人-</span>
       </p>

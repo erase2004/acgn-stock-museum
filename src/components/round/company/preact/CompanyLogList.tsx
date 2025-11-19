@@ -63,11 +63,13 @@ export default function CompanyLogList({ round, data }: Props) {
   }
 
   return (
-    <div>
+    <>
       {user && (
-        <button className="btn mb-1 btn-outline btn-sm btn-info" onClick={toggleFilter}>
-          {filterOn ? '只檢視自身紀錄' : '檢視所有紀錄'}
-        </button>
+        <div>
+          <button className="btn mb-1 btn-outline btn-sm btn-info" onClick={toggleFilter}>
+            {filterOn ? '只檢視自身紀錄' : '檢視所有紀錄'}
+          </button>
+        </div>
       )}
       {filteredItems.length > 0 && <p>總共{filteredItems.length}筆紀錄</p>}
       <Virtuoso
@@ -85,6 +87,6 @@ export default function CompanyLogList({ round, data }: Props) {
           </p>
         )}
       />
-    </div>
+    </>
   )
 }

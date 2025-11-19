@@ -21,4 +21,6 @@ const company = await getCompanyFilterByCustomSchema(
 const vipThresholds = getVipThresholds(company?.capital ?? 0)
 ---
 
-<VipList client:only="react" round={round} thresholds={vipThresholds} data={vips} />
+<div class="panel-content">
+  <VipList client:only="react" round={round} thresholds={vipThresholds} data={vips} />
+</div>

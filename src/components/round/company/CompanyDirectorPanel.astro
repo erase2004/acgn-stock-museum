@@ -57,16 +57,18 @@ const candidates = (function () {
 })()
 ---
 
-<DirectorList
-  client:only="react"
-  round={round}
-  data={directors}
-  totalRelease={company!.totalRelease}
-/>
-<div class="divider -mx-2 -my-2 md:-mx-4"></div>
-<ManagerElectionInfo
-  client:only="react"
-  round={round}
-  totalRelease={company!.totalRelease}
-  data={candidates}
-/>
+<div class="panel-content">
+  <DirectorList
+    client:only="react"
+    round={round}
+    data={directors}
+    totalRelease={company!.totalRelease}
+  />
+  <div class="divider -mx-2 my-0 md:-mx-4"></div>
+  <ManagerElectionInfo
+    client:only="react"
+    round={round}
+    totalRelease={company!.totalRelease}
+    data={candidates}
+  />
+</div>

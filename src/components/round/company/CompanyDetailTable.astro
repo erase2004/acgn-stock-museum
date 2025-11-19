@@ -29,42 +29,42 @@ const isFirstRound = round === FIRST_ROUND
 
 <div class="company-detail">
   {/* 股價趨勢 */}
-  <div>
-    <PanelFolder client:only="react" title="股價趨勢" state={false} classes="text-2xl">
+  <div class="panel-container">
+    <PanelFolder client:only="react" title="股價趨勢" state={false} classes="panel-head">
       <CompanyChartPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
   {/* 數據資訊 */}
-  <div>
-    <PanelFolder client:only="react" title="數據資訊" state={false} classes="text-2xl">
+  <div class="panel-container">
+    <PanelFolder client:only="react" title="數據資訊" state={false} classes="panel-head">
       <CompanyMarketDataPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* 營利分配資訊 */}
-  <div>
-    <PanelFolder client:only="react" title="營利分配資訊" state={false} classes="text-2xl">
+  <div class="panel-container">
+    <PanelFolder client:only="react" title="營利分配資訊" state={false} classes="panel-head">
       <CompanyProfitDistributionPanel companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* 交易訂單 */}
-  <div>
-    <PanelFolder client:only="react" title="交易訂單" state={false} classes="text-2xl">
+  <div class="panel-container">
+    <PanelFolder client:only="react" title="交易訂單" state={false} classes="panel-head">
       <CompanyOrderBookPanel />
     </PanelFolder>
   </div>
 
   {/* 產品中心 */}
-  <div>
-    <PanelFolder client:only="react" title="產品中心" state={false} classes="text-2xl">
+  <div class="panel-container">
+    <PanelFolder client:only="react" title="產品中心" state={false} classes="panel-head">
       <CompanyProductCenterPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* 董事會 */}
-  <div>
-    <PanelFolder client:only="react" title="董事會" state={false} classes="text-2xl">
+  <div class="panel-container">
+    <PanelFolder client:only="react" title="董事會" state={false} classes="panel-head">
       <CompanyDirectorPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
@@ -72,8 +72,8 @@ const isFirstRound = round === FIRST_ROUND
   {/* VIP 名冊 */}
   {
     !isFirstRound && (
-      <div>
-        <PanelFolder client:only="react" title="VIP名冊" state={false} classes="text-2xl">
+      <div class="panel-container">
+        <PanelFolder client:only="react" title="VIP名冊" state={false} classes="panel-head">
           <CompanyVipPanel round={round} companyId={companyId} />
         </PanelFolder>
       </div>
@@ -81,22 +81,22 @@ const isFirstRound = round === FIRST_ROUND
   }
 
   {/* 員工名冊 */}
-  <div>
-    <PanelFolder client:only="react" title="員工名冊" state={false} classes="text-2xl">
+  <div class="panel-container">
+    <PanelFolder client:only="react" title="員工名冊" state={false} classes="panel-head">
       <CompanyEmployeePanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* 最萌亂鬥大賽 */}
-  <div>
-    <PanelFolder client:only="react" title="最萌亂鬥大賽" state={false} classes="text-2xl">
+  <div class="panel-container">
+    <PanelFolder client:only="react" title="最萌亂鬥大賽" state={false} classes="panel-head">
       <CompanyArenaPanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
 
   {/* 挖礦機 */}
-  <div>
-    <PanelFolder client:only="react" title="挖礦機" state={false} classes="text-2xl">
+  <div class="panel-container">
+    <PanelFolder client:only="react" title="挖礦機" state={false} classes="panel-head">
       <CompanyMiningMachinePanel round={round} companyId={companyId} />
     </PanelFolder>
   </div>
@@ -104,8 +104,8 @@ const isFirstRound = round === FIRST_ROUND
   {/* 違規案件列表 */}
   {
     !isLegacyRound && (
-      <div class="max-h-96">
-        <PanelFolder client:only="react" title="違規案件列表" state={false} classes="text-2xl">
+      <div class="panel-container **:[.panel-content]:max-h-72 max-md:**:[.panel-content]:max-h-screen">
+        <PanelFolder client:only="react" title="違規案件列表" state={false} classes="panel-head">
           <ViolationCaseInfo
             type="companyViolated"
             targetId={companyId}
@@ -117,8 +117,8 @@ const isFirstRound = round === FIRST_ROUND
   }
 
   {/* 所有紀錄 */}
-  <div>
-    <PanelFolder client:only="react" title="所有紀錄" state={false} classes="text-2xl">
+  <div class="panel-container">
+    <PanelFolder client:only="react" title="所有紀錄" state={false} classes="panel-head">
       <CompanyLogInfo companyId={companyId} />
     </PanelFolder>
   </div>

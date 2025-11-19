@@ -37,7 +37,7 @@ export default function ProductList({ round, manager, data }: Props) {
   return (
     <>
       <VirtuosoGrid
-        className="max-h-96 min-h-40"
+        className="max-h-96"
         style={{ height }}
         data={data}
         listClassName={'grid grid-cols-1 gap-x-6 gap-y-4 lg:grid-cols-2'}

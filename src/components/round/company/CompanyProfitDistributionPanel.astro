@@ -27,10 +27,12 @@ const company = await (async function () {
 const isFirstRound = round === FIRST_ROUND
 ---
 
-{
-  isFirstRound ? (
-    <ProfitDistributionForFirstRoundInfo {...company} />
-  ) : (
-    <ProfitDistributionInfo {...company} />
-  )
-}
+<div class="panel-content">
+  {
+    isFirstRound ? (
+      <ProfitDistributionForFirstRoundInfo {...company} />
+    ) : (
+      <ProfitDistributionInfo {...company} />
+    )
+  }
+</div>
