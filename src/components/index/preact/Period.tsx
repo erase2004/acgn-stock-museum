@@ -18,7 +18,7 @@ const PreactPeriod: FunctionComponent<Props> = (props) => {
         {Math.floor(pd / 100)} 年 {pd % 100} 期
       </div>
       {list.map((data, index) => (
-        <PreactItemWrapper data={data} index={index} />
+        <PreactItemWrapper key={data.companyName} data={data} index={index} />
       ))}
     </Fragment>
   )

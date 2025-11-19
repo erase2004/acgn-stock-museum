@@ -230,7 +230,10 @@ export default function UserProfile({ round }: Props) {
               <span>{currencyFormat(user.profile.voteTickets)}</span>
             </div>
             {stoneTypeList.map((type) => (
-              <div title={`現有${stoneDisplayName(type)}：${user.profile.stones[type]}個`}>
+              <div
+                key={type}
+                title={`現有${stoneDisplayName(type)}：${user.profile.stones[type]}個`}
+              >
                 <img className="size-4" src={getStoneIcon(type)} title={stoneDisplayName(type)} />
                 <span>{user.profile.stones[type]}</span>
               </div>
