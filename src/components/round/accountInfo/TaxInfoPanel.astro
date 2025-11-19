@@ -21,4 +21,6 @@ const taxInfo =
   })()) ?? []
 ---
 
-<TaxList client:only="react" round={round} data={taxInfo} />
+<div class="panel-content">
+  <TaxList client:only="react" round={round} data={taxInfo} />
+</div>

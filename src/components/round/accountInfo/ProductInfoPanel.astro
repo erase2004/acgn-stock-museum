@@ -44,10 +44,18 @@ const productInfo =
 const isFirstRound = round === FIRST_ROUND
 ---
 
-{
-  isFirstRound ? (
-    <LikedProductList client:only="react" round={round} data={likedProductInfo} />
-  ) : (
-    <ProductList client:only="react" round={round} data={productInfo} />
-  )
-}
+<div class="panel-content">
+  {
+    isFirstRound ? (
+      <Fragment>
+        <p>總共{likedProductInfo.length}筆</p>
+        <LikedProductList client:only="react" round={round} data={likedProductInfo} />
+      </Fragment>
+    ) : (
+      <Fragment>
+        <p>總共{productInfo.length}筆</p>
+        <ProductList client:only="react" round={round} data={productInfo} />
+      </Fragment>
+    )
+  }
+</div>

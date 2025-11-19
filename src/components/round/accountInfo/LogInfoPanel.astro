@@ -16,4 +16,6 @@ const roundData = await getCurrentRound(connection)
 const logs = (await getAccountLogs(connection, userId, roundData!.beginDate)) ?? []
 ---
 
-<LogList client:only="react" round={round} data={logs} />
+<div class="panel-content max-h-screen">
+  <LogList client:only="react" round={round} data={logs} />
+</div>

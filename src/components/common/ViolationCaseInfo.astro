@@ -41,5 +41,7 @@ if (type === 'userViolated') {
 }
 ---
 
-<Reminder />
-<ViolationCaseList client:only="react" round={round} storeKey={storeKey} data={data} />
+<div class="panel-content">
+  <Reminder />
+  <ViolationCaseList client:only="react" round={round} storeKey={storeKey} data={data} />
+</div>

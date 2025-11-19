@@ -246,10 +246,18 @@
   }
 
   .account-detail {
-    @apply mt-4 flex w-full flex-col *:overflow-y-hidden *:border *:border-base-content/25;
+    @apply mt-4 flex w-full flex-col;
 
-    & > div {
-      @apply flex max-h-80 flex-col gap-y-2 p-2 md:p-4;
+    .panel-container {
+      @apply flex flex-col border border-base-content/25;
+    }
+
+    .panel-head {
+      @apply p-2 text-2xl md:p-4;
+    }
+
+    .panel-content {
+      @apply m-2 mt-0 flex max-h-72 flex-col overflow-y-hidden md:m-4 md:mt-0;
     }
   }
 

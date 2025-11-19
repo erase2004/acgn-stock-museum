@@ -72,26 +72,26 @@ const description = user.about.description ?? ''
   />
   <BasicInfo round={round} user={user} />
   <div class="account-detail">
-    <div>
-      <PanelFolder client:only="react" title="稅務資訊" classes="text-2xl" state={false}>
+    <div class="panel-container">
+      <PanelFolder client:only="react" title="稅務資訊" classes="panel-head" state={false}>
         <TaxInfoPanel round={round} userId={userId} />
       </PanelFolder>
     </div>
-    <div>
-      <PanelFolder client:only="react" title="持股資訊" classes="text-2xl" state={false}>
+    <div class="panel-container">
+      <PanelFolder client:only="react" title="持股資訊" classes="panel-head" state={false}>
         <StockInfoPanel round={round} userId={userId} />
       </PanelFolder>
     </div>
-    <div class="max-md:max-h-screen">
-      <PanelFolder client:only="react" title="石頭資訊" classes="text-2xl" state={false}>
+    <div class="panel-container max-md:max-h-screen">
+      <PanelFolder client:only="react" title="石頭資訊" classes="panel-head" state={false}>
         <StoneInfoPanel round={round} userId={userId} profile={user.profile} />
       </PanelFolder>
     </div>
-    <div>
+    <div class="panel-container">
       <PanelFolder
         client:only="react"
         title={isFirstRound ? '產品收藏' : '持有產品'}
-        classes="text-2xl"
+        classes="panel-head"
         state={false}
       >
         <ProductInfoPanel round={round} userId={userId} />
@@ -100,8 +100,8 @@ const description = user.about.description ?? ''
 
     {
       !isLegacyRound && (
-        <div class="max-md:max-h-screen">
-          <PanelFolder client:only="react" title="違規案件列表" classes="text-2xl" state={false}>
+        <div class="panel-container max-md:**:[.panel-content]:max-h-screen">
+          <PanelFolder client:only="react" title="違規案件列表" classes="panel-head" state={false}>
             <ViolationCaseInfo
               type="userViolated"
               targetId={userId}
@@ -111,8 +111,8 @@ const description = user.about.description ?? ''
         </div>
       )
     }
-    <div class="max-h-screen">
-      <PanelFolder client:only="react" title="玩家紀錄" classes="text-2xl" state={false}>
+    <div class="panel-container">
+      <PanelFolder client:only="react" title="玩家紀錄" classes="panel-head" state={false}>
         <LogInfoPanel round={round} userId={userId} />
       </PanelFolder>
     </div>

@@ -2,8 +2,14 @@
 import StoneList from './preact/StoneList'
 import type { schema as schemaUser } from '@/services/dbUsers'
 import { getConnection } from '@/libs/databases'
-import { getDBCompanyStones, schema } from '@/services/dbCompanyStones'
+import {
+  getDBCompanyStones,
+  schema,
+  stoneTypeList,
+  stonePowerTable,
+} from '@/services/dbCompanyStones'
 import { handlePromiseParser } from '@/utils/helpers'
+import { getStoneIcon, stoneDisplayName } from '@/utils/stone'
 import { z } from 'astro/zod'
 
 type Props = {
@@ -27,4 +33,25 @@ const stoneInfo =
   })()) ?? []
 ---
 
-<StoneList client:only="react" round={round} profile={profile} data={stoneInfo} />
+<div class="panel-content">
+  <div>
+    <p class="mb-1">帳號擁有石頭</p>
+    <div class="flex flex-col flex-wrap justify-around md:flex-row">
+      {
+        stoneTypeList.map((type) => (
+          <div class="text-nowrap">
+            <img
+              class="inline-block size-8"
+              src={getStoneIcon(type)}
+              alt={stoneDisplayName(type)}
+            />
+            {stoneDisplayName(type)} {profile['stones'][type] || 0} 個
+            <small class="align-text-top">(生產值 {stonePowerTable[type]}／個)</small>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <p class="mb-1">已放置的石頭</p>
+  <StoneList client:only="react" round={round} data={stoneInfo} />
+</div>

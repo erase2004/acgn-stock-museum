@@ -66,7 +66,7 @@ export default function ViolationCaseList({ round, storeKey, data }: Props) {
 
   return (
     <>
-      <div className="flex flex-col flex-wrap gap-2 py-2 *:w-full md:flex-row md:*:w-44">
+      <div className="flex flex-col flex-wrap gap-2 py-2 *:w-full sm:flex-row sm:*:w-44">
         <label className="select select-sm">
           <span className="label">案件分類</span>
           <select onChange={onCategoryChange} value={filterObject['category'] || ''}>
@@ -130,7 +130,7 @@ export default function ViolationCaseList({ round, storeKey, data }: Props) {
         )}
         itemContent={(_, item) => (
           <Fragment key={item._id}>
-            <td className="text-nowrap md:text-center" data-title="舉報時間">
+            <td className="text-wrap md:text-center md:text-nowrap" data-title="舉報時間">
               {formatDateTimeText(item.createdAt)}
             </td>
             <td className="text-nowrap md:text-center" data-title="案件狀態">
