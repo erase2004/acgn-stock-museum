@@ -47,7 +47,7 @@ export const schema = z.object({
   /** 董事長 User ID */
   chairman: itemId,
   /** 小圖 */
-  pictureSmall: z.string().url().optional(),
+  pictureSmall: z.string().url().nullish(),
   /** 大圖 */
   pictureBig: z.string().url().optional(),
   /** 介紹描述 */
