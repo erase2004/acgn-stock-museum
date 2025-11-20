@@ -22,7 +22,7 @@ export default function ManagerElectionInfo({ round, totalRelease, data }: Props
     <div>
       <p className="mb-2 text-xl">選舉下個商業季度的負責經理人：</p>
       <TableVirtuoso
-        className="company-panel-table max-h-72 min-h-8 border-t md:min-h-16"
+        className="company-panel-table max-h-72 min-h-8 md:min-h-16"
         style={{ height }}
         totalListHeightChanged={(h) => setHeight(h)}
         data={data}
