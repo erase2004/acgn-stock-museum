@@ -2,6 +2,7 @@ import type { Db } from 'mongodb'
 import { z } from 'astro/zod'
 import { datetime, integer, itemId, objectId } from './schema'
 import { stoneTypeList } from './dbCompanyStones'
+import { schema as schemaCompany } from '@/services/dbCompanies'
 import { zipObject } from 'lodash-es'
 import { productVoucherAmount } from '@/configs/general'
 import { handlePromiseParser } from '@/utils/helpers'
@@ -147,6 +148,7 @@ export const basicSchema = schema
     favorite: true,
   })
   .extend({
+    favoriteV2: schemaCompany.pick({ _id: true, companyName: true, isSeal: true }).array(),
     profile: profileSchema.pick({
       name: true,
       roles: true,

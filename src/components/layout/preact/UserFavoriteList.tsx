@@ -1,4 +1,4 @@
-import CompanyLink from '@/components/common/preact/CompanyLink'
+import SimpleCompanyLink from '@/components/common/preact/SimpleCompanyLink'
 import { useUser } from '@/utils/hooks'
 
 type Props = {
@@ -9,8 +9,8 @@ export default function UserFavoriteList({ round }: Props) {
   const { user } = useUser()
   if (!user) return <></>
 
-  const { favorite } = user
-  if (!favorite.length) return <></>
+  const { favoriteV2 } = user
+  if (!favoriteV2.length) return <></>
 
   return (
     <div>
@@ -19,9 +19,9 @@ export default function UserFavoriteList({ round }: Props) {
           我的最愛
         </div>
         <ul className="dropdown-content menu ml-0 max-h-[50dvh] flex-nowrap overflow-y-auto bg-base-300 text-base">
-          {favorite.map((companyId) => (
-            <li key={companyId} className="*:text-nowrap">
-              <CompanyLink round={round} companyId={companyId} />
+          {favoriteV2.map((company) => (
+            <li key={company._id} className="*:text-nowrap">
+              <SimpleCompanyLink {...company} round={round} companyId={company._id} />
             </li>
           ))}
         </ul>
