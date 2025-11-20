@@ -17,7 +17,9 @@ export default function CompanyValueRankGraph({ data }: Props) {
 
   if (!data.length) return <></>
 
-  const yAxisLabels = data.map((item) => truncateText(item.companyName, 8))
+  const yAxisLabels = data.map((item) => item.companyName)
+  const truncatedLabels = yAxisLabels.map((label) => truncateText(label, 8))
+
   const chartHeight = data.length * 60 + 80
 
   const options = {
@@ -36,6 +38,11 @@ export default function CompanyValueRankGraph({ data }: Props) {
       },
       y: {
         display: true,
+        ticks: {
+          callback: function (index: any) {
+            return truncatedLabels[index]
+          },
+        },
       },
     },
     plugins: {

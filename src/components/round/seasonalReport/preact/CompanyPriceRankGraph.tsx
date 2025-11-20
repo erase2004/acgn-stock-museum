@@ -17,7 +17,8 @@ export default function CompanyPriceRankGraph({ data }: Props) {
 
   if (!data.length) return <></>
 
-  const yAxisLabels = data.map((item) => truncateText(item.companyName, 8))
+  const yAxisLabels = data.map((item) => item.companyName)
+  const truncatedLabels = yAxisLabels.map((label) => truncateText(label, 8))
 
   const chartHeight = data.length * 20 + 125
 
@@ -44,6 +45,11 @@ export default function CompanyPriceRankGraph({ data }: Props) {
       },
       y: {
         stacked: true,
+        ticks: {
+          callback: function (index: any) {
+            return truncatedLabels[index]
+          },
+        },
       },
     },
     plugins: {

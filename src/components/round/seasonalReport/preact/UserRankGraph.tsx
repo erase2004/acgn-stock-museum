@@ -17,7 +17,9 @@ export default function UserWealthRankGraph({ data }: Props) {
 
   if (!data.length) return <></>
 
-  const yAxisLabels = data.map((item) => truncateText(item.name, 16))
+  const yAxisLabels = data.map((item) => item.name)
+  const truncatedLabels = yAxisLabels.map((label) => truncateText(label, 16))
+
   const chartHeight = data.length * 20 + 80
 
   const options = {
@@ -50,6 +52,11 @@ export default function UserWealthRankGraph({ data }: Props) {
       },
       y: {
         stacked: true,
+        ticks: {
+          callback: function (index: any) {
+            return truncatedLabels[index]
+          },
+        },
       },
     },
     plugins: {
