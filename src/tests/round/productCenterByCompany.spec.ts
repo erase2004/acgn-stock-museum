@@ -31,7 +31,7 @@ for (const round of rounds) {
     })
 
     test('pages', async ({ context }) => {
-      test.setTimeout(Math.max(2000 * companies.length, MINIMUM_TEST_TIMEOUT))
+      test.setTimeout(Math.max(1000 * companies.length, MINIMUM_TEST_TIMEOUT))
 
       const page = await context.newPage()
 
@@ -39,22 +39,14 @@ for (const round of rounds) {
         // FIXME: this is a workaround to clear browser cache
         await page.route('*', async (route) => route.continue())
 
-        const companyJsonPromise = page.waitForResponse(
-          (response) =>
-            response.url().includes('company.json') &&
-            response.request().method() === 'GET' &&
-            response.status() === 200,
-        )
-
-        // company json 會需要比較多的載入時間
         const response = await page.goto(getProductCenterByCompanyUrl(round, company._id), {
           waitUntil: 'commit',
-          timeout: 2000,
+          timeout: 1000,
         })
 
         if (company.isSeal) {
           await test.step('got 404 status code', async () => {
-            await expect(response?.status()).toBe(404)
+            expect(response?.status()).toBe(404)
           })
         } else {
           await test.step('has title', async () => {
@@ -75,9 +67,6 @@ for (const round of rounds) {
 
             // h2 heading
             {
-              // 等待 island component 載入
-              await companyJsonPromise
-
               const element = page.locator('h2')
               await expect(element).toContainText(company.companyName)
             }
