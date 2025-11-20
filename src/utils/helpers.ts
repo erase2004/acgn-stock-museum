@@ -216,3 +216,10 @@ export function isGreaterThanLg(windowWidth: number) {
 export function isGreaterThanXl(windowWidth: number) {
   return windowWidth >= 1200
 }
+
+export function truncateText(text: string, length: number) {
+  if (text.length > length) {
+    return `${text.slice(0, length - 2)}...`
+  }
+  return text
+}

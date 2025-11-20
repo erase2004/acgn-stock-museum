@@ -1,6 +1,6 @@
 import type { TypeCompanyPriceRank } from '../types'
 import type { ChartData, TooltipItem } from 'chart.js'
-import { currencyFormat, setChartStyle, toCurrencyAbbr } from '@/utils/helpers'
+import { currencyFormat, setChartStyle, toCurrencyAbbr, truncateText } from '@/utils/helpers'
 import { map } from 'lodash-es'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
@@ -17,7 +17,8 @@ export default function CompanyPriceRankGraph({ data }: Props) {
 
   if (!data.length) return <></>
 
-  const yAxisLabels = data.map((item) => item.companyName)
+  const yAxisLabels = data.map((item) => truncateText(item.companyName, 8))
+
   const chartHeight = data.length * 20 + 125
 
   const options = {
@@ -27,7 +28,6 @@ export default function CompanyPriceRankGraph({ data }: Props) {
     scales: {
       x: {
         position: 'top',
-        stacked: true,
         ticks: {
           callback: function (value: any) {
             return toCurrencyAbbr(value)
@@ -36,16 +36,10 @@ export default function CompanyPriceRankGraph({ data }: Props) {
       },
       x2: {
         position: 'bottom',
-        stacked: true,
         afterBuildTicks: (axis: any) => {
           axis.ticks = [...axis.chart.scales.x.ticks]
           axis.min = axis.chart.scales.x.min
           axis.max = axis.chart.scales.x.max
-        },
-        ticks: {
-          callback: function (value: any) {
-            return toCurrencyAbbr(value)
-          },
         },
       },
       y: {

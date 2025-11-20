@@ -1,6 +1,6 @@
 import type { TypeUserWealthRank } from '../types'
 import type { ChartData, TooltipItem } from 'chart.js'
-import { currencyFormat, setChartStyle, toCurrencyAbbr } from '@/utils/helpers'
+import { currencyFormat, setChartStyle, toCurrencyAbbr, truncateText } from '@/utils/helpers'
 import { map } from 'lodash-es'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
@@ -17,7 +17,7 @@ export default function UserWealthRankGraph({ data }: Props) {
 
   if (!data.length) return <></>
 
-  const yAxisLabels = data.map((item) => item.name)
+  const yAxisLabels = data.map((item) => truncateText(item.name, 16))
   const chartHeight = data.length * 20 + 80
 
   const options = {

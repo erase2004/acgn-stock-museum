@@ -1,6 +1,6 @@
 import type { TypeCompanyCapitalRank } from '../types'
 import type { ChartData, TooltipItem } from 'chart.js'
-import { currencyFormat, setChartStyle } from '@/utils/helpers'
+import { currencyFormat, setChartStyle, truncateText } from '@/utils/helpers'
 import { map } from 'lodash-es'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
@@ -17,7 +17,7 @@ export default function CompanyCapitalRankGraph({ data }: Props) {
 
   if (!data.length) return <></>
 
-  const yAxisLabels = data.map((item) => item.companyName)
+  const yAxisLabels = data.map((item) => truncateText(item.companyName, 8))
   const chartHeight = data.length * 60 + 125
 
   const options = {
