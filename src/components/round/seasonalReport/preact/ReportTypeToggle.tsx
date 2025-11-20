@@ -28,7 +28,7 @@ export default function ReportTypeToggle({ currentType, setReportType }: Props) 
       {Object.entries(REPORT_TYPE).map(([_, value]) => (
         <button
           key={value}
-          className={`btn mr-1 btn-md ${currentType === value ? 'btn-primary' : 'btn-neutral'}`}
+          className={`btn mr-1 btn-sm md:btn-md ${currentType === value ? 'btn-primary' : 'btn-neutral'}`}
           onClick={() => setReportType(value)}
         >
           {typeNameMap[value]}

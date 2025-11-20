@@ -11,8 +11,8 @@ export default function CompanyPriceRankTable({ round, data }: Props) {
   return (
     <table className="table-base table">
       <thead>
-        <tr>
-          <th className="w-20 text-center text-nowrap" title="排名">
+        <tr className="*:px-1">
+          <th className="w-10 text-center text-nowrap" title="排名">
             排名
           </th>
           <th className="text-center text-nowrap" title="公司名稱">

@@ -113,7 +113,10 @@ export default function MainBody({
     <>
       <div className="flex flex-wrap gap-y-1">
         <ReportTypeToggle currentType={reportType} setReportType={setReportType} />
-        <button onClick={handleClickOnModeButton} className="btn ml-auto btn-outline">
+        <button
+          onClick={handleClickOnModeButton}
+          className="btn ml-auto btn-outline btn-sm md:btn-md"
+        >
           {modeText}
         </button>
       </div>
