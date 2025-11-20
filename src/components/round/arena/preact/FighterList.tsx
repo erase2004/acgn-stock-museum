@@ -88,7 +88,7 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
   }
 
   return (
-    <>
+    <div>
       <p>總共{data.length}位參賽者</p>
       <div className="sticky-control flex flex-wrap gap-2 py-4 md:hidden">
         {arenaFighterSortableFields.map((field) => (
@@ -173,6 +173,6 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
           </Fragment>
         )}
       />
-    </>
+    </div>
   )
 }
