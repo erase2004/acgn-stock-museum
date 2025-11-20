@@ -1,7 +1,7 @@
 import type { Data } from '@/components/index/types'
 
-// TODO: change to subpath
-const baseUrl = 'https://r2-museum.acgn-stock.com/company/detail'
+const round = 'round2'
+const baseUrl = `/${round}/company/detail`
 
 const data: Data[] = [
   {
