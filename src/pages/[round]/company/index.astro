@@ -77,7 +77,11 @@ const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
 ---
 
 <RoundLayout useUserDict={true}>
-  {shouldShowLDJson && <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />}
+  {
+    shouldShowLDJson && (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(ldJson)} />
+    )
+  }
   <h1 class="round-block-title">股市總覽</h1>
   <div class="divider"></div>
   <Filter client:only="react" data={data} />

@@ -52,7 +52,11 @@ const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
 ---
 
 <RoundLayout useUserDict={true} useProductDict={true}>
-  {shouldShowLDJson && <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />}
+  {
+    shouldShowLDJson && (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(ldJson)} />
+    )
+  }
   <h1 class="round-block-title">違規案件列表</h1>
   <div class="divider"></div>
   <Reminder />
