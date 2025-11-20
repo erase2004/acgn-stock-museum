@@ -3,6 +3,7 @@ import { z } from 'astro/zod'
 import { datetime, integer, itemId, objectId } from './schema'
 import { stoneTypeList } from './dbCompanyStones'
 import { schema as schemaCompany } from '@/services/dbCompanies'
+import { schema as schemaDirector } from '@/services/dbDirectors'
 import { zipObject } from 'lodash-es'
 import { productVoucherAmount } from '@/configs/general'
 import { handlePromiseParser } from '@/utils/helpers'
@@ -158,6 +159,19 @@ export const basicSchema = schema
       voteTickets: true,
       stones: true,
     }),
+    ownStock: z
+      .preprocess(
+        (value) => {
+          // @ts-expect-error: treat value as any
+          return { companyId: value.c, stocks: value.s }
+        },
+        schemaDirector.pick({
+          companyId: true,
+          stocks: true,
+        }),
+      )
+      .array(),
+    productValue: z.record(itemId, integer),
   })
 
 export type BasicUser = z.infer<typeof basicSchema>

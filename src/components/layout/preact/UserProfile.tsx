@@ -5,15 +5,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useUser } from '@/utils/hooks'
 import { currencyFormat, styledValidateTypeMarkHtml } from '@/utils/helpers'
 import { getStoneIcon, stoneDisplayName } from '@/utils/stone'
-import {
-  getAccountUrl,
-  getOwnStockJsonUrl,
-  getOwnProductValueJsonUrl,
-  getPageTitle,
-  PAGE,
-} from '@/libs/routes'
+import { getAccountUrl, getPageTitle, PAGE } from '@/libs/routes'
 import { stoneTypeList } from '@/services/dbCompanyStones'
-import { schema as schemaDirector } from '@/services/dbDirectors'
 import { ownStocks, companyProductTotal } from '@/stores/account'
 import { map, zipObject } from 'lodash-es'
 import { firestore } from '@/libs/firebase'
@@ -22,51 +15,6 @@ import { FIRST_ROUND } from '@/configs/sites'
 
 type Props = {
   round: string
-}
-
-async function updateUserStock(round: string, userId: string) {
-  const schema = z.preprocess(
-    (value) => {
-      // @ts-expect-error: treat value as any
-      return { companyId: value.c, stocks: value.s }
-    },
-    schemaDirector.pick({
-      companyId: true,
-      stocks: true,
-    }),
-  )
-
-  const jsonUrl = getOwnStockJsonUrl(round)
-  return await fetch(jsonUrl)
-    .then(async (response) => {
-      const dict = await z.promise(z.record(z.string(), schema.array())).parse(response.json())
-
-      if (userId in dict) {
-        const data = dict[userId]
-        ownStocks.set(zipObject(map(data, 'companyId'), map(data, 'stocks')))
-      }
-    })
-    .catch(() => {
-      ownStocks.set({})
-    })
-}
-
-async function updateUserCompanyProductTotal(round: string, userId: string) {
-  const schema = z.record(z.string(), z.record(z.string(), z.number()))
-
-  const jsonUrl = getOwnProductValueJsonUrl(round)
-  return await fetch(jsonUrl)
-    .then(async (response) => {
-      const dict = await z.promise(schema).parse(response.json())
-
-      if (userId in dict) {
-        const data = dict[userId]
-        companyProductTotal.set(data)
-      }
-    })
-    .catch(() => {
-      companyProductTotal.set({})
-    })
 }
 
 export default function UserProfile({ round }: Props) {
@@ -148,9 +96,10 @@ export default function UserProfile({ round }: Props) {
       return
     }
     setUser(data)
+    ownStocks.set(zipObject(map(data.ownStock, 'companyId'), map(data.ownStock, 'stocks')))
+    companyProductTotal.set(data.productValue)
+
     dropdownRef.current?.removeAttribute('open')
-    updateUserStock(round, data._id)
-    updateUserCompanyProductTotal(round, data._id)
   }
 
   async function logout() {
@@ -178,10 +127,8 @@ export default function UserProfile({ round }: Props) {
         .then(([_, data]) => {
           if (data) {
             setUser(data)
-            return Promise.allSettled([
-              updateUserStock(round, data._id),
-              updateUserCompanyProductTotal(round, data._id),
-            ])
+            ownStocks.set(zipObject(map(data.ownStock, 'companyId'), map(data.ownStock, 'stocks')))
+            companyProductTotal.set(data.productValue)
           } else resetUser()
         })
         .finally(() => setIsInitialized(true))
