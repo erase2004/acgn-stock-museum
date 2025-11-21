@@ -64,8 +64,8 @@ and boilerplate:
 
 ## Todo List
 
-* [ ] Add round 1 to round 5 results
-  * [ ] Round 1
+* [x] Add round 1 to round 5 results
+  * [x] Round 1
   * [x] Round 2
   * [x] Round 3
   * [x] Round 4
