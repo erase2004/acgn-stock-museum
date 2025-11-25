@@ -6,7 +6,12 @@ import NavLink from './NavLink.astro'
 import ThemeToggle from './ThemeToggle.astro'
 import RoundSwitch from './RoundSwitch.astro'
 import { getCurrentRound, PAGE } from '@/libs/routes'
-import { feedbackUrl, legacyRounds } from '@/configs/sites'
+import {
+  feedbackUrl,
+  firstGenStockMarketUrl,
+  legacyRounds,
+  secondGenStockMarketUrl,
+} from '@/configs/sites'
 
 const round = getCurrentRound(Astro)!
 const isLegacyRound = legacyRounds.includes(round)
@@ -33,8 +38,12 @@ const isLegacyRound = legacyRounds.includes(round)
       {!isLegacyRound && <NavLink pageName={PAGE.VIOLATION_CASE_LIST} isRoundBounded={true} />}
       <NavLink pageName={PAGE.FSC_LOG} isRoundBounded={true} />
       <NavLink pageName={PAGE.FSC_STOCK} isRoundBounded={true} />
-      <NavLink pageName="other" externalUrl={feedbackUrl}>問題回報</NavLink>
       <NavLink pageName={PAGE.MAIN}>歷史博館物首頁</NavLink>
+    </NavLinkGroup>
+    <NavLinkGroup text="相關連結">
+      <NavLink pageName="other" externalUrl={feedbackUrl}>問題回報</NavLink>
+      <NavLink pageName="other" externalUrl={firstGenStockMarketUrl}>第一代股市</NavLink>
+      <NavLink pageName="other" externalUrl={secondGenStockMarketUrl}>第二代股市</NavLink>
     </NavLinkGroup>
     <div class="divider mr-0 ml-auto divider-horizontal"></div>
     <ThemeToggle />

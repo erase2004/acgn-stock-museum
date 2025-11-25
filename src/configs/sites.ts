@@ -254,7 +254,14 @@ export const roundDefaultDescription = '｜ 尋找你的老婆！ \n｜ 喜歡�
 
 export const mediaBasePath = '/src/assets/media'
 
+/** 問題回報連結 */
 export const feedbackUrl = 'https://github.com/erase2004/acgn-stock-museum/issues'
+
+/** 第一代股市連結 */
+export const firstGenStockMarketUrl = 'https://acgn-stock.com'
+
+/** 第二代股市連結 */
+export const secondGenStockMarketUrl = 'https://acgnstock.app'
 
 /** 第五季之前沒有產品補貨的設定 */
 export const noProductReplenishRounds: string[] = [
