@@ -67,9 +67,17 @@ const title = getCurrentPageFullTitle(Astro, company.companyName)
   <div class="divider"></div>
   {
     isFirstRound ? (
-      <CompanyListContainerForFirstRound client:only="react" data={products} />
+      <CompanyListContainerForFirstRound client:only="react" data={products}>
+        <div slot="fallback" class="w-full">
+          <span class="loading loading-xl loading-spinner"> </span>
+        </div>
+      </CompanyListContainerForFirstRound>
     ) : (
-      <CompanyListContainer client:only="react" data={products} />
+      <CompanyListContainer client:only="react" data={products}>
+        <div slot="fallback" class="w-full">
+          <span class="loading loading-xl loading-spinner"> </span>
+        </div>
+      </CompanyListContainer>
     )
   }
 </RoundLayout>

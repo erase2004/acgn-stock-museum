@@ -60,6 +60,17 @@ const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
   <h1 class="round-block-title">違規案件列表</h1>
   <div class="divider"></div>
   <Reminder />
-  <Filter client:only="react" data={data} storeKey={STORE_KEY} />
-  <ListContainer client:only="react" round={round} />
+  <Filter client:only="react" data={data} storeKey={STORE_KEY}>
+    <div slot="fallback" class="flex flex-wrap items-center gap-2 py-4">
+      <div class="h-8 w-44 skeleton animate-pulse"></div>
+      <div class="h-8 w-44 skeleton animate-pulse"></div>
+      <div class="h-8 w-72 skeleton animate-pulse"></div>
+      <div class="h-8 w-full skeleton animate-pulse"></div>
+    </div>
+  </Filter>
+  <ListContainer client:only="react" round={round}>
+    <div slot="fallback" class="w-full">
+      <span class="loading loading-xl loading-spinner"> </span>
+    </div>
+  </ListContainer>
 </RoundLayout>

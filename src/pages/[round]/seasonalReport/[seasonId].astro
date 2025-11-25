@@ -161,7 +161,12 @@ sortedRankUserWealthData.reverse()
       currentSeason={currentSeason}
       previousSeasonUrl={previousSeasonUrl}
       nextSeasonUrl={nextSeasonUrl}
-    />
+    >
+      <div slot="fallback" class="flex items-center justify-between text-center">
+        <div class="size-8 skeleton animate-pulse"></div>
+        <div class="size-8 skeleton animate-pulse"></div>
+      </div>
+    </SeasonNavbar>
     <div class="divider"></div>
     <MainBody
       client:only="react"
@@ -171,6 +176,10 @@ sortedRankUserWealthData.reverse()
       rankCompanyProfitData={sortedRankCompanyProfitData}
       rankCompanyValueData={sortedRankCompanyValueData}
       rankUserWealthData={sortedRankUserWealthData}
-    />
+    >
+      <div slot="fallback" class="w-full">
+        <span class="loading loading-xl loading-spinner"> </span>
+      </div>
+    </MainBody>
   </div>
 </RoundLayout>

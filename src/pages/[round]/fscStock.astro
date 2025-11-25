@@ -30,5 +30,9 @@ const fscStocks =
 <RoundLayout>
   <h1 class="round-block-title">金管會持股</h1>
   <div class="divider"></div>
-  <ListContainer client:only="react" round={round} data={fscStocks} />
+  <ListContainer client:only="react" round={round} data={fscStocks}>
+    <div slot="fallback" class="w-full">
+      <span class="loading loading-xl loading-spinner"> </span>
+    </div>
+  </ListContainer>
 </RoundLayout>

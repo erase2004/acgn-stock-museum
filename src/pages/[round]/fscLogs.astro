@@ -63,5 +63,9 @@ const isLegacyRound = legacyRounds.includes(round)
   <div class="divider"></div>
   <Reminder />
   <p class="my-2">總共{fscLogs.length}筆紀錄</p>
-  <ListContainer client:only="react" round={round} data={fscLogs} />
+  <ListContainer client:only="react" round={round} data={fscLogs}>
+    <div slot="fallback" class="w-full">
+      <span class="loading loading-xl loading-spinner"> </span>
+    </div>
+  </ListContainer>
 </RoundLayout>

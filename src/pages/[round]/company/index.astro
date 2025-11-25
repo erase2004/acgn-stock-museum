@@ -84,7 +84,22 @@ const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
   }
   <h1 class="round-block-title">股市總覽</h1>
   <div class="divider"></div>
-  <Filter client:only="react" data={data} />
+  <Filter client:only="react" data={data}>
+    <div slot="fallback" class="flex flex-wrap gap-1">
+      <div class="h-10 w-12 skeleton animate-pulse"></div>
+      <div class="h-10 w-30 skeleton animate-pulse"></div>
+      <div class="h-10 w-40 skeleton animate-pulse"></div>
+      <div class="join-vertical join w-full animate-pulse sm:join-horizontal md:w-auto">
+        <div class="join-item h-10 w-full skeleton sm:w-60"></div>
+        <div class="join-item h-10 w-full skeleton sm:w-30"></div>
+        <div class="join-item h-10 w-full skeleton sm:w-20"></div>
+      </div>
+    </div>
+  </Filter>
   <div class="divider"></div>
-  <ListContainer client:only="react" round={round} />
+  <ListContainer client:only="react" round={round}>
+    <div slot="fallback" class="w-full">
+      <span class="loading loading-xl loading-spinner"> </span>
+    </div>
+  </ListContainer>
 </RoundLayout>
