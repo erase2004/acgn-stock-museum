@@ -175,6 +175,7 @@ export default function LogList({ round, fighters, logs }: Props) {
       <p className="mb-2">總共{filteredItems.length}筆紀錄</p>
       <Virtuoso
         useWindowScroll
+        className="min-h-8"
         data={filteredItems}
         itemContent={(_, item) => <Fragment key={item._id}>{formatLog(item)}</Fragment>}
       />

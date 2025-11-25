@@ -1,11 +1,11 @@
-import type { Component } from 'react'
+import type { ReactNode } from 'react'
 import { useState } from 'react'
 
 type Props = {
   title: string
   classes?: string
   state?: boolean
-  children: Component
+  children: ReactNode
 }
 
 export default function PanelFolder({ title, classes, state = false, children }: Props) {
@@ -18,7 +18,7 @@ export default function PanelFolder({ title, classes, state = false, children }:
         {title}
         <i className={`fa ml-2 ${iconClass}`} aria-hidden="true"></i>
       </div>
-      {isOpen && children}
+      <div className={isOpen ? 'block h-auto' : 'hidden h-0'}>{children}</div>
     </>
   )
 }
