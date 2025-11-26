@@ -26,12 +26,6 @@ const isProd = import.meta.env.PROD
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, , shrink-to-fit=no" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-      crossorigin="anonymous"
-    />
     <meta name="generator" content={Astro.generator} />
     <slot name="round-only-resource"></slot>
     <slot name="head-seo">
@@ -97,5 +91,11 @@ const isProd = import.meta.env.PROD
     </slot>
     <BackToTopButton />
     <AlertDialog client:only="react" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
   </body>
 </html>
