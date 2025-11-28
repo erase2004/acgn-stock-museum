@@ -361,3 +361,7 @@ export function getCompanyLogJsonUrl(round: string, companyId: string) {
 export function getArenaLogJsonUrl(round: string, arenaId: string) {
   return `/${round}/json/arenaInfo/${arenaId}.js?v=${BUILD_ID}`
 }
+
+export function getFSCLogJsonUrl(round: string) {
+  return `/${round}/json/fsc-logs-data.js?v=${BUILD_ID}`
+}

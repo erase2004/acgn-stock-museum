@@ -2,15 +2,35 @@ import DisplayLog from '@/components/common/preact/DisplayLog'
 import { Virtuoso } from 'react-virtuoso'
 import { z } from 'astro/zod'
 import { schema } from '@/services/dbLog'
+import { useEffect, useState } from 'react'
+import { getFSCLogJsonUrl } from '@/libs/routes'
 
 type Log = z.infer<typeof schema>
 
 type Props = {
   round: string
-  data: Log[]
 }
 
-export default function ListContainer({ round, data }: Props) {
+export default function ListContainer({ round }: Props) {
+  const [isInitialized, setIsInitialized] = useState(false)
+  const [data, setData] = useState<Log[]>([])
+
+  useEffect(() => {
+    if (isInitialized) return
+
+    const jsonUrl = getFSCLogJsonUrl(round)
+    import(/* @vite-ignore */ jsonUrl)
+      .then((module) => {
+        const result = schema.array().parse(module.data)
+        setData(result)
+      })
+      .finally(() => setIsInitialized(true))
+  }, [])
+
+  if (!isInitialized) {
+    return <span className="loading loading-xl loading-spinner"> </span>
+  }
+
   return (
     <ul className="relative pl-0">
       <Virtuoso

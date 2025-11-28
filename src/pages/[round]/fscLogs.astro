@@ -5,11 +5,12 @@ import ListContainer from '@/components/round/fscLog/preact/ListContainer'
 import Reminder from '@/components/common/Reminder.astro'
 import { getConnection } from '@/libs/databases'
 import { getCurrentRound } from '@/libs/routes'
-import { fscLogTypeList, getDBLog, schema as schemaLog } from '@/services/dbLog'
+import { fscLogTypeList, getDBLog } from '@/services/dbLog'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { legacyRounds, rounds } from '@/configs/sites'
 import { z } from 'astro/zod'
 import { handlePromiseParser, isLatestRound } from '@/utils/helpers'
+import { integer } from '@/services/schema'
 
 export const getStaticPaths = (() => {
   return rounds.map((round) => ({
@@ -38,22 +39,12 @@ if (!isLatestRound(round)) {
   })
 }
 
-const fscLogs =
+const logAmount =
   (await (async function () {
     const dbLog = getDBLog(connection)
 
-    return handlePromiseParser(
-      z.promise(schemaLog.array()).parse(
-        dbLog
-          .find(filterRule, {
-            sort: {
-              createdAt: -1,
-            },
-          })
-          .toArray(),
-      ),
-    )
-  })()) ?? []
+    return handlePromiseParser(z.promise(integer).parse(dbLog.countDocuments(filterRule)))
+  })()) ?? 0
 
 const isLegacyRound = legacyRounds.includes(round)
 ---
@@ -62,10 +53,6 @@ const isLegacyRound = legacyRounds.includes(round)
   <h1 class="round-block-title">{isLegacyRound ? '舉報違規與金管會處理紀錄' : '金管會執行紀錄'}</h1>
   <div class="divider"></div>
   <Reminder />
-  <p class="my-2">總共{fscLogs.length}筆紀錄</p>
-  <ListContainer client:only="react" round={round} data={fscLogs}>
-    <div slot="fallback" class="w-full">
-      <span class="loading loading-xl loading-spinner"> </span>
-    </div>
-  </ListContainer>
+  <p class="my-2">總共{logAmount}筆紀錄</p>
+  <ListContainer client:only="react" round={round} />
 </RoundLayout>
