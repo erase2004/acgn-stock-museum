@@ -23,7 +23,7 @@ export default function LoadUserJson({ round }: Props) {
   )
 
   const jsonUrl = getUserJsonUrl(round)
-  import(jsonUrl).then((module) => {
+  import(/* @vite-ignore */ jsonUrl).then((module) => {
     const result = schema.array().parse(module.data)
     const data = keyBy(result, '_id')
     userArchiveDict.set(data)

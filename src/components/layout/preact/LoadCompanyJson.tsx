@@ -22,7 +22,7 @@ export default function LoadCompanyJson({ round }: Props) {
   )
 
   const jsonUrl = getCompanyJsonUrl(round)
-  import(jsonUrl).then((module) => {
+  import(/* @vite-ignore */ jsonUrl).then((module) => {
     const result = schema.array().parse(module.data)
     const data = keyBy(result, '_id')
     companyArchiveDict.set(data)

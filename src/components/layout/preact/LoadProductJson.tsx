@@ -23,7 +23,7 @@ export default function LoadProductJson({ round }: Props) {
   )
 
   const jsonUrl = getProductJsonUrl(round)
-  import(jsonUrl).then((module) => {
+  import(/* @vite-ignore */ jsonUrl).then((module) => {
     const result = schema.array().parse(module.data)
     const data = keyBy(result, '_id')
     productDict.set(data)

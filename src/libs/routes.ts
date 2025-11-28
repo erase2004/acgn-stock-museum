@@ -349,3 +349,7 @@ export function getCompanyJsonUrl(round: string) {
 export function getProductJsonUrl(round: string) {
   return `/${round}/json/product-data.js?v=${BUILD_ID}`
 }
+
+export function getAccountLogJsonUrl(round: string, userId: string) {
+  return `/${round}/json/accountInfo/${userId}.js?v=${BUILD_ID}`
+}

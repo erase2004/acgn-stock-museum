@@ -2,10 +2,11 @@ import DisplayLog from '@/components/common/preact/DisplayLog'
 import { Virtuoso } from 'react-virtuoso'
 import { z } from 'astro/zod'
 import { useFilter } from '@/utils/hooks'
-import { logTypeGroupMap, type schema } from '@/services/dbLog'
+import { logTypeGroupMap, schema } from '@/services/dbLog'
 import { flatten, isArray, without } from 'lodash-es'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { dataStoreKey } from '@/configs/general'
+import { getAccountLogJsonUrl } from '@/libs/routes'
 
 const STORE_KEY = dataStoreKey.account.log
 
@@ -13,17 +14,17 @@ type Data = z.infer<typeof schema>
 
 type Props = {
   round: string
-  data: Data[]
+  userId: string
 }
 
 function isSelected(key: string, filter: Record<string, string | string[]>) {
   return isArray(filter['logType']) ? filter['logType'].includes(key) : true
 }
 
-export default function LogList({ round, data }: Props) {
+export default function LogList({ round, userId }: Props) {
+  const [isInitialized, setIsInitialized] = useState(false)
+  const [data, setData] = useState<Data[]>([])
   const [height, setHeight] = useState(0)
-
-  const isInitialized = useRef(false)
 
   const { setFilterValue, filterObject, filteredItems } = useFilter(
     STORE_KEY,
@@ -58,9 +59,19 @@ export default function LogList({ round, data }: Props) {
   )
 
   useEffect(() => {
-    if (isInitialized.current) return
+    if (isInitialized) return
 
     selectAll()
+
+    const jsonUrl = getAccountLogJsonUrl(round, userId)
+    import(/* @vite-ignore */ jsonUrl)
+      .then((module) => {
+        const result = schema.array().parse(module.data)
+        setData(result)
+      })
+      .finally(() => {
+        setIsInitialized(true)
+      })
   }, [])
 
   function selectAll() {
@@ -81,6 +92,10 @@ export default function LogList({ round, data }: Props) {
     const selectedOptions = isArray(filterObject['logType']) ? filterObject['logType'] : []
 
     setFilterValue('logType', without(selectedOptions, key))
+  }
+
+  if (!isInitialized) {
+    return <span className="loading loading-xl loading-spinner"></span>
   }
 
   return (

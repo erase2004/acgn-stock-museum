@@ -1,8 +1,5 @@
 ---
 import LogList from './preact/LogList'
-import { getAccountLogs } from '@/services/dbLog'
-import { getConnection } from '@/libs/databases'
-import { getCurrentRound } from '@/services/dbRound'
 
 type Props = {
   round: string
@@ -10,12 +7,8 @@ type Props = {
 }
 
 const { round, userId } = Astro.props
-
-const connection = getConnection(round)
-const roundData = await getCurrentRound(connection)
-const logs = (await getAccountLogs(connection, userId, roundData!.beginDate)) ?? []
 ---
 
 <div class="panel-content max-h-screen">
-  <LogList client:only="react" round={round} data={logs} />
+  <LogList client:visible round={round} userId={userId} />
 </div>
