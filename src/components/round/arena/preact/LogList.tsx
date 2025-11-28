@@ -11,6 +11,8 @@ import { currencyFormat } from '@/utils/helpers'
 import { useFilter } from '@/utils/hooks'
 import { dataStoreKey } from '@/configs/general'
 import { getArenaLogJsonUrl } from '@/libs/json-data'
+import { useStore } from '@nanostores/react'
+import { fighters } from '@/stores/arena'
 
 const STORE_KEY = dataStoreKey.arena.log
 
@@ -21,7 +23,6 @@ type Log = z.infer<typeof schemaLog>
 type Props = {
   round: string
   arenaId: string
-  fighters: Fighter[]
 }
 
 function getAttacker(log: Log) {
@@ -75,13 +76,14 @@ function displayAttackManaer(log: Log, fighterDict: FighterDict) {
   return '???'
 }
 
-export default function LogList({ round, arenaId, fighters }: Props) {
+export default function LogList({ round, arenaId }: Props) {
+  const $fighters = useStore(fighters)
   const [isInitialized, setIsInitialized] = useState(false)
   const [logs, setLogs] = useState<Log[]>([])
 
   const fighterDict = useMemo(() => {
-    return zipObject(map(fighters, 'companyId'), fighters)
-  }, [fighters])
+    return zipObject(map($fighters, 'companyId'), $fighters)
+  }, [$fighters])
 
   const { setFilterValue, filteredItems } = useFilter(
     STORE_KEY,

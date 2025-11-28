@@ -86,7 +86,6 @@ const fighters = (await getFighters(connection, arenaId)) ?? []
       round={round}
       isArenaEnded={isEnded}
       minInvestment={arenaMinInvestedAmount}
-      data={fighters}
     />
   </PanelFolder>
   {
@@ -94,9 +93,24 @@ const fighters = (await getFighters(connection, arenaId)) ?? []
       <Fragment>
         <div class="divider" />
         <PanelFolder client:only="react" title={'戰鬥紀錄'} classes="text-2xl" state={false}>
-          <LogList client:visible round={round} arenaId={arenaId} fighters={fighters} />
+          <LogList client:visible round={round} arenaId={arenaId} />
         </PanelFolder>
       </Fragment>
     )
   }
+  <div id="hidden-data" class="invisible hidden size-0" data-fighters={JSON.stringify(fighters)}>
+  </div>
 </RoundLayout>
+
+<script>
+  import { fighters as $fighters } from '@/stores/arena'
+
+  const data = document.querySelector('#hidden-data')?.getAttribute('data-fighters')
+
+  try {
+    const fighters = JSON.parse(data || '')
+    $fighters.set(fighters)
+  } catch {
+    console.error('Cannot get fighters')
+  }
+</script>

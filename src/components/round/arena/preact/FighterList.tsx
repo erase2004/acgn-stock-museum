@@ -1,8 +1,6 @@
-import type { z } from 'astro/zod'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import UserLink from '@/components/common/preact/UserLink'
 import {
-  schema as schemaFighter,
   arenaFighterSortableFields,
   getAttributeNumber,
   fighterAttributes,
@@ -12,6 +10,8 @@ import { Fragment, useMemo, useState } from 'react'
 import { orderBy } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
 import { FIRST_ROUND } from '@/configs/sites'
+import { useStore } from '@nanostores/react'
+import { fighters } from '@/stores/arena'
 
 type OrderKey = (typeof arenaFighterSortableFields)[number]
 type SortOrder<T = 1 | 0> = Partial<Record<OrderKey, T>>
@@ -30,12 +30,12 @@ type Props = {
   round: string
   isArenaEnded: boolean
   minInvestment: number
-  data: z.infer<typeof schemaFighter>[]
 }
 
-export default function FighterList({ round, isArenaEnded, minInvestment, data }: Props) {
+export default function FighterList({ round, isArenaEnded, minInvestment }: Props) {
   const isFirstRound = round === FIRST_ROUND
 
+  const $fighters = useStore(fighters)
   const [height, setHeight] = useState(0)
 
   const [sortOrder, setSortOrder] = useState<SortOrder>(isArenaEnded ? { rank: 1 } : { agi: 0 })
@@ -52,9 +52,9 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
     })
 
     return key === 'agi'
-      ? orderBy(data, [key, 'createdAt'], [order, order === 'desc' ? 'asc' : 'desc'])
-      : orderBy(data, [key], [order])
-  }, [data, sortOrder])
+      ? orderBy($fighters, [key, 'createdAt'], [order, order === 'desc' ? 'asc' : 'desc'])
+      : orderBy($fighters, [key], [order])
+  }, [$fighters, sortOrder])
 
   function handleSortChange(key: keyof SortOrder) {
     if (typeof sortOrder[key] === 'number') {
@@ -89,7 +89,7 @@ export default function FighterList({ round, isArenaEnded, minInvestment, data }
 
   return (
     <div>
-      <p>總共{data.length}位參賽者</p>
+      <p>總共{$fighters.length}位參賽者</p>
       <div className="sticky-control flex flex-wrap gap-2 py-4 md:hidden">
         {arenaFighterSortableFields.map((field) => (
           <button
