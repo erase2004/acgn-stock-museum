@@ -6,7 +6,7 @@ import { logTypeGroupMap, schema } from '@/services/dbLog'
 import { flatten, isArray, without } from 'lodash-es'
 import { useEffect, useState } from 'react'
 import { dataStoreKey } from '@/configs/general'
-import { getAccountLogJsonUrl } from '@/libs/routes'
+import { getAccountLogJsonUrl } from '@/libs/json-data'
 
 const STORE_KEY = dataStoreKey.account.log
 

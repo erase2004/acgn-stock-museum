@@ -3,7 +3,7 @@ import { Virtuoso } from 'react-virtuoso'
 import { z } from 'astro/zod'
 import { schema } from '@/services/dbLog'
 import { useEffect, useState } from 'react'
-import { getFSCLogJsonUrl } from '@/libs/routes'
+import { getFSCLogJsonUrl } from '@/libs/json-data'
 
 type Log = z.infer<typeof schema>
 

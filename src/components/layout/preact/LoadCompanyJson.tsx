@@ -1,6 +1,6 @@
 import { z } from 'astro/zod'
 import { keyBy } from 'lodash-es'
-import { getCompanyJsonUrl } from '@/libs/routes'
+import { getCompanyJsonUrl } from '@/libs/json-data'
 import { schema as schemaCompanyArchive } from '@/services/dbCompanyArchive'
 import { companyArchiveDict } from '@/stores/common'
 

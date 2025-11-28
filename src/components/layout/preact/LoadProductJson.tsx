@@ -1,6 +1,6 @@
 import { z } from 'astro/zod'
 import { keyBy } from 'lodash-es'
-import { getProductJsonUrl } from '@/libs/routes'
+import { getProductJsonUrl } from '@/libs/json-data'
 import { schema as schemaProduct } from '@/services/dbProducts'
 import { productDict } from '@/stores/common'
 

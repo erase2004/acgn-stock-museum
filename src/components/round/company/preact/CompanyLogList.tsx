@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 import { useFilter, useUser } from '@/utils/hooks'
 import { dataStoreKey } from '@/configs/general'
 import { intersection, isArray, isString } from 'lodash-es'
-import { getCompanyLogJsonUrl } from '@/libs/routes'
+import { getCompanyLogJsonUrl } from '@/libs/json-data'
 
 const STORE_KEY = dataStoreKey.company.log
 

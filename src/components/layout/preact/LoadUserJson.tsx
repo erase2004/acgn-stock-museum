@@ -1,6 +1,6 @@
 import { z } from 'astro/zod'
 import { keyBy } from 'lodash-es'
-import { getUserJsonUrl } from '@/libs/routes'
+import { getUserJsonUrl } from '@/libs/json-data'
 import { schema as schemaUserArchive } from '@/services/dbUserArchive'
 import { userArchiveDict } from '@/stores/common'
 

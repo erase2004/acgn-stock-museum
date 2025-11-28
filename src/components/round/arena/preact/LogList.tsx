@@ -10,7 +10,7 @@ import { isArray, isString, map, zipObject } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
 import { useFilter } from '@/utils/hooks'
 import { dataStoreKey } from '@/configs/general'
-import { getArenaLogJsonUrl } from '@/libs/routes'
+import { getArenaLogJsonUrl } from '@/libs/json-data'
 
 const STORE_KEY = dataStoreKey.arena.log
 
