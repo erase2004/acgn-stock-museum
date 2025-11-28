@@ -1,18 +1,14 @@
 ---
 import type { GetStaticPaths } from 'astro'
-import type { ListItem } from '@/stores/company'
 import RoundLayout from '@/layouts/Round.astro'
 import Filter from '@/components/round/company/preact/Filter'
 import ListContainer from '@/components/round/company/preact/ListContainer'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getCompanyUrl, getCurrentRound } from '@/libs/routes'
-import { getCompanies } from '@/services/dbCompanies'
-import { getDBEmployees, schema as schemaEmployee } from '@/services/dbEmployees'
+import { getDBCompanies, schema as schemaCompany } from '@/services/dbCompanies'
+import { rounds } from '@/configs/sites'
 import { handlePromiseParser } from '@/utils/helpers'
-import { getCompanyEPS, getCompanyEPSForFirstRound } from '@/utils/company'
-import { countBy } from 'lodash-es'
-import { FIRST_ROUND, rounds } from '@/configs/sites'
 
 export const getStaticPaths = (() => {
   return rounds.map((round) => ({
@@ -25,45 +21,23 @@ export const getStaticPaths = (() => {
 const round = getCurrentRound(Astro)!
 const connection = getConnection(round)!
 
-const employeeMap = await (async function () {
-  const dbEmployees = getDBEmployees(connection)
-
-  const schema = schemaEmployee.pick({ companyId: true })
-  const employees =
-    (await handlePromiseParser(
-      z.promise(schema.array()).parse(
-        dbEmployees
-          .find({
-            employed: true,
-            resigned: false,
-          })
-          .project({
-            companyId: 1,
-          })
-          .toArray(),
-      ),
-    )) ?? []
-
-  return countBy(employees, (item) => item.companyId)
-})()
-
-const isFirstRound = round === FIRST_ROUND
-
-const companies = (await getCompanies(connection)) ?? []
-const data: ListItem[] = companies.map((company) => {
-  const employeeCount = employeeMap[company._id] || 0
-  const eps = isFirstRound
-    ? getCompanyEPSForFirstRound({ ...company, employeeCount })
-    : getCompanyEPS({ ...company, employeeCount })
-
-  return {
-    ...company,
-    employeeCount,
-    eps,
-  }
-})
-
 const itemAmount = 3
+
+const companies =
+  (await (async function () {
+    const dbCompanies = getDBCompanies(connection)
+
+    return handlePromiseParser(
+      z
+        .promise(schemaCompany.array())
+        .parse(
+          dbCompanies
+            .find({ isSeal: false }, { sort: { lastPrice: -1 }, limit: itemAmount })
+            .toArray(),
+        ),
+    )
+  })()) ?? []
+
 const ldJson = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
@@ -84,7 +58,7 @@ const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
   }
   <h1 class="round-block-title">股市總覽</h1>
   <div class="divider"></div>
-  <Filter client:only="react" data={data}>
+  <Filter client:only="react" round={round}>
     <div slot="fallback" class="flex flex-wrap gap-1">
       <div class="h-10 w-12 skeleton animate-pulse"></div>
       <div class="h-10 w-30 skeleton animate-pulse"></div>
@@ -97,9 +71,5 @@ const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
     </div>
   </Filter>
   <div class="divider"></div>
-  <ListContainer client:only="react" round={round}>
-    <div slot="fallback" class="w-full">
-      <span class="loading loading-xl loading-spinner"> </span>
-    </div>
-  </ListContainer>
+  <ListContainer client:only="react" round={round} />
 </RoundLayout>

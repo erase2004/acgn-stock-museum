@@ -6,16 +6,17 @@ import {
   LIST_STORE_KEY,
   setItems,
 } from '@/stores/company'
+import { z } from 'astro/zod'
 import { useStore } from '@nanostores/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ownStocks } from '@/stores/account'
 import { useFilter, useUser } from '@/utils/hooks'
 import { buildSearchRegExp } from '@/utils/helpers'
 import { isArray, isString, orderBy } from 'lodash-es'
-
-type Props = {
-  data: ListItem[]
-}
+import { isInitialized } from '@/stores/pagination'
+import { getCompanyListJsonUrl } from '@/libs/json-data'
+import { listItemSchema } from '@/services/dbCompanies'
+import { integer } from '@/services/schema'
 
 type ListOption = '' | 'favorite' | 'own'
 type SortOption = 'lastPrice' | 'totalValue' | 'capital' | 'createdAt'
@@ -26,7 +27,13 @@ function toggleViewMode(mode: ListMode) {
   else listViewMode.set('card')
 }
 
-export default function Filter({ data }: Props) {
+type Props = {
+  round: string
+}
+
+export default function Filter({ round }: Props) {
+  const $isInitialized = useStore(isInitialized)
+  const [data, setData] = useState<ListItem[]>([])
   const $listViewMode = useStore(listViewMode)
   const $ownStocks = useStore(ownStocks)
   const { user } = useUser()
@@ -97,6 +104,24 @@ export default function Filter({ data }: Props) {
       setFilterValue('_id', undefined)
     }
   }, [user])
+
+  useEffect(() => {
+    if ($isInitialized[LIST_STORE_KEY]) return
+
+    const jsonUrl = getCompanyListJsonUrl(round)
+    import(/* @vite-ignore */ jsonUrl)
+      .then((module) => {
+        const schema = listItemSchema.extend({
+          employeeCount: integer,
+          eps: z.string(),
+        })
+        const result = schema.array().parse(module.data)
+        setData(result)
+      })
+      .finally(() => {
+        isInitialized.setKey(LIST_STORE_KEY, true)
+      })
+  }, [])
 
   function changeListOption(e: SyntheticEvent<HTMLSelectElement>) {
     const option = e.currentTarget.value as ListOption

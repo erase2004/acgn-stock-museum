@@ -6,21 +6,27 @@ import { Fragment } from 'react'
 import { fallbackImageUrl } from '@/configs/general'
 import { formatDateTimeText } from '@/libs/timeFormat'
 import { ownStocks } from '@/stores/account'
-import { listViewMode, items, type ListItem } from '@/stores/company'
+import { listViewMode, items, type ListItem, LIST_STORE_KEY } from '@/stores/company'
 import { currencyFormat } from '@/utils/helpers'
 import { useUser } from '@/utils/hooks'
 import { useStore } from '@nanostores/react'
 import { priceDisplayClass, getStockPercentage } from '@/utils/company'
+import { isInitialized } from '@/stores/pagination'
 
 type Props = {
   round: string
 }
 
 export default function ListContainer({ round }: Props) {
+  const $isInitialized = useStore(isInitialized)
   const { user } = useUser()
   const $listViewMode = useStore(listViewMode)
   const $items = useStore(items)
   const $ownStocks = useStore(ownStocks)
+
+  if (!$isInitialized[LIST_STORE_KEY]) {
+    return <span className="loading loading-xl loading-spinner" />
+  }
 
   return (
     <>
