@@ -620,7 +620,7 @@ export async function getAccountLogs(db: Db, userId: string, roundBegin: Date) {
   )
 }
 
-export async function getCompanyLog(db: Db, companyId: string, roundBegin: Date) {
+export async function getCompanyLogs(db: Db, companyId: string, roundBegin: Date) {
   const dbLog = getDBLog(db)
 
   return handlePromiseParser(

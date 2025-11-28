@@ -1,21 +1,24 @@
-import type { schema } from '@/services/dbLog'
 import type { z } from 'astro/zod'
 import DisplayLog from '@/components/common/preact/DisplayLog'
+import { schema } from '@/services/dbLog'
 import { Virtuoso } from 'react-virtuoso'
 import { useState, useEffect } from 'react'
 import { useFilter, useUser } from '@/utils/hooks'
 import { dataStoreKey } from '@/configs/general'
 import { intersection, isArray, isString } from 'lodash-es'
+import { getCompanyLogJsonUrl } from '@/libs/routes'
 
 const STORE_KEY = dataStoreKey.company.log
 
 type Log = z.infer<typeof schema>
 type Props = {
   round: string
-  data: Log[]
+  companyId: string
 }
 
-export default function CompanyLogList({ round, data }: Props) {
+export default function CompanyLogList({ round, companyId }: Props) {
+  const [isInitialized, setIsInitialized] = useState(false)
+  const [data, setData] = useState<Log[]>([])
   const [filterOn, setFilterOn] = useState(false)
   const { user } = useUser()
 
@@ -48,9 +51,22 @@ export default function CompanyLogList({ round, data }: Props) {
 
   useEffect(() => {
     if (!user) {
+      setFilterValue('userId', undefined)
       setFilterOn(false)
     }
   }, [user])
+
+  useEffect(() => {
+    if (isInitialized) return
+
+    const jsonUrl = getCompanyLogJsonUrl(round, companyId)
+    import(/* @vite-ignore */ jsonUrl)
+      .then((module) => {
+        const result = schema.array().parse(module.data)
+        setData(result)
+      })
+      .finally(() => setIsInitialized(true))
+  }, [])
 
   function toggleFilter() {
     if (filterOn) {
@@ -60,6 +76,10 @@ export default function CompanyLogList({ round, data }: Props) {
       setFilterValue('userId', [user!._id, '!all'])
       setFilterOn(true)
     }
+  }
+
+  if (!isInitialized) {
+    return <span className="loading loading-xl loading-spinner"></span>
   }
 
   return (
