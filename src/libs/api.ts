@@ -20,13 +20,3 @@ export function getQuery(request: Request) {
   const searchParams = url.searchParams
   return Object.fromEntries(searchParams.entries())
 }
-
-export function createJSONResponse(data: any) {
-  return new Response(JSON.stringify(data), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=604800',
-    },
-  })
-}

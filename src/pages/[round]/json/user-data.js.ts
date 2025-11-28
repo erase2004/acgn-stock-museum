@@ -1,31 +1,37 @@
 import type { APIRoute, GetStaticPaths } from 'astro'
 import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
-import { getDBCompanyArchive, schema as schemaCompanyArchive } from '@/services/dbCompanyArchive'
+import { getDBUserArchive, schema as schemaUserArchive } from '@/services/dbUserArchive'
 import { handlePromiseParser } from '@/utils/helpers'
-import { createJSONResponse } from '@/libs/api'
 import { rounds } from '@/configs/sites'
 
 export const GET: APIRoute = async ({ params }) => {
   const round = params.round
   const connection = getConnection(round!)
 
-  const schema = schemaCompanyArchive
+  const schema = schemaUserArchive
     .pick({
       _id: true,
-      companyName: true,
+      name: true,
       status: true,
+      validateType: true,
     })
     // 縮短 key，減少輸出的檔案尺寸
-    .transform((value) => ({ u: value._id, c: value.companyName, s: value.status }))
+    .transform((value) => ({ i: value._id, n: value.name, s: value.status, t: value.validateType }))
 
-  const dbCompanyArchive = getDBCompanyArchive(connection)
-  const companyArchiveList =
+  const dbUserArchive = getDBUserArchive(connection)
+  const userArchiveList =
     (await handlePromiseParser(
-      z.promise(schema.array()).parse(dbCompanyArchive.find({}).toArray()),
+      z.promise(schema.array()).parse(dbUserArchive.find({}).toArray()),
     )) ?? []
 
-  return createJSONResponse(companyArchiveList)
+  return new Response(`export const data = ${JSON.stringify(userArchiveList)}`, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/javascript',
+      'Cache-Control': 'public, max-age=604800',
+    },
+  })
 }
 
 export const getStaticPaths = (() => {

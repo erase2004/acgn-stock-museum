@@ -22,8 +22,8 @@ export default function LoadCompanyJson({ round }: Props) {
   )
 
   const jsonUrl = getCompanyJsonUrl(round)
-  fetch(jsonUrl).then(async (response) => {
-    const result = await z.promise(schema.array()).parse(response.json())
+  import(jsonUrl).then((module) => {
+    const result = schema.array().parse(module.data)
     const data = keyBy(result, '_id')
     companyArchiveDict.set(data)
   })

@@ -1,5 +1,6 @@
 import type { APIContext } from 'astro'
 import { defaultWebsiteName, legacyRounds, siteList } from '@/configs/sites'
+import { BUILD_ID } from 'astro:env/client'
 
 export const PAGE = {
   MAIN: 'mainPage',
@@ -338,13 +339,13 @@ export function getAdvertisingUrl(round: string) {
 }
 
 export function getUserJsonUrl(round: string) {
-  return `/${round}/json/user.json`
+  return `/${round}/json/user-data.js?v=${BUILD_ID}`
 }
 
 export function getCompanyJsonUrl(round: string) {
-  return `/${round}/json/company.json`
+  return `/${round}/json/company-data.js?v=${BUILD_ID}`
 }
 
 export function getProductJsonUrl(round: string) {
-  return `/${round}/json/product.json`
+  return `/${round}/json/product-data.js?v=${BUILD_ID}`
 }

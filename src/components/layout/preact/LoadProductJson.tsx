@@ -23,8 +23,8 @@ export default function LoadProductJson({ round }: Props) {
   )
 
   const jsonUrl = getProductJsonUrl(round)
-  fetch(jsonUrl).then(async (response) => {
-    const result = await z.promise(schema.array()).parse(response.json())
+  import(jsonUrl).then((module) => {
+    const result = schema.array().parse(module.data)
     const data = keyBy(result, '_id')
     productDict.set(data)
   })

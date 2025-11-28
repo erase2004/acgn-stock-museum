@@ -23,8 +23,8 @@ export default function LoadUserJson({ round }: Props) {
   )
 
   const jsonUrl = getUserJsonUrl(round)
-  fetch(jsonUrl).then(async (response) => {
-    const result = await z.promise(schema.array()).parse(response.json())
+  import(jsonUrl).then((module) => {
+    const result = schema.array().parse(module.data)
     const data = keyBy(result, '_id')
     userArchiveDict.set(data)
   })

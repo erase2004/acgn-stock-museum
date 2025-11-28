@@ -3,7 +3,6 @@ import { z } from 'astro/zod'
 import { getConnection } from '@/libs/databases'
 import { getDBProducts, schema as schemaProduct } from '@/services/dbProducts'
 import { handlePromiseParser } from '@/utils/helpers'
-import { createJSONResponse } from '@/libs/api'
 import { rounds } from '@/configs/sites'
 
 export const GET: APIRoute = async ({ params }) => {
@@ -25,7 +24,13 @@ export const GET: APIRoute = async ({ params }) => {
     (await handlePromiseParser(z.promise(schema.array()).parse(dbProducts.find({}).toArray()))) ??
     []
 
-  return createJSONResponse(productList)
+  return new Response(`export const data = ${JSON.stringify(productList)}`, {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/javascript',
+      'Cache-Control': 'public, max-age=604800',
+    },
+  })
 }
 
 export const getStaticPaths = (() => {

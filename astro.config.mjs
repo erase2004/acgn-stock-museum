@@ -1,5 +1,6 @@
 // @ts-check
 
+import dayjs from 'dayjs';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig, envField } from 'astro/config';
 
@@ -35,6 +36,11 @@ export default defineConfig({
         context: 'server',
         access: 'secret',
         default: 'mongodb://127.0.0.1:27017'
+      }),
+      BUILD_ID: envField.number({
+        context: 'client',
+        access: 'public',
+        default: dayjs().unix()
       })
     }
   },
