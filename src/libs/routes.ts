@@ -357,3 +357,7 @@ export function getAccountLogJsonUrl(round: string, userId: string) {
 export function getCompanyLogJsonUrl(round: string, companyId: string) {
   return `/${round}/json/company/${companyId}.js?v=${BUILD_ID}`
 }
+
+export function getArenaLogJsonUrl(round: string, arenaId: string) {
+  return `/${round}/json/arenaInfo/${arenaId}.js?v=${BUILD_ID}`
+}

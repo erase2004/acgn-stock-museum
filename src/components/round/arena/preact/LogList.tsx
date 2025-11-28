@@ -1,15 +1,16 @@
 import type { z } from 'astro/zod'
 import type { schema as schemaFighter } from '@/services/dbArenaFighters'
-import type { schema as schemaLog } from '@/services/dbArenaLog'
 import type { Dictionary } from 'lodash'
 import type { SyntheticEvent } from 'react'
+import { schema as schemaLog } from '@/services/dbArenaLog'
 import CompanyLink from '@/components/common/preact/CompanyLink'
 import { Virtuoso } from 'react-virtuoso'
-import { Fragment, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { isArray, isString, map, zipObject } from 'lodash-es'
 import { currencyFormat } from '@/utils/helpers'
 import { useFilter } from '@/utils/hooks'
 import { dataStoreKey } from '@/configs/general'
+import { getArenaLogJsonUrl } from '@/libs/routes'
 
 const STORE_KEY = dataStoreKey.arena.log
 
@@ -19,8 +20,8 @@ type Log = z.infer<typeof schemaLog>
 
 type Props = {
   round: string
+  arenaId: string
   fighters: Fighter[]
-  logs: Log[]
 }
 
 function getAttacker(log: Log) {
@@ -74,7 +75,10 @@ function displayAttackManaer(log: Log, fighterDict: FighterDict) {
   return '???'
 }
 
-export default function LogList({ round, fighters, logs }: Props) {
+export default function LogList({ round, arenaId, fighters }: Props) {
+  const [isInitialized, setIsInitialized] = useState(false)
+  const [logs, setLogs] = useState<Log[]>([])
+
   const fighterDict = useMemo(() => {
     return zipObject(map(fighters, 'companyId'), fighters)
   }, [fighters])
@@ -99,6 +103,18 @@ export default function LogList({ round, fighters, logs }: Props) {
     },
     false,
   )
+
+  useEffect(() => {
+    if (isInitialized) return
+
+    const jsonUrl = getArenaLogJsonUrl(round, arenaId)
+    import(/* @vite-ignore */ jsonUrl)
+      .then((module) => {
+        const result = schemaLog.array().parse(module.data)
+        setLogs(result)
+      })
+      .finally(() => setIsInitialized(true))
+  }, [])
 
   const inputRef = useRef<HTMLInputElement>(null)
   const [showClear, setShowClear] = useState(false)
@@ -148,6 +164,10 @@ export default function LogList({ round, fighters, logs }: Props) {
         )}
       </div>
     )
+  }
+
+  if (!isInitialized) {
+    return <span className="loading loading-xl loading-spinner"></span>
   }
 
   return (

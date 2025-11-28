@@ -10,7 +10,6 @@ import { getCurrentRound, getArenaInfoUrl, getRoundMainPageUrl } from '@/libs/ro
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getArenaById, getPreviousArena, getNextArena, getAllArenas } from '@/services/dbArena'
 import { getFighters } from '@/services/dbArenaFighters'
-import { getArenaLogs } from '@/services/dbArenaLog'
 import { isArenaEnded, isArenaJoinEnded } from '@/utils/arena'
 import { arenaMinInvestedAmount } from '@/configs/general'
 import { rounds } from '@/configs/sites'
@@ -54,8 +53,6 @@ const nextArenaUrl = nextArena ? getArenaInfoUrl(round, nextArena._id) : undefin
 
 const isEnded = isArenaEnded(currentArena.endDate, currentRound.endDate)
 const fighters = (await getFighters(connection, arenaId)) ?? []
-
-const logs = (await getArenaLogs(connection, arenaId)) ?? []
 ---
 
 <RoundLayout useUserDict={true}>
@@ -97,7 +94,7 @@ const logs = (await getArenaLogs(connection, arenaId)) ?? []
       <Fragment>
         <div class="divider" />
         <PanelFolder client:only="react" title={'戰鬥紀錄'} classes="text-2xl" state={false}>
-          <LogList client:only="react" round={round} fighters={fighters} logs={logs} />
+          <LogList client:visible round={round} arenaId={arenaId} fighters={fighters} />
         </PanelFolder>
       </Fragment>
     )
