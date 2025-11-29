@@ -34,7 +34,13 @@ export default function ProductLink({ productId }: Props) {
     const { productName, url, type } = productData
     displayText = productName || defaultText
     setHtml(
-      <a href={url} title={productName} data-product-type={type} target="_blank">
+      <a
+        href={url}
+        title={productName}
+        data-product-type={type}
+        target="_blank"
+        rel="nofollow noopener"
+      >
         {displayText}
       </a>,
     )

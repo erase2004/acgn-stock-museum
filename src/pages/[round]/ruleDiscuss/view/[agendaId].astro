@@ -79,7 +79,12 @@ const description = `${removeMarkdown(agenda.description)}`
     <div>
       <div class="flex flex-nowrap gap-x-2">
         <h3 class="text-2xl">議程介紹</h3>
-        <a class="btn btn-sm btn-primary" href={agenda.discussionUrl} target="_blank">
+        <a
+          class="btn btn-sm btn-primary"
+          href={agenda.discussionUrl}
+          target="_blank"
+          rel="nofollow noreferrer"
+        >
           <i class="fa fa-external-link"></i>相關討論
         </a>
       </div>

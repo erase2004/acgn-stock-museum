@@ -59,7 +59,7 @@ function getExpireDate(begin: Date) {
               <td class="text-left" data-title="廣告內容" title={item.message}>
                 <div class="max-md:max-h-36 max-md:overflow-y-auto max-md:break-all md:truncate">
                   {item.url ? (
-                    <a href={item.url} target="_blank">
+                    <a href={item.url} target="_blank" rel="nofollow noreferrer">
                       {item.message}
                     </a>
                   ) : (

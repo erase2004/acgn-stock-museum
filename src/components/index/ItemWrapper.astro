@@ -15,13 +15,7 @@ const { isLatestPeriod, index, data } = Astro.props
 const wrappingStyles = getWrappingStyles(index)
 ---
 
-<a
-  class={`media-item ${wrappingStyles}`}
-  href={data.url}
-  target="_blank"
-  rel="noopener"
-  title={data.companyName}
->
+<a class={`media-item ${wrappingStyles}`} href={data.url} target="_blank" title={data.companyName}>
   <span class="item-title">
     {data.companyName}
   </span>

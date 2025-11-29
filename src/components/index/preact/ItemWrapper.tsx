@@ -19,7 +19,6 @@ const PreactItemWrapper: FunctionComponent<Props> = (props) => {
       className={`media-item ${wrappingStyles}`}
       href={data.url}
       target="_blank"
-      rel="noopener"
       title={data.companyName}
     >
       <span className="item-title">{data.companyName}</span>
