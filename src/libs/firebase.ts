@@ -8,7 +8,7 @@ const firebaseConfig = {
   storageBucket: 'acgn-museum.firebasestorage.app',
   messagingSenderId: '770086167999',
   appId: '1:770086167999:web:1dca68a044109f8963ad0a',
-  measurementId: 'G-58NTBC5DHS',
+  measurementId: 'G-FP73DDEVRL',
 }
 
 // Initialize Firebase
