@@ -5,14 +5,12 @@ import { formatDescription } from '@/utils/helpers'
 type Props = {
   title?: string
   description?: string
-  keywords?: string[]
   image?: string | null
 }
 
 const {
   title = getCurrentPageFullTitle(Astro),
   description = 'ACGN 股票歷史博物館大廳',
-  keywords = ['ACGN', '股市', '博物館'],
   image = new URL('mstile-310x310.png', Astro.site),
 } = Astro.props
 ---
@@ -43,5 +41,4 @@ const {
     </Fragment>
   )
 }
-{keywords && <meta name="keywords" content={keywords.join(',')} />}
 <meta property="og:type" content="website" />
