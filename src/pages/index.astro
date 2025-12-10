@@ -79,21 +79,10 @@ const reversedList = Object.entries(dataList)
   )
 const initialList = reversedList.slice(0, 1)
 const restList = reversedList.slice(1)
-
-const ldJson = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  itemListElement: initialList[0][1].map((item, index) => ({
-    '@type': 'ListItem',
-    position: index + 1,
-    url: new URL(item.url, Astro.site),
-  })),
-}
 ---
 
 <BaseLayout>
   <div slot="main" class="homepage md:px-4">
-    <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
     {
       initialList.map(([period, list], index) => (
         <Period period={period} list={list} isLatest={index === 0} />

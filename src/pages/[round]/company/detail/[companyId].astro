@@ -5,7 +5,12 @@ import SealedDetailContent from '@/components/round/company/SealedDetailContent.
 import NormalDetailContent from '@/components/round/company/NormalDetailContent.astro'
 import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { getConnection } from '@/libs/databases'
-import { getCurrentPageFullTitle, getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
+import {
+  getAccountUrl,
+  getCurrentPageFullTitle,
+  getCurrentRound,
+  getRoundMainPageUrl,
+} from '@/libs/routes'
 import {
   getCompanyFilterByCustomSchema,
   getAllBasicCompanies,
@@ -14,6 +19,7 @@ import {
 import { rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
 import { removeMarkdown } from '@/utils/helpers'
+import dayjs from 'dayjs'
 
 export const getStaticPaths = (async () => {
   const results = await Promise.allSettled(
@@ -41,7 +47,14 @@ const connection = getConnection(round)
 const company = await getCompanyFilterByCustomSchema(
   connection,
   companyId,
-  schema.pick({ companyName: true, isSeal: true, description: true, pictureSmall: true }),
+  schema.pick({
+    companyName: true,
+    isSeal: true,
+    description: true,
+    pictureSmall: true,
+    founder: true,
+    createdAt: true,
+  }),
 )
 
 if (!company) {
@@ -50,9 +63,24 @@ if (!company) {
 
 const title = getCurrentPageFullTitle(Astro, company.companyName)
 const description = removeMarkdown(company.description)
+
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  author: [
+    {
+      '@type': 'Person',
+      url: getAccountUrl(round, company.founder),
+    },
+  ],
+  headline: title,
+  datePublished: dayjs(company.createdAt).toISOString(),
+  image: [company.pictureSmall],
+}
 ---
 
 <RoundLayout useUserDict={true} useProductDict={true}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(ldJson)} />
   <OpenGraph slot="head-seo" title={title} description={description} image={company.pictureSmall} />
   {company.isSeal ? <SealedDetailContent /> : <NormalDetailContent />}
 </RoundLayout>

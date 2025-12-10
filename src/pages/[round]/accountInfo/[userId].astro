@@ -18,6 +18,7 @@ import { handlePromiseParser } from '@/utils/helpers'
 import { dataStoreKey } from '@/configs/general'
 import { FIRST_ROUND, legacyRounds, rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
+import dayjs from 'dayjs'
 
 export const getStaticPaths = (async () => {
   const results = await Promise.allSettled(
@@ -61,9 +62,22 @@ const isFirstRound = round === FIRST_ROUND
 
 const title = getCurrentPageFullTitle(Astro, user.profile.name)
 const description = user.about.description ?? ''
+
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  dateCreated: dayjs(user.createdAt).toISOString(),
+  mainEntity: {
+    '@type': 'Person',
+    name: user.profile.name,
+    identifier: user._id,
+    image: user.about.picture,
+  },
+}
 ---
 
 <RoundLayout useUserDict={true} useProductDict={true}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(ldJson)} />
   <OpenGraph
     slot="head-seo"
     title={title}

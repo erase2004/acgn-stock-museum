@@ -5,7 +5,12 @@ import UserLink from '@/components/common/preact/UserLink'
 import Issue from '@/components/round/ruleAgenda/Issue.astro'
 import OpenGraph from '@/components/layout/OpenGraph.astro'
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound, getCurrentPageFullTitle, getRoundMainPageUrl } from '@/libs/routes'
+import {
+  getCurrentRound,
+  getCurrentPageFullTitle,
+  getRoundMainPageUrl,
+  getAccountUrl,
+} from '@/libs/routes'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getAgendaById, getAllBasicRuleAgendas } from '@/services/dbRuleAgendas'
 import { getRelatedIssues } from '@/services/dbRuleIssues'
@@ -13,6 +18,7 @@ import { getRelatedIssueOptions } from '@/services/dbRuleIssueOptions'
 import { markdownToHtml, removeMarkdown } from '@/utils/helpers'
 import { flatten, keyBy, map } from 'lodash-es'
 import { legacyRounds, rounds } from '@/configs/sites'
+import dayjs from 'dayjs'
 
 export const getStaticPaths = (async () => {
   const results = await Promise.allSettled(
@@ -61,9 +67,23 @@ const isLegacyRound = legacyRounds.includes(round)
 
 const title = getCurrentPageFullTitle(Astro, agenda.title)
 const description = `${removeMarkdown(agenda.description)}`
+
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  author: [
+    {
+      '@type': 'Person',
+      url: getAccountUrl(round, agenda.creator),
+    },
+  ],
+  headline: title,
+  datePublished: dayjs(agenda.createdAt).toISOString(),
+}
 ---
 
 <RoundLayout useUserDict={true}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(ldJson)} />
   <OpenGraph slot="head-seo" title={title} description={description} />
   <h1 class="round-block-title">{agenda.title}</h1>
   <div class="divider"></div>

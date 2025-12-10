@@ -59,8 +59,6 @@ export const schema = z.object({
   description: z.string().min(10).max(3000),
   /** 違規名單 */
   violators: violatorSchema.array(),
-  /** 未讀的使用者標記 */
-  unreadUsers: itemId.array(),
   /** 相關案件 */
   relatedCases: itemId.array(),
   /** 建立日期 */

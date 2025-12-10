@@ -3,7 +3,7 @@ import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import Filter from '@/components/round/announcement/preact/Filter'
 import ListContainer from '@/components/round/announcement/preact/ListContainer'
-import { getAnnouncementUrl, getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
+import { getCurrentRound, getRoundMainPageUrl } from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAnnouncements } from '@/services/dbAnnouncements'
 import { STORE_KEY } from '@/stores/announcement'
@@ -25,26 +25,9 @@ if (legacyRounds.includes(round)) {
 
 const connection = getConnection(round)!
 const announcements = (await getAnnouncements(connection)) ?? []
-
-const itemAmount = 3
-const ldJson = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  itemListElement: announcements.slice(0, itemAmount).map((item, index) => ({
-    '@type': 'ListItem',
-    position: index + 1,
-    url: new URL(getAnnouncementUrl(round, item._id), Astro.url),
-  })),
-}
-const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
 ---
 
 <RoundLayout useUserDict={true}>
-  {
-    shouldShowLDJson && (
-      <script is:inline type="application/ld+json" set:html={JSON.stringify(ldJson)} />
-    )
-  }
   <h1 class="round-block-title">系統公告</h1>
   <div class="divider"></div>
   <Filter client:only="react" data={announcements} storeKey={STORE_KEY}>

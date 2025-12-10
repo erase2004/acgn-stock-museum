@@ -4,7 +4,12 @@ import RoundLayout from '@/layouts/Round.astro'
 import RejectionPetition from '@/components/round/announcement/RejectionPetition.astro'
 import RejectionPoll from '@/components/round/announcement/RejectionPoll.astro'
 import OpenGraph from '@/components/layout/OpenGraph.astro'
-import { getCurrentRound, getAnnouncementUrl, getRoundMainPageUrl } from '@/libs/routes'
+import {
+  getCurrentRound,
+  getAnnouncementUrl,
+  getRoundMainPageUrl,
+  getAccountUrl,
+} from '@/libs/routes'
 import { getConnection } from '@/libs/databases'
 import { getAllBasicAnnouncements, getAnnouncementById } from '@/services/dbAnnouncements'
 import { categoryDisplayName } from '@/utils/announcement'
@@ -12,6 +17,7 @@ import { getCurrentPageFullTitle } from '@/libs/routes'
 import { legacyRounds, rounds } from '@/configs/sites'
 import { removeMarkdown } from '@/utils/helpers'
 import { flatten } from 'lodash-es'
+import dayjs from 'dayjs'
 
 export const getStaticPaths = (async () => {
   const results = await Promise.allSettled(
@@ -52,9 +58,23 @@ const canRejectAnnoumcenet = !!announcement.rejectionPetition
 
 const title = getCurrentPageFullTitle(Astro, announcement.subject)
 const description = removeMarkdown(announcement.content)
+
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  author: [
+    {
+      '@type': 'Person',
+      url: getAccountUrl(round, announcement.creator),
+    },
+  ],
+  headline: title,
+  datePublished: dayjs(announcement.createdAt).toISOString(),
+}
 ---
 
 <RoundLayout useUserDict={true}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(ldJson)} />
   <OpenGraph slot="head-seo" title={title} description={description} />
   <h1 class="round-block-title">
     公告否決 - {categoryDisplayName(announcement.category)}

@@ -21,6 +21,7 @@ import { stateBadgeClass, stateDisplayName, categoryDisplayName } from '@/utils/
 import { markdownToHtml, removeMarkdown, isLatestRound } from '@/utils/helpers'
 import { legacyRounds, rounds } from '@/configs/sites'
 import { flatten } from 'lodash-es'
+import dayjs from 'dayjs'
 
 export const getStaticPaths = (async () => {
   const results = await Promise.allSettled(
@@ -77,9 +78,24 @@ const relatedLogs = (await getViolationCaseRelatedLogs(connection, caseId)) ?? [
 
 const title = getCurrentPageFullTitle(Astro)
 const description = `案件識別碼：${violation._id}｜內容：${removeMarkdown(violation.description)}`
+
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  author: [
+    {
+      '@type': 'Organization',
+      name: '金管會',
+    },
+  ],
+  headline: title,
+  datePublished: dayjs(violation.createdAt).toISOString(),
+  dateModified: dayjs(violation.updatedAt).toISOString(),
+}
 ---
 
 <RoundLayout useUserDict={true} useProductDict={true}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(ldJson)} />
   <OpenGraph slot="head-seo" title={title} description={description} />
   <h1 class="round-block-title">
     違規案件內容 - <span class="text-nowrap">{categoryDisplayName(violation.category)}</span>

@@ -3,7 +3,7 @@ import type { GetStaticPaths } from 'astro'
 import RoundLayout from '@/layouts/Round.astro'
 import ListContainer from '@/components/round/ruleAgenda/ListContainer.astro'
 import { getConnection } from '@/libs/databases'
-import { getCurrentRound, getRuleAgendaUrl } from '@/libs/routes'
+import { getCurrentRound } from '@/libs/routes'
 import { getCurrentRound as getCurrentRoundFromDB } from '@/services/dbRound'
 import { getAllRuleAgendas } from '@/services/dbRuleAgendas'
 import { rounds } from '@/configs/sites'
@@ -23,26 +23,9 @@ const ruleAgendas = (await getAllRuleAgendas(connection, currentRound!)) ?? []
 
 const inProgress = ruleAgendas.filter((agenda) => agenda.isEnded === false)
 const finished = ruleAgendas.filter((agenda) => agenda.isEnded === true)
-
-const itemAmount = 3
-const ldJson = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  itemListElement: finished.slice(0, itemAmount).map((item, index) => ({
-    '@type': 'ListItem',
-    position: index + 1,
-    url: new URL(getRuleAgendaUrl(round, item._id), Astro.url),
-  })),
-}
-const shouldShowLDJson = ldJson.itemListElement.length === itemAmount
 ---
 
 <RoundLayout>
-  {
-    shouldShowLDJson && (
-      <script is:inline type="application/ld+json" set:html={JSON.stringify(ldJson)} />
-    )
-  }
   <h1 class="round-block-title">規則討論</h1>
   <div class="divider"></div>
   <h2 class="text-3xl opacity-70">進行中的議程</h2>
