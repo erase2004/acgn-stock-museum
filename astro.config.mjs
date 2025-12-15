@@ -79,7 +79,8 @@ export default defineConfig({
       namespaces: {
         image: false,
         video: false,
-      }
+      },
+      lastmod: new Date(),
     })
   ],
 });
