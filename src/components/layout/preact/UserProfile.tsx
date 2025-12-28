@@ -60,17 +60,15 @@ export default function UserProfile({ round }: Props) {
         raw = doc.data()
       })
 
-      const { success, data } = basicSchema.safeParse(raw)
+      const data = basicSchema.parse(raw)
 
-      if (success)
-        return [
-          success,
-          {
-            ...data,
-            favorite: map(data.favoriteV2, '_id'),
-          },
-        ]
-      else return [success, data]
+      return [
+        true,
+        {
+          ...data,
+          favorite: map(data.favoriteV2, '_id'),
+        },
+      ]
     } catch (err) {
       console.error(err)
 
