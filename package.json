@@ -35,7 +35,7 @@
     "dayjs": "^1.11.18",
     "firebase": "^12.5.0",
     "katex": "^0.16.25",
-    "lodash-es": "^4.17.21",
+    "lodash-es": "^4.17.23",
     "mongodb": "^6.20.0",
     "nanostores": "^1.0.1",
     "react": "^19.2.0",
