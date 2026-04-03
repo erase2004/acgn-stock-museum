@@ -1,4 +1,5 @@
 // TODO: add new entry when round is over
+export { default as '202601' } from './imageListData/202601'
 export { default as '202504' } from './imageListData/202504'
 export { default as '202503' } from './imageListData/202503'
 export { default as '202502' } from './imageListData/202502'

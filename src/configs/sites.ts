@@ -21,6 +21,13 @@ export type Round = {
 
 // TODO: add new entry when round is over
 export const siteList = {
+  round34: {
+    year: 2026,
+    title: '(22) 2025/12/28 ~ 2026/03/29',
+    name: `(22) ${defaultWebsiteName}`,
+    disabled: false,
+    dbname: 'museum-34',
+  },
   round33: {
     year: 2025,
     title: '(21) 2025/09/28 ~ 2025/12/28',
