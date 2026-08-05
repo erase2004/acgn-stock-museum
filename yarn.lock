@@ -8698,21 +8698,7 @@ virtua@^0.47.0:
   resolved "https://registry.yarnpkg.com/virtua/-/virtua-0.47.0.tgz#71b0797b8628f1125f60955293b83b1ed1629083"
   integrity sha512-ihUpsZKbw+lqG9ET1zXHOHVV9nSLszLSE8Z2m3kWJKey9HCd7OG3QKK3quJZs1/jRJgMpYBffi3pYP0X0jxAzA==
 
-vite@^6.3.6:
-  version "6.3.6"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-6.3.6.tgz#69a976b64930750d40219fbc68c5200874d315c1"
-  integrity sha512-0msEVHJEScQbhkbVTb/4iHZdJ6SXp/AvxL2sjwYQFfBqleHtnCqv1J3sa9zbWz/6kW1m9Tfzn92vW+kZ1WV6QA==
-  dependencies:
-    esbuild "^0.25.0"
-    fdir "^6.4.4"
-    picomatch "^4.0.2"
-    postcss "^8.5.3"
-    rollup "^4.34.9"
-    tinyglobby "^0.2.13"
-  optionalDependencies:
-    fsevents "~2.3.3"
-
-vite@^6.4.1:
+vite@^6.3.6, vite@^6.4.1:
   version "6.4.1"
   resolved "https://registry.yarnpkg.com/vite/-/vite-6.4.1.tgz#afbe14518cdd6887e240a4b0221ab6d0ce733f96"
   integrity sha512-+Oxm7q9hDoLMyJOYfUYBuHQo+dkAloi33apOPP56pzj+vsdJDzr+j1NISE5pyaAuKL4A3UD34qd0lx5+kfKp2g==
